@@ -24,9 +24,53 @@
 		"contact": {}
 	},
 	"paths": {
-		"/books": {
+		"/users": {
 			"get": {
-				"operationId": "GetBooks",
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/mooves": {
+			"get": {
+				"operationId": "GetMooves",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/games": {
+			"get": {
+				"operationId": "GetGames",
 				"responses": {
 					"200": {
 						"description": "Ok",
