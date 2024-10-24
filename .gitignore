@@ -1,5 +1,4 @@
 node_modules
 build
 .idea
-swagger.json
 backend/public/swagger.json
