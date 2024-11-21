@@ -1,12 +1,12 @@
 export interface CreateGameDTO {
-    playerWhiteId: number;   // ID du joueur jouant les blancs
+    playerWhiteId?: number;   // ID du joueur jouant les blancs (peut être null pour un joueur invité)
     playerBlackId?: number;  // ID du joueur jouant les noirs (peut être null pour un joueur invité)
     isPublic: boolean;       // Si la partie est publique ou non
 }
 
 export interface GameDTO {
     id: number;                // ID de la partie
-    playerWhiteId: number;     // ID du joueur blanc
+    playerWhiteId: number| null;     // ID du joueur blanc
     playerBlackId: number | null;  // ID du joueur noir, peut être null
     gameState: string;         // État du jeu (ex: JSON de l’échiquier)
     isFinished: boolean;  // Statut de la partie
