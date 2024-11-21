@@ -5,7 +5,7 @@ import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runti
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { MooveController } from './../controllers/moove.controller';
+import { MoveController } from '../controllers/move.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GameController } from './../controllers/game.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -277,8 +277,8 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/mooves',
-            ...(fetchMiddlewares<RequestHandler>(MooveController)),
-            ...(fetchMiddlewares<RequestHandler>(MooveController.prototype.getMooves)),
+            ...(fetchMiddlewares<RequestHandler>(MoveController)),
+            ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.getMooves)),
 
             async function MooveController_getMooves(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
@@ -290,7 +290,7 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new MooveController();
+                const controller = new MoveController();
 
               await templateService.apiHandler({
                 methodName: 'getMooves',
