@@ -75,3 +75,5 @@ Game.init(
         timestamps: true,
     }
 );
+
+export default Game;
