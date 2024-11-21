@@ -23,16 +23,16 @@ export class GameService {
         TODO : creer toute les pièces de la partie a partir de Chesspiece.services
         */
         return GameMapper.toDTO(await Game.create({
-            playerWhite: playerWhiteId,
-            playerBlack: playerBlackId,
-            isPublic: isPublic,
+            player_white_id: playerWhiteId,
+            player_black_id: playerBlackId,
+            is_public: isPublic,
             /*
             TODO : creer un gamestate dynamique a partir de Chesspiece.services
             */
-            gameState: "",
-            isFinished: false,
-            winnerId: null,
-            createdAt: new Date()
+            game_state: "",
+            is_finished: false,
+            winner_id: null,
+            created_at: new Date()
         }));
     }
 

@@ -1,5 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
+import Game from "./game.model";
+import {User} from "./user.model";
 
 interface ChessPieceAttributes {
     id: number;
@@ -64,5 +66,10 @@ ChessPiece.init(
         sequelize,
     }
 );
+
+ChessPiece.belongsTo(Game, { foreignKey: "game_id" });
+Game.hasMany(ChessPiece, { sourceKey: "id", foreignKey: "game_id" });
+
+
 
 export default ChessPiece;
