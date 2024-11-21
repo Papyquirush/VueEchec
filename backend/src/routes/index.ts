@@ -8,6 +8,8 @@ import { UserController } from './../controllers/user.controller';
 import { MooveController } from './../controllers/moove.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GameController } from './../controllers/game.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ChessPieceController } from './../controllers/chessPiece.controller';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
 
@@ -39,6 +41,44 @@ const models: TsoaRoute.Models = {
         "properties": {
             "username": {"dataType":"string"},
             "password": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "chessPieceDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "pieceType": {"dataType":"string","required":true},
+            "color": {"dataType":"string","required":true},
+            "position": {"dataType":"string","required":true},
+            "isCaptured": {"dataType":"boolean","required":true},
+            "hasMoved": {"dataType":"boolean","required":true},
+            "gameId": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateChessPieceDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "pieceType": {"dataType":"string","required":true},
+            "color": {"dataType":"string","required":true},
+            "position": {"dataType":"string","required":true},
+            "gameId": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateChessPieceDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "pieceType": {"dataType":"string"},
+            "color": {"dataType":"string"},
+            "position": {"dataType":"string"},
+            "isCaptured": {"dataType":"boolean"},
+            "hasMoved": {"dataType":"boolean"},
+            "gameId": {"dataType":"double"},
         },
         "additionalProperties": false,
     },
@@ -257,6 +297,156 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getGames',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/chessPieces',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getAllChessPieces)),
+
+            async function ChessPieceController_getAllChessPieces(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'getAllChessPieces',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/chessPieces/:id',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getChessPieceById)),
+
+            async function ChessPieceController_getChessPieceById(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'getChessPieceById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/chessPieces',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.createChessPiece)),
+
+            async function ChessPieceController_createChessPiece(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateChessPieceDTO"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'createChessPiece',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/chessPieces/:id',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.deleteChessPiece)),
+
+            async function ChessPieceController_deleteChessPiece(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteChessPiece',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/chessPieces/:id',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.updateChessPiece)),
+
+            async function ChessPieceController_updateChessPiece(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateChessPieceDTO"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'updateChessPiece',
                 controller,
                 response,
                 next,
