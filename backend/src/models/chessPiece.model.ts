@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Game from "./game.model";
-import {User} from "./user.model";
+
 
 interface ChessPieceAttributes {
     id: number;
