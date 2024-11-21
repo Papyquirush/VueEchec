@@ -1,31 +1,31 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
+import { User } from './user.model';
 
 interface GameAttributes {
     id: number;
-    playerWhite: string;
-    playerBlack: string;
-    isPublic: boolean;
-    gameState: string;
-    isFinished: boolean;
-    winnerId: number | null;
-    createdAt: Date;
-    finishedAt: Date;
+    player_white_id: number|undefined;
+    player_black_id: number|undefined;
+    is_public: boolean;
+    game_state: string;
+    is_finished: boolean;
+    winner_id: number | null;
+    created_at: Date;
+    finished_at?: Date;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
 
 class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
-    public isPublic!: boolean;
-    public gameState!: string;
-    public isFinished!: boolean;
-    public winnerId!: number | null;
-    public finishedAt!: Date;
+    public is_public!: boolean;
+    public game_state!: string;
+    public is_finished!: boolean;
+    public winner_id!: number | null;
+    public finished_at!: Date;
     public id!: number;
-    public playerWhite!: string;
-    public playerBlack!: string;
-
-    public readonly createdAt!: Date;
+    public player_white_id!: number;
+    public player_black_id!: number;
+    public readonly created_at!: Date;
 }
 
 Game.init(
@@ -35,45 +35,50 @@ Game.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        playerWhite: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        playerBlack: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        isPublic: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-        },
-        gameState: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        isFinished: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-        },
-        winnerId: {
+        player_white_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
-        createdAt: {
+        player_black_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        is_public: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            defaultValue: false,
+        },
+        game_state: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        is_finished: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+        },
+        winner_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        created_at: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: DataTypes.NOW,
         },
-        finishedAt: {
+        finished_at: {
             type: DataTypes.DATE,
             allowNull: true,
-        }
+        },
     },
     {
         sequelize,
         tableName: 'Game',
-        timestamps: true,
     }
 );
+
+Game.belongsTo(User, { foreignKey: "player_white_id" });
+Game.belongsTo(User, { foreignKey: "player_black_id" });
+User.hasMany(Game, { sourceKey: "id", foreignKey: "player_white_id" });
+User.hasMany(Game, { sourceKey: "id", foreignKey: "player_black_id" });
+
 
 export default Game;
