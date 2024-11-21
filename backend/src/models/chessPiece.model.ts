@@ -3,12 +3,12 @@ import sequelize from '../config/database';
 
 interface ChessPieceAttributes {
     id: number;
-    gameId: number;
-    pieceType: string;
+    game_id: number;
+    piece_type: string;
     color: string;
     position: string;
-    hasMoved?: boolean;
-    isCaptured?: boolean;
+    has_moved?: boolean;
+    is_captured?: boolean;
 }
 
 
@@ -16,12 +16,12 @@ interface ChessPieceCreationAttributes extends Optional<ChessPieceAttributes, 'i
 
 class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttributes> implements ChessPieceAttributes {
     public id!: number;
-    public gameId!: number;
-    public pieceType!: string;
+    public game_id!: number;
+    public piece_type!: string;
     public color!: string;
     public position!: string;
-    public hasMoved!: boolean;
-    public isCaptured!: boolean;
+    public has_moved!: boolean;
+    public is_captured!: boolean;
 
 }
 
@@ -32,11 +32,11 @@ ChessPiece.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        gameId: {
+        game_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        pieceType: {
+        piece_type: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -48,12 +48,12 @@ ChessPiece.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        hasMoved: {
+        has_moved: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
         },
-        isCaptured: {
+        is_captured: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,

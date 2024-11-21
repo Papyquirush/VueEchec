@@ -24,7 +24,7 @@ export class ChessPieceService {
         gameId: number,
     ): Promise<chessPieceDto> {
         return ChessPieceMapper.toOutputDto(
-            await ChessPiece.create({ id: -1, pieceType: pieceType, color: color, position: position, gameId: gameId }),
+            await ChessPiece.create({ piece_type: pieceType, color: color, position: position, game_id: gameId }),
         );
     }
 
@@ -37,10 +37,10 @@ export class ChessPieceService {
     ): Promise<chessPieceDto> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
-            if(pieceType !== "") chessPiece.pieceType = pieceType;
+            if(pieceType !== "") chessPiece.piece_type = pieceType;
             if(color !== "") chessPiece.color = color;
             if(position !== "") chessPiece.position = position;
-            if(gameId !== -1) chessPiece.gameId = gameId;
+            if(gameId !== -1) chessPiece.game_id = gameId;
             await chessPiece.save();
             return ChessPieceMapper.toOutputDto(chessPiece);
         } else {

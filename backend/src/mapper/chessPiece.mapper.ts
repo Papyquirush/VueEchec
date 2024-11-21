@@ -5,12 +5,12 @@ export class ChessPieceMapper {
     public static toOutputDto(chessPiece: ChessPiece): chessPieceDto {
         return {
         id: chessPiece.id,
-        pieceType: chessPiece.pieceType,
+        pieceType: chessPiece.piece_type,
         color: chessPiece.color,
         position: chessPiece.position,
-        isCaptured: chessPiece.isCaptured,
-        hasMoved: chessPiece.hasMoved,
-        gameId: chessPiece.gameId,
+        isCaptured: chessPiece.is_captured,
+        hasMoved: chessPiece.has_moved,
+        gameId: chessPiece.game_id,
         };
     }
 
