@@ -1,16 +1,17 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
+import { User } from './user.model';
 
 interface GameAttributes {
     id: number;
-    playerWhite: string;
-    playerBlack: string;
+    playerWhite: number|undefined;
+    playerBlack: number|undefined;
     isPublic: boolean;
     gameState: string;
     isFinished: boolean;
     winnerId: number | null;
     createdAt: Date;
-    finishedAt: Date;
+    finishedAt?: Date;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
@@ -22,8 +23,8 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public winnerId!: number | null;
     public finishedAt!: Date;
     public id!: number;
-    public playerWhite!: string;
-    public playerBlack!: string;
+    public playerWhite!: number;
+    public playerBlack!: number;
 
     public readonly createdAt!: Date;
 }
@@ -36,24 +37,24 @@ Game.init(
             primaryKey: true,
         },
         playerWhite: {
-            type: DataTypes.STRING,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: true,
         },
         playerBlack: {
-            type: DataTypes.STRING,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: true,
         },
         isPublic: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
         },
         gameState: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         isFinished: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
         },
         winnerId: {
             type: DataTypes.INTEGER,
@@ -62,12 +63,11 @@ Game.init(
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: DataTypes.NOW,
         },
         finishedAt: {
             type: DataTypes.DATE,
             allowNull: true,
-        }
+        },
     },
     {
         sequelize,
@@ -75,5 +75,6 @@ Game.init(
         timestamps: true,
     }
 );
+
 
 export default Game;
