@@ -2,6 +2,12 @@ import {chessPieceDto} from "../dto/chessPiece.dto";
 import {notFound} from "../error/NotFoundError";
 import ChessPiece  from "../models/chessPiece.model";
 import {ChessPieceMapper} from "../mapper/chessPiece.mapper";
+import PawnPiece from "../models/pieces/pawnPiece.model";
+
+const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
+    'pawn': PawnPiece,
+    // Ajouter d'autres types de pièces ici
+};
 
 export class ChessPieceService {
     public async getAllChessPieces(): Promise<chessPieceDto[]> {
@@ -23,9 +29,10 @@ export class ChessPieceService {
         position: string,
         gameId: number,
     ): Promise<chessPieceDto> {
-        return ChessPieceMapper.toOutputDto(
-            await ChessPiece.create({ piece_type: pieceType, color: color, position: position, game_id: gameId }),
-        );
+        const PieceClass = pieceTypeMap[pieceType.toLowerCase()] || ChessPiece;
+        const chessPiece = PieceClass.createInstance(pieceType, color, position, gameId);
+        await chessPiece.save();
+        return ChessPieceMapper.toOutputDto(chessPiece);
     }
 
     public async updateChessPiece(
