@@ -7,7 +7,7 @@ export class GameMapper{
             id: game.id,
             playerWhiteId: game.player_white_id,
             playerBlackId: game.player_black_id,
-            gameState: game.game_state,
+            gameState: game.game_state && typeof game.game_state === 'string' ? JSON.parse(game.game_state) : game.game_state,
             isFinished: game.is_finished,
             winnerId: game.winner_id,
             isPublic: game.is_public,
@@ -16,7 +16,7 @@ export class GameMapper{
         }
     }
 
-    public static toDTOList(gameList: Game[]): GameDTO[]{
+    public static toDTOList(gameList: Game[]): GameDTO[] {
         return gameList.map((game) => GameMapper.toDTO(game));
     }
 
