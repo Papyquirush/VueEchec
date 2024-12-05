@@ -25,6 +25,11 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     public has_moved!: boolean;
     public is_captured!: boolean;
 
+
+    public  move(positionX: number, positionY: number): void{}
+
+    
+
 }
 
 ChessPiece.init(
