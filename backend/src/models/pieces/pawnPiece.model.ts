@@ -1,6 +1,11 @@
 import ChessPiece from '../chessPiece.model';
 
 class PawnPiece extends ChessPiece {
+
+    public static createInstance(piece_type: string, color: string, position: string, gameId: number): PawnPiece {
+        return ChessPiece.createInstance("Pawn", color, position, gameId) as PawnPiece;
+    }
+
     public moveTo(positionX: number, positionY: number): void {
         if(positionX < 0 || positionX > 7 || positionY < 0 || positionY > 7) {
             console.log("Invalid move");

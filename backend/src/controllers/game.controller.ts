@@ -1,6 +1,6 @@
 import { Controller, Get, Route,Post, Body } from "tsoa";
 import { CreateGameDTO, GameDTO } from "../dto/game.dto";
-import { gameService } from "../services/game.servives";
+import { gameService } from "../services/game.services";
 
 @Route("games")
 export class GameController extends Controller {

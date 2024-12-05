@@ -25,6 +25,17 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     public has_moved!: boolean;
     public is_captured!: boolean;
 
+    public static createInstance(pieceType: string, color: string, position: string, gameId: number): ChessPiece {
+        return ChessPiece.build({
+            piece_type: pieceType,
+            color: color,
+            position: position,
+            game_id: gameId,
+            has_moved: false,
+            is_captured: false,
+        });
+    }
+
 
 
     public  moveTo(positionX: number, positionY: number): void{}
