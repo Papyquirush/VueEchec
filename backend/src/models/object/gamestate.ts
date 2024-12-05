@@ -55,6 +55,31 @@ class Gamestate {
         }
     }
 
+
+    public async updateGameState(oldPosition : string, position : string): Promise<void> {
+
+        if(this.pieces[position]) {
+            delete this.pieces[position];
+        }
+
+        if(this.whitePieces[position]) {
+            delete this.whitePieces[position];
+            this.blackPieces[position] = this.blackPieces[oldPosition];
+            delete this.blackPieces[oldPosition];
+        }
+
+        if(this.blackPieces[position]) {
+            delete this.blackPieces[position];
+            this.whitePieces[position] = this.whitePieces[oldPosition];
+            delete this.whitePieces[oldPosition];
+        }
+
+
+        this.pieces[position] = this.pieces[oldPosition];
+        delete this.pieces[oldPosition];
+
+    }
+
 }
 
 export default Gamestate;

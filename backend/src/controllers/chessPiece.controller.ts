@@ -10,7 +10,7 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
-import PawnPiece from "../models/pieces/pawnPiece.model";
+
 
 
 
@@ -56,7 +56,8 @@ export class ChessPieceController extends Controller {
 
         let chessPiece = await chessPieceService.getChessPieces(185);
         console.log(chessPiece);
-        chessPiece.moveTo("h", 3);
+        chessPiece.moveTo("h3");
+        console.log(chessPiece);
         console.log("success");
     }
 
