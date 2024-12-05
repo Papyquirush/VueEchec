@@ -89,6 +89,22 @@ export class ChessPieceService {
         return Object.assign(new PieceClass(), chessPiece);
     }
 
+    public async getSlotsAvailable(position: string, gameId: number): Promise<string[]> {
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
+        if (chessPiece) {
+            let specificChessPiece = this.convertToSpecificPiece(chessPiece);
+            return await specificChessPiece.getSlotsAvailable();
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
+    public async isChessPieceInPosition(position: string,gameId : number): Promise<boolean> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        return chessPiece !== null;
+    }
+
+
 }
 
 export default new ChessPieceService();

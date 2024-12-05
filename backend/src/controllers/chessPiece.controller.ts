@@ -60,6 +60,10 @@ export class ChessPieceController extends Controller {
         console.log("success");
     }
 
-
+    @Get("slots-available/{gameId}/{position}")
+    public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {
+        return chessPieceService.getSlotsAvailable(position,gameId);
+    }
+  
 }
 

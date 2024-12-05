@@ -47,6 +47,8 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
 
     public canTakePiece(positionX: number, positionY: number): boolean {return true; }
 
+    public getSlotsAvailable(): Promise<string[]> { return Promise.resolve(["oui"]); }
+
 }
 
 ChessPiece.init(

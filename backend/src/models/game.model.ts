@@ -12,6 +12,7 @@ interface GameAttributes {
     winner_id: number | null;
     created_at: Date;
     finished_at?: Date;
+    turn_count: number;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
@@ -26,6 +27,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public player_white_id!: number;
     public player_black_id!: number;
     public readonly created_at!: Date;
+    public turn_count!: number;
 }
 
 Game.init(
@@ -67,6 +69,11 @@ Game.init(
         finished_at: {
             type: DataTypes.DATE,
             allowNull: true,
+        },
+        turn_count: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
         },
     },
     {

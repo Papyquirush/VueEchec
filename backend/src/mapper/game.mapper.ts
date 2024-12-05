@@ -12,7 +12,8 @@ export class GameMapper{
             winnerId: game.winner_id,
             isPublic: game.is_public,
             createdAt: game.created_at,
-            finishedAt: game.finished_at
+            finishedAt: game.finished_at,
+            turnCount: game.turn_count,
         }
     }
 
