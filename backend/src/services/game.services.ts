@@ -37,7 +37,6 @@ export class GameService {
         }));
         let gameState = new GameState(game.id)
         await gameState.initStartGame(game.id);
-        console.log(gameState);
         return await this.updateGame(game.id,playerWhiteId,playerBlackId,isPublic,JSON.stringify(gameState.toJson()),false,undefined);
 
         
