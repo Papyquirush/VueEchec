@@ -46,8 +46,8 @@ export class ChessPieceController extends Controller {
       @Path() id: number,
       @Body() requestBody: UpdateChessPieceDTO,
     ): Promise<chessPieceDto> {
-      const { pieceType, color, position, gameId } = requestBody;
-      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1);
+      const { pieceType, color, position, gameId,hasMoved } = requestBody;
+      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
     }
 
     @Post("{id}/move")
@@ -56,7 +56,7 @@ export class ChessPieceController extends Controller {
 
         let chessPiece = await chessPieceService.getChessPieces(185);
         console.log(chessPiece);
-        chessPiece.moveTo("h3");
+        chessPiece.moveTo("h5");
         console.log(chessPiece);
         console.log("success");
     }

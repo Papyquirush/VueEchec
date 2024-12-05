@@ -62,6 +62,7 @@ export class ChessPieceService {
         color: string,
         position: string,
         gameId: number,
+        hasMoved: boolean
     ): Promise<chessPieceDto> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
@@ -69,6 +70,7 @@ export class ChessPieceService {
             if(color !== "") chessPiece.color = color;
             if(position !== "") chessPiece.position = position;
             if(gameId !== -1) chessPiece.game_id = gameId;
+            if(hasMoved !== undefined) chessPiece.has_moved = hasMoved;
             await chessPiece.save();
             return ChessPieceMapper.toOutputDto(chessPiece);
         } else {

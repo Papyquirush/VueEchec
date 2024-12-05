@@ -57,8 +57,8 @@ class PawnPiece extends ChessPiece {
         if(slots.includes(position)) {
             this.position = position;
             this.has_moved = true;
-            await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id);
-
+            await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id,this.has_moved);
+            await gameService.nextTurn(this.game_id, this.position, position);
 
             console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
         }
@@ -74,7 +74,7 @@ class PawnPiece extends ChessPiece {
 
         if(newX >= 0 || newX <= 8 || (parseInt(currentY) == 0 || parseInt(currentY) == 8)) {
 
-            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id);
+            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
         }
 
         console.log(`PawnPiece is promoted to ${pieceType}`);
