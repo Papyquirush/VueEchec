@@ -9,8 +9,9 @@ import {
     CreateChessPieceDTO,
   } from "../dto/chessPiece.dto";
 
-import chessPieceService  from "../services/chessPiece.services";
+import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
 import PawnPiece from "../models/pieces/pawnPiece.model";
+
 
 
 @Route("chessPieces")
@@ -51,8 +52,12 @@ export class ChessPieceController extends Controller {
 
     @Post("{id}/move")
     public async try() {
-        const pawnPiece = PawnPiece.createInstance("pawn","White","a4",14); // Example initialization
-        pawnPiece.moveTo("a", 3);
+        console.log("Try");
+
+        let chessPiece = await chessPieceService.getChessPieces(185);
+        console.log(chessPiece);
+        chessPiece.moveTo("h", 3);
+        console.log("success");
     }
 
 

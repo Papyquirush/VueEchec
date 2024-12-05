@@ -1,12 +1,21 @@
 import {chessPieceDto} from "../dto/chessPiece.dto";
 import {notFound} from "../error/NotFoundError";
-import ChessPiece  from "../models/chessPiece.model";
+import ChessPiece from "../models/chessPiece.model";
 import {ChessPieceMapper} from "../mapper/chessPiece.mapper";
 import PawnPiece from "../models/pieces/pawnPiece.model";
+import KingPiece from "../models/pieces/kingPiece.model";
+import QueenPiece from "../models/pieces/queenPiece.model";
+import BishopPiece from "../models/pieces/bishopPiece.model";
+import KnightPiece from "../models/pieces/knightPiece.model";
+import RookPiece from "../models/pieces/rookPiece.model";
 
 const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
     'pawn': PawnPiece,
-    // Ajouter d'autres types de pièces ici
+    'rook': RookPiece,
+    'knight': KnightPiece,
+    'bishop': BishopPiece,
+    'queen': QueenPiece,
+    'king': KingPiece,
 };
 
 export class ChessPieceService {
@@ -22,6 +31,17 @@ export class ChessPieceService {
             notFound("ChessPiece");
         }
     }
+
+
+    public async getChessPieces(id: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
 
     public async createChessPiece(
         pieceType: string,
@@ -64,6 +84,10 @@ export class ChessPieceService {
         }
     }
 
+    private convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
+        let PieceClass = pieceTypeMap[chessPiece.piece_type.toLowerCase()] || ChessPiece;
+        return Object.assign(new PieceClass(), chessPiece);
+    }
 
 }
 
