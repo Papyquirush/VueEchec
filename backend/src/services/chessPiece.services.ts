@@ -6,7 +6,6 @@ import PawnPiece from "../models/pieces/pawnPiece.model";
 
 const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
     'pawn': PawnPiece,
-    // Ajouter d'autres types de pièces ici
 };
 
 export class ChessPieceService {
@@ -64,13 +63,24 @@ export class ChessPieceService {
         }
     }
 
-    public async getSlotsAvailable(position: string,gameId : number): Promise<string[]> {
-        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+    private convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
+        let PieceClass = pieceTypeMap[chessPiece.piece_type.toLowerCase()] || ChessPiece;
+        return Object.assign(new PieceClass(), chessPiece);
+    }
+
+    public async getSlotsAvailable(position: string, gameId: number): Promise<string[]> {
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
         if (chessPiece) {
-            return chessPiece.getSlotsAvailable();
+            let specificChessPiece = this.convertToSpecificPiece(chessPiece);
+            return await specificChessPiece.getSlotsAvailable();
         } else {
             notFound("ChessPiece");
         }
+    }
+
+    public async isChessPieceInPosition(position: string,gameId : number): Promise<boolean> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        return chessPiece !== null;
     }
 
 
