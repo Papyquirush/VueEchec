@@ -4,11 +4,13 @@ import { chessPieceDto } from "../../dto/chessPiece.dto";
 class Gamestate {
     public whitePieces: { [key: string]: chessPieceDto };
     public blackPieces: { [key: string]: chessPieceDto };
+    public pieces: { [key: string]: {[key:string]:string} };
     public gameId: number;
 
     constructor(gameId: number) {
         this.whitePieces = {};
         this.blackPieces = {};
+        this.pieces = {};
         this.gameId = gameId;
     }
 
@@ -24,7 +26,9 @@ class Gamestate {
         for (let i = 0; i < 8; i++) {
             let piece = await chessPieceService.createChessPiece('pawn', 'white', `${this.numberToLetter(i+1)}2`, gameId);
             this.whitePieces[piece.position] = piece;
+            this.pieces[piece.position] = {pieceType: piece.pieceType, color: piece.color};
             piece = await chessPieceService.createChessPiece('pawn', 'black', `${this.numberToLetter(i+1)}7`, gameId);
+            this.pieces[piece.position] = {pieceType: piece.pieceType, color: piece.color};
             this.blackPieces[piece.position] = piece;
         }
         this.whitePieces['a1'] = await chessPieceService.createChessPiece('rook', 'white', 'a1', gameId);
@@ -43,6 +47,12 @@ class Gamestate {
         this.blackPieces['d8'] = await chessPieceService.createChessPiece('queen', 'black', 'd8', gameId);
         this.whitePieces['e1'] = await chessPieceService.createChessPiece('king', 'white', 'e1', gameId);
         this.blackPieces['e8'] = await chessPieceService.createChessPiece('king', 'black', 'e8', gameId);
+        for(const key in this.whitePieces) {
+            this.pieces[key] = {pieceType: this.whitePieces[key].pieceType, color: this.whitePieces[key].color};
+        }
+        for(const key in this.blackPieces) {
+            this.pieces[key] = {pieceType: this.blackPieces[key].pieceType, color: this.blackPieces[key].color};
+        }
     }
 
     public toJson(): any {

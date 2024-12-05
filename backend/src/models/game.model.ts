@@ -7,7 +7,7 @@ interface GameAttributes {
     player_white_id: number|undefined;
     player_black_id: number|undefined;
     is_public: boolean;
-    game_state: string;
+    game_state: { [key: string]: { [key: string]: string } };
     is_finished: boolean;
     winner_id: number | null;
     created_at: Date;
@@ -18,7 +18,7 @@ interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
 
 class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
     public is_public!: boolean;
-    public game_state!: string;
+    public game_state!: { [key: string]: { [key: string]: string } };
     public is_finished!: boolean;
     public winner_id!: number | null;
     public finished_at!: Date;
@@ -49,7 +49,7 @@ Game.init(
             defaultValue: false,
         },
         game_state: {
-            type: DataTypes.STRING,
+            type: DataTypes.JSON,
             allowNull: true,
         },
         is_finished: {
