@@ -37,7 +37,7 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     }
 
 
-    public  moveTo(positionX: string, positionY: number): void{}
+    public moveTo(positionX: string, positionY: number): void{}
 
     public isPieceThere(positionX: number, positionY: number): boolean {return true; }
 
