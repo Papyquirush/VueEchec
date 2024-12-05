@@ -1,5 +1,8 @@
 import ChessPiece from '../chessPiece.model';
 import chessPieceServices from "../../services/chessPiece.services";
+import moveServices from "../../services/move.services";
+import {gameService} from "../../services/game.services";
+
 
 class PawnPiece extends ChessPiece {
 
@@ -46,71 +49,24 @@ class PawnPiece extends ChessPiece {
         return slotsAvailable;
     }
 
-    public moveTo(positionX: string, positionY: number): void {
-        console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
-        const [currentXLetter, currentY] = this.position.split('');
-        const currentX = this.letterToIndex(currentXLetter);
+    public async moveTo(position : string): Promise<void> {
+        const [positionX, positionY] = position.split('');
 
-        const newX = this.letterToIndex(positionX);
-        console.log("1");
-        if(newX < 0 || newX > 7 || positionY < 1 || positionY > 7) {
-            console.log("Invalid move");
-            return;
-        }
-        console.log("2");
-        if(this.position === `${positionX}${positionY}`) {
-            console.log("Invalid move");
-            return;
-        }
-        console.log("3");
-        if (!this.has_moved) {
-            if (positionY - parseInt(currentY) > 2) {
-                console.log("Invalid move");
-                return;
-            }
-        }
-        console.log("4");
-        if(this.isMovePossible(newX, positionY)) {
+
+        let slots = await this.getSlotsAvailable();
+        if(slots.includes(position)) {
+            this.position = position;
             this.has_moved = true;
-            this.position = `${positionX}${positionY}`;
+            await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id);
+
+
+            console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
         }
 
-        console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
-    }
-
-    public isMovePossible(positionX: number, positionY: number): boolean {
-        console.log("isMovePossible");
-        const [currentXLetter, currentY] = this.position.split('');
-        const currentX = this.letterToIndex(currentXLetter);
-        if(this.isPieceThere(positionX, positionY)) {
-            console.log("5");
-            if(this.canTakePiece(positionX, positionY)){
-                console.log("6");
-                return true;
-            }
-        }
-        return false;
 
     }
 
-    public canTakePiece(positionX: number, positionY: number): boolean {
-        if(this.isPieceAlly(positionX, positionY)) {
-            console.log("Invalid move");
-            return false;
-        }
 
-        const [currentXLetter, currentY] = this.position.split('');
-        const currentX = this.letterToIndex(currentXLetter);
-
-        if(this.color == "White" && (currentX + 1 === positionX && (parseInt(currentY) + 1 === positionY || parseInt(currentY) - 1 === positionY))) {
-            return true;
-        } else if(this.color == "Black" && (currentX - 1 === positionX && (parseInt(currentY) + 1 === positionY || parseInt(currentY) - 1 === positionY))) {
-            return true;
-        } else {
-            console.log("Invalid move");
-            return false;
-        }
-    }
 
     public async promotePiece(pieceType: string): Promise<void> {
         const [currentXLetter, currentY] = this.position.split('');
