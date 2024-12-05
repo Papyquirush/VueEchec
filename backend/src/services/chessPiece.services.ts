@@ -104,6 +104,16 @@ export class ChessPieceService {
         return chessPiece !== null;
     }
 
+    public async isTwoPiecesInSameColor(position1: string, position2: string, gameId: number): Promise<boolean> {
+        let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId}});
+        let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId}});
+        if (firstChessPiece && secondChessPiece) {
+            return firstChessPiece.color === secondChessPiece.color;
+        } else {
+            return false;
+        }
+    }
+
 
 }
 
