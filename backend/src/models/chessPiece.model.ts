@@ -26,9 +26,14 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     public is_captured!: boolean;
 
 
-    public  move(positionX: number, positionY: number): void{}
 
-    
+    public  moveTo(positionX: number, positionY: number): void{}
+
+    public isPieceThere(positionX: number, positionY: number): boolean {return true; }
+
+    public isMovePossible(positionX: number, positionY: number): boolean {return true; }
+
+    public isPieceAlly(positionX: number, positionY: number): boolean {return true; }
 
 }
 
