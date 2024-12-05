@@ -10,6 +10,8 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService  from "../services/chessPiece.services";
+import PawnPiece from "../models/pieces/pawnPiece.model";
+
 
 @Route("chessPieces")
 
@@ -46,6 +48,13 @@ export class ChessPieceController extends Controller {
       const { pieceType, color, position, gameId } = requestBody;
       return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1);
     }
+
+    @Post("{id}/move")
+    public async try() {
+        const pawnPiece = PawnPiece.createInstance("pawn","White","a4",14); // Example initialization
+        pawnPiece.moveTo("a", 3);
+    }
+
 
 }
 
