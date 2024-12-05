@@ -55,18 +55,6 @@ class Gamestate {
         }
     }
 
-    public toJson(): any {
-        const result: { [key: string]: string } = {};
-        for (const key in this.whitePieces) {
-            const piece = this.whitePieces[key];
-            result[piece.position] = piece.pieceType;
-        }
-        for (const key in this.blackPieces) {
-            const piece = this.blackPieces[key];
-            result[piece.position] = piece.pieceType;
-        }
-        return result;
-    }
 }
 
 export default Gamestate;

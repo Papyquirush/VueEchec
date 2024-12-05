@@ -12,6 +12,7 @@ export interface GameDTO {
     isFinished: boolean;  // Statut de la partie
     winnerId: number | null;   // ID du gagnant, peut être null si la partie est en cours
     isPublic: boolean;         // Si la partie est publique ou non
+    turnCount: number;         // Nombre de tours
     createdAt: Date;           // Date de création de la partie
     finishedAt: Date;           // Dernière mise à jour de la partie
 }
@@ -21,4 +22,5 @@ export interface UpdateGameDTO {
     isFinished: boolean;  // Statut de la partie
     winnerId?: number | null;           // ID du gagnant si la partie est terminée
     finishedAt?: Date;                   // Date de la fin de la partie
+    turnCount?: number;        // Nombre de tours
 }
