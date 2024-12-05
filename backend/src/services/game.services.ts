@@ -63,10 +63,21 @@ export class GameService {
         let game = await Game.findByPk(id);
         if (game) {
             let gameState = new GameState(game.id);
-            gameState.pieces = typeof game.game_state === 'string' ? JSON.parse(game.game_state) : game.game_state;
+            gameState.pieces = typeof game.game_state === 'string'
+                ? JSON.parse(game.game_state)
+                : JSON.parse(JSON.stringify(game.game_state));
+
+            console.log("avant");
+            console.log(gameState.pieces);
+
             await gameState.updateGameState(oldPosition, position);
 
-            if (gameState.pieces[position]["color"] === 'white') {
+            console.log("après");
+            console.log(gameState.pieces);
+
+
+
+            if (gameState.pieces[position].color === 'white') {
                 await moveServices.createMove(game.id, game.turn_count, game.player_white_id, game.id, oldPosition, position, 0);
             } else {
                 await moveServices.createMove(game.id, game.turn_count, game.player_black_id, game.id, oldPosition, position, 0);
