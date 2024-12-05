@@ -94,7 +94,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"double","required":true},
             "playerWhiteId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
             "playerBlackId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
-            "gameState": {"dataType":"string","required":true},
+            "gameState": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"string"}},"required":true},
             "isFinished": {"dataType":"boolean","required":true},
             "winnerId": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
             "isPublic": {"dataType":"boolean","required":true},
@@ -697,6 +697,35 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateChessPiece',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/chessPieces/:id/move',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.try)),
+
+            async function ChessPieceController_try(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'try',
                 controller,
                 response,
                 next,
