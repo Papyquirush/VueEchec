@@ -47,5 +47,10 @@ export class ChessPieceController extends Controller {
       return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1);
     }
 
+    @Get("slots-available/{gameId}/{position}")
+    public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {
+        return chessPieceService.getSlotsAvailable(position,gameId);
+    }
+
 }
 

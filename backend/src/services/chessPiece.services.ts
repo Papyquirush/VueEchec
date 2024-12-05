@@ -64,6 +64,15 @@ export class ChessPieceService {
         }
     }
 
+    public async getSlotsAvailable(position: string,gameId : number): Promise<string[]> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        if (chessPiece) {
+            return chessPiece.getSlotsAvailable();
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
 
 }
 
