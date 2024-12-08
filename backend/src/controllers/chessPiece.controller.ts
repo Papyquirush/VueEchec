@@ -54,9 +54,9 @@ export class ChessPieceController extends Controller {
     public async try() {
         console.log("Try");
 
-        let chessPiece = await chessPieceService.getChessPieces(177);
+        let chessPiece = await chessPieceService.getChessPieces(204);
         console.log(chessPiece);
-        chessPiece.moveTo("d4");
+        chessPiece.moveTo("a6");
         console.log(chessPiece);
         console.log("success");
     }
