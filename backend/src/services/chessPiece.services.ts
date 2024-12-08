@@ -34,14 +34,16 @@ export class ChessPieceService {
     }
 
 
-    public async getChessPieces(id: number): Promise<ChessPiece> {
-        let chessPiece = await ChessPiece.findByPk(id);
+    public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
         if (chessPiece) {
             return this.convertToSpecificPiece(chessPiece);
         } else {
             notFound("ChessPiece");
         }
     }
+
+
 
 
     public async createChessPiece(
