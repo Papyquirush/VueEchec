@@ -11,6 +11,7 @@ import {
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
 import ChessPiece from "../models/chessPiece.model";
+import PawnPiece from "../models/pieces/pawnPiece.model";
 
 
 
@@ -51,7 +52,7 @@ export class ChessPieceController extends Controller {
       return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
     }
 
-    @Post("{game}/move/{oldPosition}/{newPosition}")
+    @Post("/move{game}/{oldPosition}/{newPosition}")
     public async move(
         @Path() oldPosition: string,
         @Path() newPosition: string,
@@ -62,6 +63,19 @@ export class ChessPieceController extends Controller {
 
         chessPiece.moveTo(newPosition);
     }
+
+    @Post("/promote/{game}/{position}/{pieceType}")
+    public async promote(
+        @Path() position: string,
+        @Path() pieceType: string,
+        @Path() game: number
+    ) {
+        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position) as PawnPiece;
+
+        await chessPiece.promotePiece(pieceType);
+    }
+
+
 
     @Get("slots-available/{gameId}/{position}")
     public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {

@@ -67,10 +67,18 @@ class PawnPiece extends ChessPiece {
         const [currentXLetter, currentY] = this.position.split('');
         const newX = this.letterToIndex(currentXLetter);
 
-        if(newX >= 0 || newX <= 8 || (parseInt(currentY) == 0 || parseInt(currentY) == 8)) {
 
-            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+        if(this.color == 'white') {
+            if(parseInt(currentY) == 8 && pieceType != 'pawn' && newX >0 && newX < 9) {
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+            }
+        }else {
+            if(parseInt(currentY) == 1 && pieceType != 'pawn' && newX >0 && newX < 9) {
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+            }
+
         }
+
 
         console.log(`PawnPiece is promoted to ${pieceType}`);
     }
