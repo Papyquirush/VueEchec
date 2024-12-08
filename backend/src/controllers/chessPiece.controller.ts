@@ -10,6 +10,7 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
+import ChessPiece from "../models/chessPiece.model";
 
 
 
@@ -50,15 +51,16 @@ export class ChessPieceController extends Controller {
       return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
     }
 
-    @Post("{id}/move")
-    public async try() {
-        console.log("Try");
+    @Post("{game}/move/{oldPosition}/{newPosition}")
+    public async move(
+        @Path() oldPosition: string,
+        @Path() newPosition: string,
+        @Path() game: number
+    ) {
 
-        let chessPiece = await chessPieceService.getChessPieces(204);
-        console.log(chessPiece);
-        chessPiece.moveTo("a4");
-        console.log(chessPiece);
-        console.log("success");
+        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,oldPosition);
+
+        chessPiece.moveTo(newPosition);
     }
 
     @Get("slots-available/{gameId}/{position}")
