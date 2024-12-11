@@ -649,13 +649,14 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/chessPieces/:id',
+        app.delete('/chessPieces/:game/:position',
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.deleteChessPiece)),
 
             async function ChessPieceController_deleteChessPiece(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    position: {"in":"path","name":"position","required":true,"dataType":"string"},
+                    game: {"in":"path","name":"game","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

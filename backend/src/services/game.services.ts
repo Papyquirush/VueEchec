@@ -97,6 +97,8 @@ export class GameService {
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
             await gameState.updateGameStateAfterDelete(position);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+
         }
 
 

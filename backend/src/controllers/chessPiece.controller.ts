@@ -12,6 +12,7 @@ import {
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
 import ChessPiece from "../models/chessPiece.model";
 import PawnPiece from "../models/pieces/pawnPiece.model";
+import chessPieceServices from "../services/chessPiece.services";
 
 
 
@@ -38,9 +39,10 @@ export class ChessPieceController extends Controller {
       return chessPieceService.createChessPiece(pieceType, color, position, gameId);
     }
 
-    @Delete("{id}")
-    public async deleteChessPiece(@Path() id: number): Promise<void> {
-      await chessPieceService.deleteChessPiece(id);
+    @Delete("/{game}/{position}")
+    public async deleteChessPiece(@Path() position: string,@Path() game: number): Promise<void> {
+        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position);
+        await chessPieceServices.deleteChessPiece(chessPiece.id);
     }
 
     @Patch("{id}")
@@ -58,10 +60,9 @@ export class ChessPieceController extends Controller {
         @Path() newPosition: string,
         @Path() game: number
     ) {
-        console.log("0")
         let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,oldPosition);
-        console.log("1")
         chessPiece.moveTo(newPosition);
+
     }
 
     @Post("/promote/{game}/{position}/{pieceType}")

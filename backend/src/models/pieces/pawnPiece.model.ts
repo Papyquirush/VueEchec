@@ -50,16 +50,12 @@ class PawnPiece extends ChessPiece {
     }
 
     public async moveTo(position: string): Promise<void> {
-        console.log("2");
         const oldPosition = this.position;
         let slots = await this.getSlotsAvailable();
-        console.log("3");
         if (slots.includes(position)) {
             this.position = position;
             this.has_moved = true;
-            console.log("4");
             await gameService.nextTurn(this.game_id, oldPosition, position);
-            console.log("5");
             await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id, this.has_moved);
             console.log(`PawnPiece moves to position (${position})`);
         }
