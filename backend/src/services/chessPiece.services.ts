@@ -34,6 +34,15 @@ export class ChessPieceService {
     }
 
 
+    public async getChessPiece(id: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
     public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
         if (chessPiece) {
@@ -44,6 +53,14 @@ export class ChessPieceService {
     }
 
 
+    public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
 
 
     public async createChessPiece(
@@ -120,6 +137,15 @@ export class ChessPieceService {
         return chessPiece !== null;
     }
 
+    public async isTwoPiecesInSameColor(position1: string, position2: string, gameId: number): Promise<boolean> {
+        let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId}});
+        let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId}});
+        if (firstChessPiece && secondChessPiece) {
+            return firstChessPiece.color === secondChessPiece.color;
+        } else {
+            return false;
+        }
+    }
 
 
 }
