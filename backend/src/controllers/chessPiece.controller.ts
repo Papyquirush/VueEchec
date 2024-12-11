@@ -52,15 +52,15 @@ export class ChessPieceController extends Controller {
       return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
     }
 
-    @Post("/move{game}/{oldPosition}/{newPosition}")
+    @Post("/move/{game}/{oldPosition}/{newPosition}")
     public async move(
         @Path() oldPosition: string,
         @Path() newPosition: string,
         @Path() game: number
     ) {
-
+        console.log("0")
         let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,oldPosition);
-
+        console.log("1")
         chessPiece.moveTo(newPosition);
     }
 
