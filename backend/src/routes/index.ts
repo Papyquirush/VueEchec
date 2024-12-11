@@ -653,6 +653,10 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.delete('/chessPieces/:id',
+                position: {"in":"path","name":"position","required":true,"dataType":"string"},
+                game: {"in":"path","name":"game","required":true,"dataType":"double"},
+        };
+        app.delete('/chessPieces/:game/:position',
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.deleteChessPiece)),
 
