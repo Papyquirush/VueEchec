@@ -35,6 +35,15 @@ export class ChessPieceService {
     }
 
 
+    public async getChessPiece(id: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
     public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
         if (chessPiece) {
@@ -52,6 +61,13 @@ export class ChessPieceService {
             piece.has_moved = true;
             await gameService.nextTurn(piece.game_id, oldPosition, position);
             await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
+
+    public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
         }
     }
 
@@ -90,10 +106,21 @@ export class ChessPieceService {
         }
     }
 
+    public async moveTo(id: number, position: string): Promise<void> {
+        let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            let specificChessPiece = this.convertToSpecificPiece(chessPiece);
+            specificChessPiece.moveTo(position);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
+
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
-            await gameService.deleteChessPiece(chessPiece.game_id,chessPiece.position);
+            await gameService.getGameById(chessPiece.game_id);
             await chessPiece.destroy();
         } else {
             notFound("ChessPiece");
@@ -120,6 +147,15 @@ export class ChessPieceService {
         return chessPiece !== null;
     }
 
+    public async isTwoPiecesInSameColor(position1: string, position2: string, gameId: number): Promise<boolean> {
+        let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId}});
+        let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId}});
+        if (firstChessPiece && secondChessPiece) {
+            return firstChessPiece.color === secondChessPiece.color;
+        } else {
+            return false;
+        }
+    }
 
 
 }

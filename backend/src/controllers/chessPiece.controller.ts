@@ -71,7 +71,6 @@ export class ChessPieceController extends Controller {
         @Path() game: number
     ) {
         let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position) as PawnPiece;
-
         await chessPiece.promotePiece(pieceType);
     }
 

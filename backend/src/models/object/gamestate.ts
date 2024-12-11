@@ -59,7 +59,7 @@ class Gamestate {
     public async updateGameState(oldPosition: string, position: string): Promise<void> {
         const pieceAtOldPosition = this.pieces[oldPosition];
         if (pieceAtOldPosition) {
-            const pieceInfo = { ...pieceAtOldPosition };// Update the pieces object
+            const pieceInfo = { ...pieceAtOldPosition };
             this.pieces[position] = pieceInfo;
             delete this.pieces[oldPosition];
         }
@@ -74,7 +74,6 @@ class Gamestate {
         }
     }
 
-
     public async updateGameStateAfterDelete(position: string): Promise<void> {
         if (this.whitePieces[position]) {
             delete this.whitePieces[position];
@@ -83,6 +82,8 @@ class Gamestate {
         }
         delete this.pieces[position];
     }
+
+
 
 }
 

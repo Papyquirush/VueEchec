@@ -38,11 +38,11 @@ class PawnPiece extends ChessPiece {
         }
         //vérification des pièces à prendre
         let chessPieceLeft : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}`, this.game_id) : await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, this.game_id);
-        if(chessPieceLeft && !this.isPieceAlly(this.letterToIndex(String.fromCharCode(this.position[0].charCodeAt(0) - 1)), this.color == 'white' ? parseInt(this.position[1]) + 1 : parseInt(this.position[1]) - 1)){
+        if(chessPieceLeft && !await chessPieceServices.isTwoPiecesInSameColor(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, this.game_id)){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`);
         }
         let chessPieceRight : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}`, this.game_id) : await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, this.game_id);
-        if(chessPieceRight && !this.isPieceAlly(this.letterToIndex(String.fromCharCode(this.position[0].charCodeAt(0) + 1)), this.color == 'white' ? parseInt(this.position[1]) + 1 : parseInt(this.position[1]) - 1)){
+        if(chessPieceRight && !await chessPieceServices.isTwoPiecesInSameColor(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, this.game_id)){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
         }
 
