@@ -55,6 +55,25 @@ class Gamestate {
         }
     }
 
+
+    public async updateGameState(oldPosition: string, position: string): Promise<void> {
+        const pieceAtOldPosition = this.pieces[oldPosition];
+        if (pieceAtOldPosition) {
+            const pieceInfo = { ...pieceAtOldPosition };// Update the pieces object
+            this.pieces[position] = pieceInfo;
+            delete this.pieces[oldPosition];
+        }
+
+
+        if (this.whitePieces[oldPosition]) {
+            this.whitePieces[position] = this.whitePieces[oldPosition];
+            delete this.whitePieces[oldPosition];
+        } else if (this.blackPieces[oldPosition]) {
+            this.blackPieces[position] = this.blackPieces[oldPosition];
+            delete this.blackPieces[oldPosition];
+        }
+    }
+
 }
 
 export default Gamestate;

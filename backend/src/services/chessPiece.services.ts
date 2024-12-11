@@ -8,6 +8,7 @@ import QueenPiece from "../models/pieces/queenPiece.model";
 import BishopPiece from "../models/pieces/bishopPiece.model";
 import KnightPiece from "../models/pieces/knightPiece.model";
 import RookPiece from "../models/pieces/rookPiece.model";
+import Gamestate from "../models/object/gamestate";
 
 const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
     'pawn': PawnPiece,
@@ -42,6 +43,16 @@ export class ChessPieceService {
         }
     }
 
+    public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
+
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
         if (chessPiece) {
@@ -70,6 +81,7 @@ export class ChessPieceService {
         color: string,
         position: string,
         gameId: number,
+        hasMoved: boolean
     ): Promise<chessPieceDto> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
@@ -77,12 +89,24 @@ export class ChessPieceService {
             if(color !== "") chessPiece.color = color;
             if(position !== "") chessPiece.position = position;
             if(gameId !== -1) chessPiece.game_id = gameId;
+            if(hasMoved !== undefined) chessPiece.has_moved = hasMoved;
             await chessPiece.save();
             return ChessPieceMapper.toOutputDto(chessPiece);
         } else {
             notFound("ChessPiece");
         }
     }
+
+    public async moveTo(id: number, position: string): Promise<void> {
+        let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            let specificChessPiece = this.convertToSpecificPiece(chessPiece);
+            await specificChessPiece.moveTo(position);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
 
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);

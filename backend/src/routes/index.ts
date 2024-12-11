@@ -710,12 +710,15 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/chessPieces/:id/move',
+        app.post('/chessPieces/:game/move/:oldPosition/:newPosition',
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
-            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.try)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.move)),
 
-            async function ChessPieceController_try(request: ExRequest, response: ExResponse, next: any) {
+            async function ChessPieceController_move(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    oldPosition: {"in":"path","name":"oldPosition","required":true,"dataType":"string"},
+                    newPosition: {"in":"path","name":"newPosition","required":true,"dataType":"string"},
+                    game: {"in":"path","name":"game","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -727,7 +730,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ChessPieceController();
 
               await templateService.apiHandler({
-                methodName: 'try',
+                methodName: 'move',
                 controller,
                 response,
                 next,

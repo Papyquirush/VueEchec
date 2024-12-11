@@ -1,5 +1,8 @@
 import ChessPiece from '../chessPiece.model';
 import chessPieceServices from "../../services/chessPiece.services";
+import moveServices from "../../services/move.services";
+import {gameService} from "../../services/game.services";
+
 
 class PawnPiece extends ChessPiece {
 
@@ -46,37 +49,19 @@ class PawnPiece extends ChessPiece {
         return slotsAvailable;
     }
 
-    public moveTo(positionX: string, positionY: number): void {
-        console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
-        const [currentXLetter, currentY] = this.position.split('');
-        const currentX = this.letterToIndex(currentXLetter);
-
-        const newX = this.letterToIndex(positionX);
-        console.log("1");
-        if(newX < 0 || newX > 7 || positionY < 1 || positionY > 7) {
-            console.log("Invalid move");
-            return;
-        }
-        console.log("2");
-        if(this.position === `${positionX}${positionY}`) {
-            console.log("Invalid move");
-            return;
-        }
-        console.log("3");
-        if (!this.has_moved) {
-            if (positionY - parseInt(currentY) > 2) {
-                console.log("Invalid move");
-                return;
-            }
-        }
-        console.log("4");
-        if(this.isMovePossible(newX, positionY)) {
+    public async moveTo(position: string): Promise<void> {
+        const oldPosition = this.position;
+        let slots = await this.getSlotsAvailable();
+        if (slots.includes(position)) {
+            this.position = position;
             this.has_moved = true;
-            this.position = `${positionX}${positionY}`;
+            await gameService.nextTurn(this.game_id, oldPosition, position);
+            await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id, this.has_moved);
+            console.log(`PawnPiece moves to position (${position})`);
         }
-
-        console.log(`PawnPiece moves to position (${positionX}, ${positionY})`);
     }
+
+
 
     public async promotePiece(pieceType: string): Promise<void> {
         const [currentXLetter, currentY] = this.position.split('');
@@ -84,7 +69,7 @@ class PawnPiece extends ChessPiece {
 
         if(newX >= 0 || newX <= 8 || (parseInt(currentY) == 0 || parseInt(currentY) == 8)) {
 
-            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id);
+            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
         }
 
         console.log(`PawnPiece is promoted to ${pieceType}`);

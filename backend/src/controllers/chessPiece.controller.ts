@@ -10,7 +10,8 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
-import PawnPiece from "../models/pieces/pawnPiece.model";
+import ChessPiece from "../models/chessPiece.model";
+
 
 
 
@@ -46,18 +47,20 @@ export class ChessPieceController extends Controller {
       @Path() id: number,
       @Body() requestBody: UpdateChessPieceDTO,
     ): Promise<chessPieceDto> {
-      const { pieceType, color, position, gameId } = requestBody;
-      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1);
+      const { pieceType, color, position, gameId,hasMoved } = requestBody;
+      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
     }
 
-    @Post("{id}/move")
-    public async try() {
-        console.log("Try");
+    @Post("{game}/move/{oldPosition}/{newPosition}")
+    public async move(
+        @Path() oldPosition: string,
+        @Path() newPosition: string,
+        @Path() game: number
+    ) {
 
-        let chessPiece = await chessPieceService.getChessPiece(185);
-        console.log(chessPiece);
-        chessPiece.moveTo("h", 3);
-        console.log("success");
+        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,oldPosition);
+
+        chessPiece.moveTo(newPosition);
     }
 
     @Get("slots-available/{gameId}/{position}")

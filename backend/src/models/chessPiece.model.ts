@@ -37,13 +37,9 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     }
 
 
-    public moveTo(positionX: string, positionY: number): void{}
+    public moveTo(position: string): void{}
 
-    public isPieceThere(positionX: number, positionY: number): boolean {return true; }
-
-    public isMovePossible(positionX: number, positionY: number): boolean {return true; }
-
-    public canTakePiece(positionX: number, positionY: number): boolean {return true; }
+    public isPieceAlly(positionX: number, positionY: number): boolean {return true; }
 
     public getSlotsAvailable(): Promise<string[]> { return Promise.resolve(["oui"]); }
 

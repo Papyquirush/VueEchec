@@ -44,6 +44,7 @@ Game.init(
         player_black_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            defaultValue: 3,
         },
         is_public: {
             type: DataTypes.BOOLEAN,
