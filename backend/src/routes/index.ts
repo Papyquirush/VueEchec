@@ -619,6 +619,37 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsChessPieceController_getChessPieceByPosition: Record<string, TsoaRoute.ParameterSchema> = {
+                position: {"in":"path","name":"position","required":true,"dataType":"string"},
+                game: {"in":"path","name":"game","required":true,"dataType":"double"},
+        };
+        app.get('/chessPieces/:game/:position',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getChessPieceByPosition)),
+
+            async function ChessPieceController_getChessPieceByPosition(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsChessPieceController_getChessPieceByPosition, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'getChessPieceByPosition',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsChessPieceController_createChessPiece: Record<string, TsoaRoute.ParameterSchema> = {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateChessPieceDTO"},
         };

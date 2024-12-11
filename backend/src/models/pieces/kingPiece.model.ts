@@ -51,27 +51,26 @@ class KingPiece extends chessPieceModel {
                 if(await chessPieceServices.isChessPieceInPosition('e1', this.game_id)){
                     let kingPiece = await chessPieceServices.getChessPieceByPosition('e1', this.game_id);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
-                        switch(this.position){
-                            case 'a1':
-                                if(await chessPieceServices.isChessPieceInPosition('a1', this.game_id)){
-                                    let rookPiece = await chessPieceServices.getChessPieceByPosition('a1', this.game_id);
-                                    if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                        if(!await chessPieceServices.isChessPieceInPosition('b1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d1', this.game_id)){
-                                            slotsAvailable.push('c1');
-                                        }
-                                    }
+                        //grand roque
+                        if(await chessPieceServices.isChessPieceInPosition('a1', this.game_id)){
+                            let rookPiece = await chessPieceServices.getChessPieceByPosition('a1', this.game_id);
+                            if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
+                                if(!await chessPieceServices.isChessPieceInPosition('b1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d1', this.game_id)){
+                                    slotsAvailable.push('c1');
                                 }
-                                break;
-                            case 'h1':
-                                if(await chessPieceServices.isChessPieceInPosition('h1', this.game_id)){
-                                    let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', this.game_id);
-                                    if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                        if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
-                                            slotsAvailable.push('g1');
-                                        }
-                                    }
+                            }
+                        }
+                        //petit roque
+                        if(await chessPieceServices.isChessPieceInPosition('h1', this.game_id)){
+                            console.log('h1');
+                            let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', this.game_id);
+                            console.log(rookPiece);
+                            if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
+                                console.log('rookPiece');
+                                if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
+                                    slotsAvailable.push('g1');
                                 }
-                                break;
+                            }
                         }
                     }
                 }

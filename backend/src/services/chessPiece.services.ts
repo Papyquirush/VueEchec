@@ -44,10 +44,10 @@ export class ChessPieceService {
         }
     }
 
-    public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<ChessPiece> {
+    public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<chessPieceDto> {
         let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
         if (chessPiece) {
-            return this.convertToSpecificPiece(chessPiece);
+            return ChessPieceMapper.toOutputDto(this.convertToSpecificPiece(chessPiece));
         } else {
             notFound("ChessPiece");
         }

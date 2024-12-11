@@ -54,46 +54,6 @@ class RookPiece extends chessPieceModel {
                 break;
             }
         }
-        //le roque
-        if(!this.has_moved){
-            if(this.color == 'white' && await chessPieceServices.isChessPieceInPosition('e1', this.game_id)){
-                let kingPiece = await chessPieceServices.getChessPieceByPosition('e1', this.game_id);
-                if(kingPiece.piece_type == 'king' && !this.has_moved){
-                    switch(this.position){
-                        case 'a1':
-                            if(!await chessPieceServices.isChessPieceInPosition('b1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d1', this.game_id)){
-                                slotsAvailable.push('d1');
-                            }
-                            break;
-                        case 'h1':
-                            if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
-                                slotsAvailable.push('f1');
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }else if(this.color == 'black' && await chessPieceServices.isChessPieceInPosition('e8', this.game_id)){
-                let kingPiece = await chessPieceServices.getChessPieceByPosition('e8', this.game_id);
-                if(kingPiece.piece_type == 'king' && !this.has_moved){
-                    switch(this.position){
-                        case 'a8':
-                            if(!await chessPieceServices.isChessPieceInPosition('b8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d8', this.game_id)){
-                                slotsAvailable.push('d8');
-                            }
-                            break;
-                        case 'h8':
-                            if(!await chessPieceServices.isChessPieceInPosition('f8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g8', this.game_id)){
-                                slotsAvailable.push('f8');
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
         return slotsAvailable;
     }
 

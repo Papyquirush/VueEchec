@@ -51,6 +51,10 @@ class KnightPiece extends ChessPiece {
         }
         return slotsAvailable;
     }
+
+    public async moveTo(position: string): Promise<void> {
+        await chessPieceServices.moveTo(this, position);
+    }
 }
 
 export default KnightPiece;

@@ -30,6 +30,11 @@ export class ChessPieceController extends Controller {
       return chessPieceService.getChessPieceById(id);
     }
 
+    @Get("/{game}/{position}")
+    public async getChessPieceByPosition(@Path() position: string, @Path() game:number): Promise<chessPieceDto> {
+      return chessPieceService.getChessPiecesByGameAndPosition(game,position);
+    }
+
     @Post("/")
     public async createChessPiece(
       @Body() requestBody: CreateChessPieceDTO,
@@ -59,7 +64,7 @@ export class ChessPieceController extends Controller {
         @Path() newPosition: string,
         @Path() game: number
     ) {
-        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,oldPosition);
+        let chessPiece = await chessPieceService.getChessPieceByPosition(oldPosition,game);
         chessPiece.moveTo(newPosition);
 
     }
@@ -70,7 +75,7 @@ export class ChessPieceController extends Controller {
         @Path() pieceType: string,
         @Path() game: number
     ) {
-        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position) as PawnPiece;
+        let chessPiece = await chessPieceService.getChessPieceByPosition(position,game) as PawnPiece;
         await chessPiece.promotePiece(pieceType);
     }
 
