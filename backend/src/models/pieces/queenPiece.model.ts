@@ -14,41 +14,92 @@ class QueenPiece extends chessPieceModel {
     public async getSlotsAvailable(): Promise<string[]> {
 
         let slotsAvailable: string[] = [];
-
-        //vérification d'une pièce devant le pion
-        if((this.position[2]!=='8'&& this.color=='white')||(this.position[2]!=='1'&& this.color=='black')) {
-
-            if(this.color == 'white') {
-                for(let i = parseInt(this.position[1]) + 1; i <= 8; i++) {
-                    let chessPieceInfront : boolean = await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${i}`, this.game_id);
-                    if(chessPieceInfront) {
-                        if(!this.isPieceAlly(this.letterToIndex(this.position[0]), i)) {
-                            slotsAvailable.push(`${this.position[0]}${i}`);
-                        }
-                        break;
-                    } else {
-                        slotsAvailable.push(`${this.position[0]}${i}`);
-                    }
-                }
-            }else {
-                for(let i = parseInt(this.position[1]) - 1; i >= 1; i--) {
-                    let chessPieceInfront : boolean = await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${i}`, this.game_id);
-                    if(chessPieceInfront) {
-                        if(!this.isPieceAlly(this.letterToIndex(this.position[0]), i)) {
-                            slotsAvailable.push(`${this.position[0]}${i}`);
-                        }
-                        break;
-                    } else {
-                        slotsAvailable.push(`${this.position[0]}${i}`);
-                    }
-                }
+        //Déplacement du fou
+        //haut gauche
+        for(let i = parseInt(this.position[1]) + 1, j = this.position[0].charCodeAt(0) - 1; i <= 8 && j >= 97; i++, j--){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
             }
-
+            slotsAvailable.push(`${String.fromCharCode(j)}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
         }
 
+        //haut droite
+        for(let i = parseInt(this.position[1]) + 1, j = this.position[0].charCodeAt(0) + 1; i <= 8 && j <= 104; i++, j++){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${String.fromCharCode(j)}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+        }
 
+        //bas gauche
+        for(let i = parseInt(this.position[1]) - 1, j = this.position[0].charCodeAt(0) - 1; i >= 1 && j >= 97; i--, j--){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${String.fromCharCode(j)}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+        }
 
+        //bas droite
+        for(let i = parseInt(this.position[1]) - 1, j = this.position[0].charCodeAt(0) + 1; i >= 1 && j <= 104; i--, j++){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${String.fromCharCode(j)}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(j)}${i}`, this.game_id)){
+                break;
+            }
+        }
 
+        // Implémentation spécifique pour la tour
+        //haut
+        for(let i = parseInt(this.position[1]) + 1; i <= 8; i++){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${this.position[0]}${i}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${this.position[0]}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${i}`, this.game_id)){
+                break;
+            }
+        }
+        //bas
+        for(let i = parseInt(this.position[1]) - 1; i >= 1; i--){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${this.position[0]}${i}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${this.position[0]}${i}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${i}`, this.game_id)){
+                break;
+            }
+        }
+        //gauche
+        for(let i = this.position[0].charCodeAt(0) - 1; i >= 97; i--){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(i)}${parseInt(this.position[1])}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${String.fromCharCode(i)}${parseInt(this.position[1])}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(i)}${parseInt(this.position[1])}`, this.game_id)){
+                break;
+            }
+        }
+        //droite
+        for(let i = this.position[0].charCodeAt(0) + 1; i <= 104; i++){
+            if(await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(i)}${parseInt(this.position[1])}`, this.game_id)){
+                break;
+            }
+            slotsAvailable.push(`${String.fromCharCode(i)}${parseInt(this.position[1])}`);
+            if(await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(i)}${parseInt(this.position[1])}`, this.game_id)){
+                break;
+            }
+        }
         return slotsAvailable;
     }
 

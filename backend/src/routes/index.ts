@@ -650,6 +650,9 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsChessPieceController_deleteChessPiece: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
+        };
+        app.delete('/chessPieces/:id',
                 position: {"in":"path","name":"position","required":true,"dataType":"string"},
                 game: {"in":"path","name":"game","required":true,"dataType":"double"},
         };

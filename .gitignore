@@ -3,3 +3,4 @@ build
 .idea
 backend/public/swagger.json
 backend/library.sqlite
+
