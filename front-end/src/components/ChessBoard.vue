@@ -1,5 +1,7 @@
 <template>
+  <BoutonInit v-model:isInit="isInit"/>
   <BoutonRotate v-model="isRotated"/>
+  <h1 class="text-3xl text-white">Partie numéro : {{ gameId }}</h1>
   <div
     :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
     <div v-for="(row, rowIndex) in board" :key="rowIndex" class="row">
@@ -8,84 +10,53 @@
            :class="[changeCell(rowIndex, colIndex), isRotated ? 'rotatitating' : 'unRotatitating']">
         <ChessPiece v-if="cell" :type="cell.pieceType" :color="cell.color" />
         <span v-if="rowIndex === 0"
-              :class="['legend-cols', isRotated ? 'block' : 'hidden']">{{ columns[colIndex] }}</span>
+              :class="['legend-cols', isRotated ? 'block' : 'hidden']">{{ COLUMNS[colIndex] }}</span>
         <span v-if="colIndex === 7"
-              :class="['legend-rows', isRotated ? 'block' : 'hidden']">{{ rows[rowIndex] }}</span>
+              :class="['legend-rows', isRotated ? 'block' : 'hidden']">{{ ROWS[rowIndex] }}</span>
         <span v-if="rowIndex === 7"
-              :class="['legend-cols', isRotated ? 'hidden' : 'block']">{{ columns[colIndex] }}</span>
+              :class="['legend-cols', isRotated ? 'hidden' : 'block']">{{ COLUMNS[colIndex] }}</span>
         <span v-if="colIndex === 0"
-              :class="['legend-rows', isRotated ? 'hidden' : 'block']">{{ rows[rowIndex] }}</span>
+              :class="['legend-rows', isRotated ? 'hidden' : 'block']">{{ ROWS[rowIndex] }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeMount, watch } from 'vue';
 import ChessPiece from './ChessPiece.vue';
+import BoutonInit from './BoutonInit.vue';
 import BoutonRotate from "./BoutonRotate.vue";
+import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
+import { COLUMNS , ROWS, type Cell } from '@/constants';
 
-type Cell = { pieceType: 'king' | 'queen' | 'rook' | 'bishop' | 'knight' | 'pawn', color: 'white' | 'black' } | null;
 
-const backendData = {
-  gameState: {
-    a2: { pieceType: 'pawn', color: 'white' },
-    a7: { pieceType: 'pawn', color: 'black' },
-    b2: { pieceType: 'pawn', color: 'white' },
-    b7: { pieceType: 'pawn', color: 'black' },
-    c2: { pieceType: 'pawn', color: 'white' },
-    c7: { pieceType: 'pawn', color: 'black' },
-    d2: { pieceType: 'pawn', color: 'white' },
-    d7: { pieceType: 'pawn', color: 'black' },
-    e2: { pieceType: 'pawn', color: 'white' },
-    e7: { pieceType: 'pawn', color: 'black' },
-    f2: { pieceType: 'pawn', color: 'white' },
-    f7: { pieceType: 'pawn', color: 'black' },
-    g2: { pieceType: 'pawn', color: 'white' },
-    g7: { pieceType: 'pawn', color: 'black' },
-    h2: { pieceType: 'pawn', color: 'white' },
-    h7: { pieceType: 'pawn', color: 'black' },
-    a1: { pieceType: 'rook', color: 'white' },
-    h1: { pieceType: 'rook', color: 'white' },
-    b1: { pieceType: 'knight', color: 'white' },
-    g1: { pieceType: 'knight', color: 'white' },
-    c1: { pieceType: 'bishop', color: 'white' },
-    f1: { pieceType: 'bishop', color: 'white' },
-    d1: { pieceType: 'queen', color: 'white' },
-    e1: { pieceType: 'king', color: 'white' },
-    a8: { pieceType: 'rook', color: 'black' },
-    h8: { pieceType: 'rook', color: 'black' },
-    b8: { pieceType: 'knight', color: 'black' },
-    g8: { pieceType: 'knight', color: 'black' },
-    c8: { pieceType: 'bishop', color: 'black' },
-    f8: { pieceType: 'bishop', color: 'black' },
-    d8: { pieceType: 'queen', color: 'black' },
-    e8: { pieceType: 'king', color: 'black' }
-  } as const };
 
-const mapPositionToIndex = (pos: string) => {
-  const col = pos.charCodeAt(0) - 97;
-  const row = 8 - parseInt(pos[1], 10);
-  return { row, col };
-};
+
+const gameId = ref<string>();
+gameId.value = "1";
+
+const currGame = ref();
 
 const board = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(null)));
 
-const initializeBoard = () => {
-  for (const [position, piece] of Object.entries(backendData.gameState)) {
-    const { row, col } = mapPositionToIndex(position);
-    board.value[row][col] = piece;
-  }
-};
-
-const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-const rows = ['8', '7', '6', '5', '4', '3', '2', '1'];
-
 const isRotated = ref(false);
 
-const rotateBoard = () => {
-  isRotated.value = !isRotated.value;
-};
+const isInit = ref(false);
+
+
+watch(isInit, async (value) => {
+  if (value) {
+    currGame.value = await ChessBoardService.initializeBoard(1,3);
+    board.value = currGame.value.board;
+    gameId.value = currGame.value.gameId;
+
+    console.log(currGame.value.gameId);
+    
+    console.log(gameId.value);
+  }
+});
+
 const changeCell = (rowIndex: number, colIndex: number): string => {
   let resultClass = "";
   if ((rowIndex + colIndex) % 2 === 1) {
@@ -94,9 +65,20 @@ const changeCell = (rowIndex: number, colIndex: number): string => {
   return resultClass;
 };
 
-onMounted(() => {
-  initializeBoard();
+onBeforeMount(() => {
+  if(currGame.value === undefined){
+
+  }else{
+    currGame.value = ChessBoardService.loadBoard();
+    console.log(currGame.value.gameId);
+  }
 });
+
+onMounted(() => {
+    
+});
+
+
 </script>
 
 <style scoped>
