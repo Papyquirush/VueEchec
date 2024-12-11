@@ -57,21 +57,20 @@ class PawnPiece extends ChessPiece {
 
     public async promotePiece(pieceType: string): Promise<void> {
         const [currentXLetter, currentY] = this.position.split('');
-        const newX = this.letterToIndex(currentXLetter);
-
+        const newX = this.letterToIndex(currentXLetter)+1;
 
         if(this.color == 'white') {
+
             if(parseInt(currentY) == 8 && pieceType != 'pawn' && newX >0 && newX < 9) {
-                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${currentXLetter}${parseInt(currentY)}`, this.game_id,this.has_moved);
             }
         }else {
             if(parseInt(currentY) == 1 && pieceType != 'pawn' && newX >0 && newX < 9) {
-                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${currentXLetter}${parseInt(currentY)}`, this.game_id,this.has_moved);
             }
-
         }
 
-
+        await gameService.nextTurnAfterPromote(this.game_id, this.position,pieceType);
         console.log(`PawnPiece is promoted to ${pieceType}`);
     }
 

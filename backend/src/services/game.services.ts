@@ -68,15 +68,7 @@ export class GameService {
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
 
-            console.log("avant");
-            console.log(gameState.pieces);
-
             await gameState.updateGameState(oldPosition, position);
-
-            console.log("après");
-            console.log(gameState.pieces);
-
-
 
             if (gameState.pieces[position].color === 'white') {
                 await moveServices.createMove(game.id, game.turn_count, game.player_white_id, game.id, oldPosition, position, 0);
@@ -102,6 +94,22 @@ export class GameService {
         }
 
 
+    }
+
+
+    public async nextTurnAfterPromote(id: number, position: string,pieceType: string) {
+        let game = await Game.findByPk(id);
+        if (game) {
+            let gameState = new GameState(game.id);
+
+            gameState.pieces = typeof game.game_state === 'string'
+                ? JSON.parse(game.game_state)
+                : JSON.parse(JSON.stringify(game.game_state));
+
+            await gameState.updateGameStateAfterPromote(position, pieceType);
+
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+        }
     }
 
 

@@ -12,6 +12,8 @@ import {
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
 import PawnPiece from "../models/pieces/pawnPiece.model";
 import chessPieceServices from "../services/chessPiece.services";
+import chessPieceModel from "../models/chessPiece.model";
+import {gameService} from "../services/game.services";
 
 
 
@@ -49,14 +51,6 @@ export class ChessPieceController extends Controller {
         await chessPieceServices.deleteChessPiece(chessPiece.id);
     }
 
-    @Patch("{id}")
-    public async updateChessPiece(
-      @Path() id: number,
-      @Body() requestBody: UpdateChessPieceDTO,
-    ): Promise<chessPieceDto> {
-      const { pieceType, color, position, gameId,hasMoved } = requestBody;
-      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
-    }
 
     @Post("/move/{game}/{oldPosition}/{newPosition}")
     public async move(

@@ -83,6 +83,15 @@ class Gamestate {
         delete this.pieces[position];
     }
 
+    public async updateGameStateAfterPromote(position: string, pieceType: string): Promise<void> {
+        if (this.whitePieces[position]) {
+            this.whitePieces[position].pieceType = pieceType;
+        } else if (this.blackPieces[position]) {
+            this.blackPieces[position].pieceType = pieceType;
+        }
+        this.pieces[position].pieceType = pieceType;
+    }
+
 
 
 }
