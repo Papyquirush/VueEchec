@@ -4,6 +4,7 @@ import { GameMapper } from "../mapper/game.mapper";
 import { notFound } from "../error/NotFoundError";
 import  GameState  from "../models/object/gamestate";
 import moveServices from "./move.services";
+import gamestate from "../models/object/gamestate";
 
 export class GameService {
     public async getGames(): Promise<GameDTO[]> {
@@ -87,6 +88,21 @@ export class GameService {
         }
     }
 
+    public async deleteChessPiece(id: number,position : string): Promise<void> {
+        let game = await Game.findByPk(id);
+
+        if(game){
+            let gameState = new GameState(game.id);
+            gameState.pieces = typeof game.game_state === 'string'
+                ? JSON.parse(game.game_state)
+                : JSON.parse(JSON.stringify(game.game_state));
+            await gameState.updateGameStateAfterDelete(position);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+
+        }
+
+
+    }
 
 
 

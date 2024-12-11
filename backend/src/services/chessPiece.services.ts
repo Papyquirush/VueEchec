@@ -53,6 +53,14 @@ export class ChessPieceService {
         }
     }
 
+    public async moveTo(piece : ChessPiece ,position: string): Promise<void> {
+        const oldPosition = piece.position;
+        let slots = await piece.getSlotsAvailable();
+        if (slots.includes(position)) {
+            piece.position = position;
+            piece.has_moved = true;
+            await gameService.nextTurn(piece.game_id, oldPosition, position);
+            await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
 
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
