@@ -141,19 +141,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateChessPieceDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "pieceType": {"dataType":"string"},
-            "color": {"dataType":"string"},
-            "position": {"dataType":"string"},
-            "isCaptured": {"dataType":"boolean"},
-            "hasMoved": {"dataType":"boolean"},
-            "gameId": {"dataType":"double"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -669,37 +656,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'deleteChessPiece',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsChessPieceController_updateChessPiece: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateChessPieceDTO"},
-        };
-        app.patch('/chessPieces/:id',
-            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
-            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.updateChessPiece)),
-
-            async function ChessPieceController_updateChessPiece(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsChessPieceController_updateChessPiece, request, response });
-
-                const controller = new ChessPieceController();
-
-              await templateService.apiHandler({
-                methodName: 'updateChessPiece',
                 controller,
                 response,
                 next,
