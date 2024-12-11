@@ -1,11 +1,15 @@
 import ChessPiece from '../chessPiece.model';
+import chessPieceServices from "../../services/chessPiece.services";
 
 class KnightPiece extends ChessPiece {
-    public moveTo(position: string): void {
-        const [positionX, positionY] = position.split('');
-        // Implémentation spécifique pour le cavalier
-        console.log(`Knight moves to position (${positionX}, ${positionY})`);
+    public static createInstance(piece_type: string, color: string, position: string, gameId: number): KnightPiece {
+        return ChessPiece.createInstance("knight", color, position, gameId) as KnightPiece;
     }
+
+    public async moveTo(position: string): Promise<void> {
+        await chessPieceServices.moveTo(this, position);
+    }
+
 }
 
 export default KnightPiece;

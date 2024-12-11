@@ -10,7 +10,6 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
-import ChessPiece from "../models/chessPiece.model";
 import PawnPiece from "../models/pieces/pawnPiece.model";
 import chessPieceServices from "../services/chessPiece.services";
 

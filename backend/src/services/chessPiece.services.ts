@@ -44,7 +44,16 @@ export class ChessPieceService {
         }
     }
 
-
+    public async moveTo(piece : ChessPiece ,position: string): Promise<void> {
+        const oldPosition = piece.position;
+        let slots = await piece.getSlotsAvailable();
+        if (slots.includes(position)) {
+            piece.position = position;
+            piece.has_moved = true;
+            await gameService.nextTurn(piece.game_id, oldPosition, position);
+            await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
+        }
+    }
 
 
     public async createChessPiece(
@@ -80,17 +89,6 @@ export class ChessPieceService {
             notFound("ChessPiece");
         }
     }
-
-    public async moveTo(id: number, position: string): Promise<void> {
-        let chessPiece = await ChessPiece.findByPk(id);
-        if (chessPiece) {
-            let specificChessPiece = this.convertToSpecificPiece(chessPiece);
-            await specificChessPiece.moveTo(position);
-        } else {
-            notFound("ChessPiece");
-        }
-    }
-
 
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);
