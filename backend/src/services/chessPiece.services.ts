@@ -9,6 +9,7 @@ import BishopPiece from "../models/pieces/bishopPiece.model";
 import KnightPiece from "../models/pieces/knightPiece.model";
 import RookPiece from "../models/pieces/rookPiece.model";
 import Gamestate from "../models/object/gamestate";
+import {gameService} from "./game.services";
 
 const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
     'pawn': PawnPiece,
@@ -101,7 +102,7 @@ export class ChessPieceService {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
             let specificChessPiece = this.convertToSpecificPiece(chessPiece);
-            await specificChessPiece.moveTo(position);
+            specificChessPiece.moveTo(position);
         } else {
             notFound("ChessPiece");
         }
@@ -111,6 +112,7 @@ export class ChessPieceService {
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
+            await gameService.getGameById(chessPiece.game_id);
             await chessPiece.destroy();
         } else {
             notFound("ChessPiece");
