@@ -94,6 +94,7 @@ export class ChessPieceService {
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
+
             await chessPiece.destroy();
         } else {
             notFound("ChessPiece");

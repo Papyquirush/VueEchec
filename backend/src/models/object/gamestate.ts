@@ -74,6 +74,16 @@ class Gamestate {
         }
     }
 
+
+    public async updateGameStateAfterDelete(position: string): Promise<void> {
+        if (this.whitePieces[position]) {
+            delete this.whitePieces[position];
+        } else if (this.blackPieces[position]) {
+            delete this.blackPieces[position];
+        }
+        delete this.pieces[position];
+    }
+
 }
 
 export default Gamestate;
