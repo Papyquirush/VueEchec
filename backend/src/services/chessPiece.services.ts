@@ -33,8 +33,17 @@ export class ChessPieceService {
     }
 
 
-    public async getChessPieces(id: number): Promise<ChessPiece> {
+    public async getChessPiece(id: number): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findByPk(id);
+        if (chessPiece) {
+            return this.convertToSpecificPiece(chessPiece);
+        } else {
+            notFound("ChessPiece");
+        }
+    }
+
+    public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
         if (chessPiece) {
             return this.convertToSpecificPiece(chessPiece);
         } else {
