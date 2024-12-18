@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Game from "./game.model";
+import chessPieceServices from "../services/chessPiece.services";
 
 
 interface ChessPieceAttributes {
@@ -37,7 +38,9 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     }
 
 
-    public moveTo(position: string): void{}
+    public moveTo(position: string): void{
+
+    }
 
     public isPieceAlly(positionX: number, positionY: number): boolean {return true; }
 
