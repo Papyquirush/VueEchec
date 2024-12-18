@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Route,Delete,Patch,Path,Post,Body
+    Controller, Get, Route,Delete,Patch,Path,Post,Body,Security
 
 } from "tsoa";
 
@@ -20,7 +20,7 @@ import KingPiece from "../models/pieces/kingPiece.model";
 
 
 @Route("chessPieces")
-
+@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
@@ -82,7 +82,6 @@ export class ChessPieceController extends Controller {
     }
 
 
-
     @Post("/roque/{game}/{position}/{newPosition}")
     public async roque(
         @Path() newPosition: string,
@@ -95,5 +94,10 @@ export class ChessPieceController extends Controller {
     }
 
 
+    @Get("is-check/{gameId}")
+    public async isCheck(@Path() gameId:number): Promise<boolean> {
+        return chessPieceService.isCheck(gameId);
+    }
+  
 }
 

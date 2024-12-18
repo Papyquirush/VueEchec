@@ -7,7 +7,6 @@
 
   <div>
     <h1 class="text-4xl text-white text-center">Le site d'échecs numéro 4 au monde !</h1>
-    <ChessBoard />
   </div>
 </template>
 
@@ -15,12 +14,10 @@
 import { defineComponent } from 'vue'
 import HeaderVue from '@/components/HeaderVue.vue'
 import {Tab} from "@headlessui/vue";
-import ChessBoard from '@/components/ChessBoard.vue'
 export default defineComponent({
   components: {
     Tab,
-    HeaderVue,
-    ChessBoard
+    HeaderVue
   }
 })
 </script>
