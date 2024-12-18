@@ -5,6 +5,7 @@ import { notFound } from "../error/NotFoundError";
 import  GameState  from "../models/object/gamestate";
 import moveServices from "./move.services";
 import gamestate from "../models/object/gamestate";
+import ChessPiece from "../models/chessPiece.model";
 
 export class GameService {
     public async getGames(): Promise<GameDTO[]> {
@@ -92,7 +93,21 @@ export class GameService {
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
 
         }
+    }
 
+    public async createFictiveGameByOtherGame(gameId:number): Promise<Map<GameDTO,ChessPiece[]>>{
+        let game = await this.getGameById(gameId);
+        let fictiveChessPieces: ChessPiece[] = [];
+        for (let position in game.gameState) {
+            let chessPiece = new ChessPiece();
+            chessPiece.position = position;
+            chessPiece.color = game.gameState[position].color;
+            chessPiece.piece_type = game.gameState[position].type;
+            fictiveChessPieces.push(chessPiece);
+        }
+        let map = new Map<GameDTO, ChessPiece[]>();
+        map.set(game,fictiveChessPieces);
+        return map;
 
     }
 
@@ -111,6 +126,7 @@ export class GameService {
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
         }
     }
+
 
 
 
