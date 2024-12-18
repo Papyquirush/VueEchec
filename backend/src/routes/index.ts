@@ -793,6 +793,38 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsChessPieceController_roque: Record<string, TsoaRoute.ParameterSchema> = {
+                newPosition: {"in":"path","name":"newPosition","required":true,"dataType":"string"},
+                position: {"in":"path","name":"position","required":true,"dataType":"string"},
+                game: {"in":"path","name":"game","required":true,"dataType":"double"},
+        };
+        app.post('/chessPieces/roque/:game/:position/:newPosition',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.roque)),
+
+            async function ChessPieceController_roque(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsChessPieceController_roque, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'roque',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 

@@ -14,6 +14,7 @@ import PawnPiece from "../models/pieces/pawnPiece.model";
 import chessPieceServices from "../services/chessPiece.services";
 import chessPieceModel from "../models/chessPiece.model";
 import {gameService} from "../services/game.services";
+import KingPiece from "../models/pieces/kingPiece.model";
 
 
 
@@ -79,6 +80,21 @@ export class ChessPieceController extends Controller {
     public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {
         return chessPieceService.getSlotsAvailable(position,gameId);
     }
-  
+
+
+
+    @Post("/roque/{game}/{position}/{newPosition}")
+    public async roque(
+        @Path() newPosition: string,
+        @Path() position: string,
+        @Path() game: number
+    ) {
+        console.log("roque");
+        let chessPiece = await chessPieceService.getChessPieceByPosition(position,game) as KingPiece;
+        console.log(chessPiece);
+        await chessPiece.roque(chessPiece,newPosition);
+    }
+
+
 }
 
