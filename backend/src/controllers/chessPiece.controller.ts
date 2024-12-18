@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Route,Delete,Patch,Path,Post,Body
+    Controller, Get, Route,Delete,Patch,Path,Post,Body,Security
 
 } from "tsoa";
 
@@ -19,7 +19,7 @@ import {gameService} from "../services/game.services";
 
 
 @Route("chessPieces")
-
+@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
