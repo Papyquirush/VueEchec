@@ -11,6 +11,8 @@ import { MoveController } from './../controllers/move.controller';
 import { GameController } from './../controllers/game.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ChessPieceController } from './../controllers/chessPiece.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AuthenticationController } from './../controllers/authentication.controller';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
 
@@ -137,6 +139,16 @@ const models: TsoaRoute.Models = {
             "color": {"dataType":"string","required":true},
             "position": {"dataType":"string","required":true},
             "gameId": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AuthenticationInputDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "grant_type": {"dataType":"string","required":true},
+            "username": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -782,6 +794,66 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getSlotsAvailable',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsChessPieceController_isCheck: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.get('/chessPieces/is-check/:gameId',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.isCheck)),
+
+            async function ChessPieceController_isCheck(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsChessPieceController_isCheck, request, response });
+
+                const controller = new ChessPieceController();
+
+              await templateService.apiHandler({
+                methodName: 'isCheck',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthenticationController_authenticate: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"AuthenticationInputDTO"},
+        };
+        app.post('/auth',
+            ...(fetchMiddlewares<RequestHandler>(AuthenticationController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthenticationController.prototype.authenticate)),
+
+            async function AuthenticationController_authenticate(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthenticationController_authenticate, request, response });
+
+                const controller = new AuthenticationController();
+
+              await templateService.apiHandler({
+                methodName: 'authenticate',
                 controller,
                 response,
                 next,
