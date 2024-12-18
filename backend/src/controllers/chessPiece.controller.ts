@@ -85,6 +85,11 @@ export class ChessPieceController extends Controller {
     public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {
         return chessPieceService.getSlotsAvailable(position,gameId);
     }
+
+    @Get("is-check/{gameId}")
+    public async isCheck(@Path() gameId:number): Promise<boolean> {
+        return chessPieceService.isCheck(gameId);
+    }
   
 }
 
