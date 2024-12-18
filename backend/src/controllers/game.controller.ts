@@ -1,9 +1,10 @@
-import { Controller, Get, Route,Post, Body,Path } from "tsoa";
+import {Controller, Get, Route, Post, Body, Security,Path } from "tsoa";
 import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
 
 @Route("games")
+@Security("jwt")
 export class GameController extends Controller {
 
     @Get("/")

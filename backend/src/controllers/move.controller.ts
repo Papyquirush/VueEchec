@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Route,Delete,Patch,Path,Post,Body
+    Controller, Get, Route,Delete,Patch,Path,Post,Body,Security
 
 } from "tsoa";
 
@@ -12,6 +12,7 @@ import {
 import MoveService  from "../services/move.services";
 
 @Route("moves")
+@Security("jwt")
 export class MoveController extends Controller {
 
     @Get("/")
