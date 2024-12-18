@@ -5,12 +5,8 @@ export const ChessBoardService = {
   async initializeBoard(playerWhiteId: number, playerBlackId: number) {
     const currGame = await ChessBoardApi.initializeGame(playerWhiteId, playerBlackId);
 
-    console.log("currGame : ",currGame);
-
     const gameId = currGame.id;
     const gameState = currGame.gameState;
-
-    console.log("gameid : ",gameId,"game state :", gameState);
 
     const board:Cell[][] = Array(8)
       .fill(null)
@@ -22,6 +18,9 @@ export const ChessBoardService = {
     }
     console.log("board : ",board);
     return { gameId, board };
+  },
+
+  async getLastGameId(playerId: number) {
   },
 
 
@@ -43,6 +42,16 @@ export const ChessBoardService = {
   async fetchAndHighlightAvailableSlots(gameId: number, position: string) {
     return await ChessBoardApi.getAvailableSlots(gameId, position);
   },
+
+// async movePiece(gameId: number, from: string, to: string) {
+//    const fromIndex = mapPositionToIndex(from);
+//    const toIndex = mapPositionToIndex(to);
+//
+//    const response = await ChessBoardApi.movePiece(gameId, fromIndex, toIndex);
+//
+//    return response;
+// },
+
 };
 
 
