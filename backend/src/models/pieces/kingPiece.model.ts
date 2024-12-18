@@ -63,11 +63,8 @@ class KingPiece extends chessPieceModel {
                         }
                         //petit roque
                         if(await chessPieceServices.isChessPieceInPosition('h1', this.game_id)){
-                            console.log('h1');
                             let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', this.game_id);
-                            console.log(rookPiece);
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                console.log('rookPiece');
                                 if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
                                     slotsAvailable.push('g1');
                                 }
@@ -79,8 +76,8 @@ class KingPiece extends chessPieceModel {
                 if(await chessPieceServices.isChessPieceInPosition('e8', this.game_id)){
                     let kingPiece = await chessPieceServices.getChessPieceByPosition('e8', this.game_id);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
-                        switch(this.position){
-                            case 'a8':
+                        console.log("1");
+                        console.log(this.position);
                                 if(await chessPieceServices.isChessPieceInPosition('a8', this.game_id)){
                                     let rookPiece = await chessPieceServices.getChessPieceByPosition('a8', this.game_id);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
@@ -89,8 +86,6 @@ class KingPiece extends chessPieceModel {
                                         }
                                     }
                                 }
-                                break;
-                            case 'h8':
                                 if(await chessPieceServices.isChessPieceInPosition('h8', this.game_id)){
                                     let rookPiece = await chessPieceServices.getChessPieceByPosition('h8', this.game_id);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
@@ -98,8 +93,7 @@ class KingPiece extends chessPieceModel {
                                             slotsAvailable.push('g8');
                                         }
                                     }
-                                }
-                                break;
+
                         }
                     }
                 }
@@ -114,12 +108,10 @@ class KingPiece extends chessPieceModel {
     }
 
     public async roque(piece : ChessPiece ,position: string): Promise<void> {
-        console.log("roque2");
         const oldPosition = piece.position;
         let slots = await piece.getSlotsAvailable();
-        let chessPiece = await chessPieceServices.getChessPieceByPosition(position, piece.game_id);
 
-        if(chessPiece.color == 'white') {
+        if(piece.color == 'white') {
             if (position == 'c1') {
                 if (slots.includes(position)) {
                     piece.position = position;
@@ -139,13 +131,9 @@ class KingPiece extends chessPieceModel {
                     let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', piece.game_id);
                     let oldRookPosition = rookPiece.position;
                     rookPiece.position = 'f1';
-                    console.log(rookPiece);
                     await gameService.nextTurnAfterRoque(piece.game_id, oldPosition, position, oldRookPosition, rookPiece.position);
-                    console.log("nextTurnAfterRoque");
                     await chessPieceServices.updateChessPiece(rookPiece.id, rookPiece.piece_type, rookPiece.color, rookPiece.position, rookPiece.game_id, rookPiece.has_moved);
-                    console.log("updateChessPiece");
                     await chessPieceServices.updateChessPiece(piece.id, piece.piece_type, piece.color, piece.position, piece.game_id, piece.has_moved);
-                    console.log("updateChessPiece2");
                 }
             }
         }else {

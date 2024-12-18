@@ -89,7 +89,6 @@ export class ChessPieceController extends Controller {
         @Path() position: string,
         @Path() game: number
     ) {
-        console.log("roque");
         let chessPiece = await chessPieceService.getChessPieceByPosition(position,game) as KingPiece;
         console.log(chessPiece);
         await chessPiece.roque(chessPiece,newPosition);
