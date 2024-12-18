@@ -93,7 +93,37 @@ class Gamestate {
     }
 
 
+    async updateGameStateAfterRoque(oldPosition: string, position: string, oldRookPosition: string, rookPosition: string) {
 
+        const pieceAtOldPosition = this.pieces[oldPosition];
+        const rookPiece = this.pieces[oldRookPosition];
+        if (pieceAtOldPosition) {
+            const pieceInfo = { ...pieceAtOldPosition };
+            this.pieces[position] = pieceInfo;
+            delete this.pieces[oldPosition];
+        }
+        if (rookPiece) {
+            const rookInfo = { ...rookPiece };
+            this.pieces[rookPosition] = rookInfo;
+            delete this.pieces[oldRookPosition];
+        }
+
+        if (this.whitePieces[oldPosition]) {
+            this.whitePieces[position] = this.whitePieces[oldPosition];
+            delete this.whitePieces[oldPosition];
+        } else if (this.blackPieces[oldPosition]) {
+            this.blackPieces[position] = this.blackPieces[oldPosition];
+            delete this.blackPieces[oldPosition];
+        }
+        if (this.whitePieces[oldRookPosition]) {
+            this.whitePieces[rookPosition] = this.whitePieces[oldRookPosition];
+            delete this.whitePieces[oldRookPosition];
+        } else if (this.blackPieces[oldRookPosition]) {
+            this.blackPieces[rookPosition] = this.blackPieces[oldRookPosition];
+            delete this.blackPieces[oldRookPosition];
+        }
+
+    }
 }
 
 export default Gamestate;

@@ -835,6 +835,18 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+        const argsChessPieceController_roque: Record<string, TsoaRoute.ParameterSchema> = {
+                newPosition: {"in":"path","name":"newPosition","required":true,"dataType":"string"},
+                position: {"in":"path","name":"position","required":true,"dataType":"string"},
+                game: {"in":"path","name":"game","required":true,"dataType":"double"},
+        };
+        app.post('/chessPieces/roque/:game/:position/:newPosition',
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
+            ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.roque)),
+
+            async function ChessPieceController_roque(request: ExRequest, response: ExResponse, next: any) {
+
         const argsChessPieceController_isCheck: Record<string, TsoaRoute.ParameterSchema> = {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };
@@ -844,15 +856,22 @@ export function RegisterRoutes(app: Router) {
 
             async function ChessPieceController_isCheck(request: ExRequest, response: ExResponse, next: any) {
 
+
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
+
+                
+
                 validatedArgs = templateService.getValidatedArgs({ args: argsChessPieceController_isCheck, request, response });
+
 
                 const controller = new ChessPieceController();
 
               await templateService.apiHandler({
+
+
                 methodName: 'isCheck',
                 controller,
                 response,
@@ -884,6 +903,7 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'authenticate',
+
                 controller,
                 response,
                 next,
