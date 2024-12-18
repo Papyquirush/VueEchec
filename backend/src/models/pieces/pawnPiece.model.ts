@@ -38,11 +38,11 @@ class PawnPiece extends ChessPiece {
         }
         //vérification des pièces à prendre
         let chessPieceLeft : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}`, this.game_id) : await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, this.game_id);
-        if(chessPieceLeft && !this.isPieceAlly(this.letterToIndex(String.fromCharCode(this.position[0].charCodeAt(0) - 1)), this.color == 'white' ? parseInt(this.position[1]) + 1 : parseInt(this.position[1]) - 1)){
+        if(chessPieceLeft && !await chessPieceServices.isTwoPiecesInSameColor(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, this.game_id)){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`);
         }
         let chessPieceRight : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}`, this.game_id) : await chessPieceServices.isChessPieceInPosition(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, this.game_id);
-        if(chessPieceRight && !this.isPieceAlly(this.letterToIndex(String.fromCharCode(this.position[0].charCodeAt(0) + 1)), this.color == 'white' ? parseInt(this.position[1]) + 1 : parseInt(this.position[1]) - 1)){
+        if(chessPieceRight && !await chessPieceServices.isTwoPiecesInSameColor(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, this.game_id)){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
         }
 
@@ -50,30 +50,30 @@ class PawnPiece extends ChessPiece {
     }
 
     public async moveTo(position: string): Promise<void> {
-        const oldPosition = this.position;
-        let slots = await this.getSlotsAvailable();
-        if (slots.includes(position)) {
-            this.position = position;
-            this.has_moved = true;
-            await gameService.nextTurn(this.game_id, oldPosition, position);
-            await chessPieceServices.updateChessPiece(this.id, this.piece_type, this.color, position, this.game_id, this.has_moved);
-            console.log(`PawnPiece moves to position (${position})`);
-        }
+        await chessPieceServices.moveTo(this, position);
     }
 
 
 
     public async promotePiece(pieceType: string): Promise<void> {
         const [currentXLetter, currentY] = this.position.split('');
-        const newX = this.letterToIndex(currentXLetter);
+        const newX = this.letterToIndex(currentXLetter)+1;
 
-        if(newX >= 0 || newX <= 8 || (parseInt(currentY) == 0 || parseInt(currentY) == 8)) {
+        if(this.color == 'white') {
 
-            await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${newX}${parseInt(currentY)}`, this.game_id,this.has_moved);
+            if(parseInt(currentY) == 8 && pieceType != 'pawn' && newX >0 && newX < 9) {
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${currentXLetter}${parseInt(currentY)}`, this.game_id,this.has_moved);
+            }
+        }else {
+            if(parseInt(currentY) == 1 && pieceType != 'pawn' && newX >0 && newX < 9) {
+                await chessPieceServices.updateChessPiece(this.id, pieceType, this.color, `${currentXLetter}${parseInt(currentY)}`, this.game_id,this.has_moved);
+            }
         }
 
+        await gameService.nextTurnAfterPromote(this.game_id, this.position,pieceType);
         console.log(`PawnPiece is promoted to ${pieceType}`);
     }
+
 
 
 
