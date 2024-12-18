@@ -1,4 +1,5 @@
-import { GameDTO,CreateGameDTO } from "../dto/game.dto";
+import { GameDTO, CreateGameDTO } from "../dto/game.dto";
+import { Op } from "sequelize";
 import Game from "../models/game.model";
 import { GameMapper } from "../mapper/game.mapper";
 import { notFound } from "../error/NotFoundError";
@@ -116,7 +117,6 @@ export class GameService {
         let game = await Game.findByPk(id);
         if (game) {
             let gameState = new GameState(game.id);
-
             gameState.pieces = typeof game.game_state === 'string'
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
@@ -124,6 +124,24 @@ export class GameService {
             await gameState.updateGameStateAfterPromote(position, pieceType);
 
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+        }
+    }
+
+    public async getLastGame(userId: number): Promise<GameDTO | null> {
+        let game = await Game.findOne({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ],
+                is_finished: false
+            },
+            order: [['created_at', 'DESC']]
+        });
+        if (game) {
+            return GameMapper.toDTO(game);
+        } else {
+            return null;
         }
     }
 
