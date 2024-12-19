@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Route,Delete,Patch,Path,Post,Body
+    Controller, Get, Route,Delete,Patch,Path,Post,Body,Security
 
 } from "tsoa";
 import {
@@ -12,7 +12,7 @@ import { userService } from "../services/user.services";
 
 
 @Route("users")
-
+@Security("jwt")
 export class UserController extends Controller {
     // Récupère tous les utilisateurs
     @Get("/")
