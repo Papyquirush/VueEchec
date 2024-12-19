@@ -54,6 +54,7 @@ class KnightPiece extends ChessPiece {
     }
 
     public async moveTo(position: string): Promise<void> {
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         await chessPieceServices.moveTo(this, position);
     }
 }
