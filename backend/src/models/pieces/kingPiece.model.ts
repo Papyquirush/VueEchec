@@ -13,6 +13,7 @@ class KingPiece extends chessPieceModel {
     
     public async getSlotsAvailable(): Promise<string[]> {
         let slotsAvailable: string[] = [];
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         // Implémentation spécifique pour le roi
         //haut
         if(parseInt(this.position[1]) + 1 <= 8){

@@ -13,6 +13,7 @@ class RookPiece extends chessPieceModel {
 
     public async getSlotsAvailable(): Promise<string[]> {
         let slotsAvailable: string[] = [];
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         // Implémentation spécifique pour la tour
         //haut
         for(let i = parseInt(this.position[1]) + 1; i <= 8; i++){

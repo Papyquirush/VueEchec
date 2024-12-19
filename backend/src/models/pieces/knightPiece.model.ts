@@ -8,6 +8,7 @@ class KnightPiece extends ChessPiece {
     
     public async getSlotsAvailable(): Promise<string[]> {
         let slotsAvailable: string[] = [];
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         // Implémentation spécifique pour le cavalier
         //2haut 1gauche
         if(!await chessPieceServices.isTwoPiecesInSameColor(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 2}`, this.game_id)

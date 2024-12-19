@@ -14,6 +14,7 @@ class QueenPiece extends chessPieceModel {
     public async getSlotsAvailable(): Promise<string[]> {
 
         let slotsAvailable: string[] = [];
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         //Déplacement du fou
         //haut gauche
         for(let i = parseInt(this.position[1]) + 1, j = this.position[0].charCodeAt(0) - 1; i <= 8 && j >= 97; i++, j--){

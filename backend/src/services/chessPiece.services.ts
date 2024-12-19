@@ -153,6 +153,11 @@ export class ChessPieceService {
         }
     }
 
+    public async isTurn(gameId: number, color: string): Promise<boolean> {
+        let game = await gameService.getGameById(gameId);
+        return game.turnCount % 2 === 0 ? color === "white" : color === "black";
+    }
+
     public async isCheck(gameId: number): Promise<boolean> {
         let game = await gameService.getGameById(gameId);
         if(game){
