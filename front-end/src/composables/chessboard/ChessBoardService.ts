@@ -43,15 +43,10 @@ export const ChessBoardService = {
     return await ChessBoardApi.getAvailableSlots(gameId, position);
   },
 
-// async movePiece(gameId: number, from: string, to: string) {
-//    const fromIndex = mapPositionToIndex(from);
-//    const toIndex = mapPositionToIndex(to);
-//
-//    const response = await ChessBoardApi.movePiece(gameId, fromIndex, toIndex);
-//
-//    return response;
-// },
-
+async movePiece(gameId: number, from: string, to: string) {
+    const response = await ChessBoardApi.movePiece(gameId, from, to);
+    return response;
+ },
 };
 
 

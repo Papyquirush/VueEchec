@@ -2,74 +2,56 @@
   <BoutonInit v-model:isInit="isInit"/>
   <BoutonRotate v-model="isRotated"/>
   <h1 class="text-3xl text-white">Partie numéro : {{ gameId }}</h1>
-  <div
-    :class="['chessboard selectedNone', isRotated ? 'rotatitating' : 'unRotatitating']">
-    <div v-for="(row, rowIndex) in board" :key="rowIndex" class="row">
+  <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
+    <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
       <div v-for="(cell, colIndex) in row"
-           :key="colIndex" class="cell"
-           :class="[changeCell(rowIndex, colIndex),isRotated ? 'rotatitating' : 'unRotatitating',
-           isHighlighted(rowIndex, colIndex) ? 'highlighted' : ''
-         ]"
-         @click="handleCellClick(rowIndex, colIndex)">
-        <ChessPiece v-if="cell" :type="cell.pieceType" :color="cell.color" />
-        <span v-if="rowIndex === 0"
-              :class="['legend-cols', isRotated ? 'block' : 'hidden']">{{ COLUMNS[colIndex] }}</span>
-        <span v-if="colIndex === 7"
-              :class="['legend-rows', isRotated ? 'block' : 'hidden']">{{ ROWS[rowIndex] }}</span>
-        <span v-if="rowIndex === 7"
-              :class="['legend-cols', isRotated ? 'hidden' : 'block']">{{ COLUMNS[colIndex] }}</span>
-        <span v-if="colIndex === 0"
-              :class="['legend-rows', isRotated ? 'hidden' : 'block']">{{ ROWS[rowIndex] }}</span>
+           :key="colIndex"
+           class="cell"
+           :class="[
+             getCellClasses(rowIndex, colIndex),
+             isRotated ? 'rotatitating' : 'unRotatitating',
+             {'highlighted': isHighlighted(rowIndex, colIndex)},
+             {'selected': isSelectedCell(rowIndex, colIndex)}
+           ]"
+           @click="handleCellClick(rowIndex, colIndex)">
+        <ChessPiece 
+          v-if="cell" 
+          :type="cell.pieceType" 
+          :color="cell.color"
+          :class="{'piece-animation': isMoving(rowIndex, colIndex)}"
+        />
+        <BoardLabels 
+          :row-index="rowIndex"
+          :col-index="colIndex"
+          :is-rotated="isRotated"
+          :columns="COLUMNS"
+          :rows="ROWS"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount, watch } from 'vue';
+import { ref, computed, watch, onMounted, reactive } from 'vue';
 import ChessPiece from './ChessPiece.vue';
 import BoutonInit from './BoutonInit.vue';
 import BoutonRotate from "./BoutonRotate.vue";
+import BoardLabels from './BoardLabels.vue';
 import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
-import { COLUMNS , ROWS, type Cell } from '@/constants';
+import { COLUMNS, ROWS, type Cell } from '@/constants';
 
 
-
-
-const gameId = ref<string>();
-gameId.value = "1";
-
-const currGame = ref();
-
-const board = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(null)));
-
+const gameId = ref<string>("1");
+const localBoard = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(null)));
 const isRotated = ref(false);
-
 const isInit = ref(false);
+const currGame = ref();
+let isUpdating = false;
 
-
-watch(isInit, async (value) => {
-  if (value) {
-    currGame.value = await ChessBoardService.initializeBoard(1,3);
-    board.value = currGame.value.board;
-    gameId.value = currGame.value.gameId;
-
-    console.log(currGame.value.gameId);
-    
-    console.log(gameId.value);
-  }
-});
-
-const changeCell = (rowIndex: number, colIndex: number): string => {
-  let resultClass = "";
-  if ((rowIndex + colIndex) % 2 === 1) {
-    resultClass += " dark";
-  }
-  return resultClass;
-};
-
-const availableMoves = ref<string[]>([]);
 const selectedCell = ref<{row: number, col: number} | null>(null);
+const availableMoves = ref<string[]>([]);
+const lastMove = ref<{from: {row: number, col: number}, to: {row: number, col: number}} | null>(null);
 
 const indexToPosition = (row: number, col: number): string => {
   const column = String.fromCharCode(97 + col);
@@ -77,62 +59,164 @@ const indexToPosition = (row: number, col: number): string => {
   return `${column}${rowNotation}`;
 };
 
+const positionToIndex = (position: string): {row: number, col: number} => {
+  const col = position.charCodeAt(0) - 97;
+  const row = 8 - parseInt(position[1]);
+  return { row, col };
+};
+
+const getCellClasses = (rowIndex: number, colIndex: number): string => {
+  return (rowIndex + colIndex) % 2 === 1 ? 'dark' : '';
+};
+
 const isHighlighted = (row: number, col: number): boolean => {
-  const position = indexToPosition(row, col);
-  return availableMoves.value.includes(position);
+  return availableMoves.value.includes(indexToPosition(row, col));
+};
+
+const isSelectedCell = (row: number, col: number): boolean => {
+  return selectedCell.value?.row === row && selectedCell.value?.col === col;
+};
+
+const isMoving = (row: number, col: number): boolean => {
+  if (!lastMove.value) return false;
+  const { to } = lastMove.value;
+  return to.row === row && to.col === col;
 };
 
 const handleCellClick = async (row: number, col: number) => {
-  if (!currGame.value?.gameId) return;
+  if (!currGame.value?.gameId || isUpdating) return;
   
-  if (board.value[row][col]) {
-    const position = indexToPosition(row, col);
-    try {
-      availableMoves.value = await ChessBoardService.fetchAndHighlightAvailableSlots(
-        currGame.value.gameId,
-        position
-      );
-      selectedCell.value = { row, col };
-    } catch (error) {
-      console.error("Erreur lors de la récupération des mouvements possibles:", error);
-      availableMoves.value = [];
-      selectedCell.value = null;
+  const position = indexToPosition(row, col);
+  const clickedPiece = localBoard.value[row][col];
+
+  if (selectedCell.value) {
+    if (isHighlighted(row, col)) {
+      const fromPosition = indexToPosition(selectedCell.value.row, selectedCell.value.col);
+      await movePiece(fromPosition, position);
+    } else {
+      clearSelection();
+      if (clickedPiece) {
+        await selectPiece(row, col);
+      }
     }
-  } else {
-    availableMoves.value = [];
-    selectedCell.value = null;
+  } else if (clickedPiece) {
+    await selectPiece(row, col);
   }
 };
 
-onBeforeMount(async() => {
-  if(currGame.value != undefined){
-    if (gameId.value) {
-      currGame.value = await ChessBoardService.loadBoard(Number(gameId.value));
-    }
-    console.log(currGame.value.gameId);
+const selectPiece = async (row: number, col: number) => {
+  try {
+    const position = indexToPosition(row, col);
+    availableMoves.value = await ChessBoardService.fetchAndHighlightAvailableSlots(
+      currGame.value.gameId,
+      position
+    );
+    selectedCell.value = { row, col };
+  } catch (error) {
+    console.error("Erreur lors de la récupération des mouvements:", error);
+    clearSelection();
+  }
+};
+
+const movePiece = async (from: string, to: string) => {
+  const fromIndices = positionToIndex(from);
+  const toIndices = positionToIndex(to);
+  
+  try {
+    isUpdating = true;
+    
+    const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
+    
+    const newBoard = localBoard.value.map(row => [...row]);
+    newBoard[fromIndices.row][fromIndices.col] = null;
+    newBoard[toIndices.row][toIndices.col] = movingPiece;
+    localBoard.value = newBoard;
+    
+    lastMove.value = { from: fromIndices, to: toIndices };
+    clearSelection();
+    
+    await ChessBoardService.movePiece(currGame.value.gameId, from, to);
+    
+  } catch (error) {
+    console.error("Erreur lors du mouvement:", error);
+    await syncWithServer();
+  } finally {
+    isUpdating = false;
+  }
+};
+
+const clearSelection = () => {
+  selectedCell.value = null;
+  availableMoves.value = [];
+};
+
+const syncWithServer = async () => {
+  try {
+    const serverBoard = await ChessBoardService.loadBoard(currGame.value.gameId);
+    localBoard.value = JSON.parse(JSON.stringify(serverBoard));
+  } catch (error) {
+    console.error("Erreur de synchronisation avec le serveur:", error);
+  }
+};
+
+watch(isInit, async (value) => {
+  if (value) {
+    currGame.value = await ChessBoardService.initializeBoard(1, 3);
+    await syncWithServer();
+    gameId.value = currGame.value.gameId;
   }
 });
 
-onMounted(() => {
-    
+onMounted(async () => {
+  if (gameId.value) {
+    currGame.value = await ChessBoardService.loadBoard(Number(gameId.value));
+    await syncWithServer();
+  }
 });
-
-
-
 </script>
 
 <style scoped>
+.chessboard {
+  display: grid;
+  grid-template-columns: repeat(8, 5vw);
+  grid-template-rows: repeat(8, 5vw);
+  justify-content: center;
+  align-items: center;
+  padding: 5% 0;
+}
 
-.selectedNone {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.row {
+  display: contents;
+}
+
+.cell {
+  width: 5vw;
+  height: 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: #b4cfe8;
+  color: #374d65;
+  transition: background-color 0.2s ease;
+}
+
+.cell:hover {
+  background-color: #6b8baf;
+}
+
+.dark {
+  background-color: #374d65;
+  color: #b4cfe8;
+}
+
+.dark:hover {
+  background-color: #2f4156;
 }
 
 .highlighted {
-  background-color: #7fb2e6 !important; 
   position: relative;
+  background-color: #7fb2e6 !important;
 }
 
 .highlighted::after {
@@ -145,59 +229,17 @@ onMounted(() => {
   pointer-events: none;
 }
 
-
 .highlighted:hover {
   background-color: #6b9fd3 !important;
   cursor: pointer;
 }
 
-.chessboard {
-  display: grid;
-  grid-template-columns: repeat(8, 5vw);
-  grid-template-rows: repeat(8, 5vw);
-  justify-content: center;
-  align-items: center;
-  padding-top: 5%;
-  padding-bottom: 5%;
+.selected {
+  background-color: #ffd700 !important;
 }
 
-
-.row {
-  display: contents;
-}
-.cell {
-  width: 5vw;
-  height: 5vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-color: #b4cfe8;
-  color: #374d65;
-}
-.cell:hover {
-  background-color: #6b8baf;
-}
-.dark {
-  background-color: #374d65;
-  color: #b4cfe8;
-}
-.dark:hover {
-  background-color: #2f4156;
-}
-.legend-cols {
-  position: absolute;
-  bottom: 0;
-  right: 2%;
-  font-size: 1.5vw;
-  font-weight: bold;
-}
-.legend-rows {
-  position: absolute;
-  top: 2%;
-  left: 2%;
-  font-size: 1.5vw;
-  font-weight: bold;
+.piece-animation {
+  animation: movePiece 0.3s ease-in-out;
 }
 
 .rotatitating {
@@ -208,22 +250,19 @@ onMounted(() => {
   animation: unRotateBoard 1.5s ease-in-out forwards;
 }
 
+@keyframes movePiece {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 @keyframes rotateBoard {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(180deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(180deg); }
 }
 
 @keyframes unRotateBoard {
-  from {
-    transform: rotate(180deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(180deg); }
+  to { transform: rotate(360deg); }
 }
-
 </style>
