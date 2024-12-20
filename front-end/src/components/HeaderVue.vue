@@ -5,7 +5,7 @@
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="shrink-0">
-              <img class="size-8 " src="@/assets/images/chess_icon.svg" alt="logo_chess" />
+              <img class="size-8 chess-piece" src="@/assets/images/chess_icon.svg" alt="logo_chess" />
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
@@ -87,8 +87,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const navigation = [
-  { name: 'Vue Échecs', href: '#', current: true },
-  { name: 'Jouer', href: '#', current: false },
+  { name: 'Vue Échecs', href: '/', current: true },
+  { name: 'Jouer', href: '/about', current: false },
   { name: 'Statistiques', href: '#', current: false },
   { name: 'Mes parties', href: '#', current: false },
   { name: 'Connexion', href: '#', current: false },
@@ -102,3 +102,8 @@ const userNavigation = [
 
 </script>
 
+<style scoped>
+.chess-piece {
+  filter: invert(100%);
+}
+</style>

@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Route,Delete,Patch,Path,Post,Body
+    Controller, Get, Route,Delete,Patch,Path,Post,Body,Security
 
 } from "tsoa";
 
@@ -10,12 +10,17 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
+import PawnPiece from "../models/pieces/pawnPiece.model";
+import chessPieceServices from "../services/chessPiece.services";
+import chessPieceModel from "../models/chessPiece.model";
+import {gameService} from "../services/game.services";
+import KingPiece from "../models/pieces/kingPiece.model";
 
 
 
 
 @Route("chessPieces")
-
+@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
@@ -28,6 +33,11 @@ export class ChessPieceController extends Controller {
       return chessPieceService.getChessPieceById(id);
     }
 
+    @Get("/{game}/{position}")
+    public async getChessPieceByPosition(@Path() position: string, @Path() game:number): Promise<chessPieceDto> {
+      return chessPieceService.getChessPiecesByGameAndPosition(game,position);
+    }
+
     @Post("/")
     public async createChessPiece(
       @Body() requestBody: CreateChessPieceDTO,
@@ -36,34 +46,57 @@ export class ChessPieceController extends Controller {
       return chessPieceService.createChessPiece(pieceType, color, position, gameId);
     }
 
-    @Delete("{id}")
-    public async deleteChessPiece(@Path() id: number): Promise<void> {
-      await chessPieceService.deleteChessPiece(id);
+    @Delete("/{game}/{position}")
+    public async deleteChessPiece(@Path() position: string,@Path() game: number): Promise<void> {
+        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position);
+        await chessPieceServices.deleteChessPiece(chessPiece.id);
     }
 
-    @Patch("{id}")
-    public async updateChessPiece(
-      @Path() id: number,
-      @Body() requestBody: UpdateChessPieceDTO,
-    ): Promise<chessPieceDto> {
-      const { pieceType, color, position, gameId,hasMoved } = requestBody;
-      return chessPieceService.updateChessPiece(id, pieceType ?? "", color ?? "", position ?? "", gameId ?? -1,hasMoved ?? false);
+
+    @Post("/move/{game}/{oldPosition}/{newPosition}")
+    public async move(
+        @Path() oldPosition: string,
+        @Path() newPosition: string,
+        @Path() game: number
+    ) {
+        let chessPiece = await chessPieceService.getChessPieceByPosition(oldPosition,game);
+        chessPiece.moveTo(newPosition);
+
     }
 
-    @Post("{id}/move")
-    public async try() {
-        console.log("Try");
-
-        let chessPiece = await chessPieceService.getChessPieces(204);
-        console.log(chessPiece);
-        chessPiece.moveTo("a6");
-        console.log(chessPiece);
-        console.log("success");
+    @Post("/promote/{game}/{position}/{pieceType}")
+    public async promote(
+        @Path() position: string,
+        @Path() pieceType: string,
+        @Path() game: number
+    ) {
+        let chessPiece = await chessPieceService.getChessPieceByPosition(position,game) as PawnPiece;
+        await chessPiece.promotePiece(pieceType);
     }
+
+
 
     @Get("slots-available/{gameId}/{position}")
     public async getSlotsAvailable(@Path() position: string,@Path() gameId:number): Promise<string[]> {
         return chessPieceService.getSlotsAvailable(position,gameId);
+    }
+
+
+    @Post("/roque/{game}/{position}/{newPosition}")
+    public async roque(
+        @Path() newPosition: string,
+        @Path() position: string,
+        @Path() game: number
+    ) {
+        let chessPiece = await chessPieceService.getChessPieceByPosition(position,game) as KingPiece;
+        console.log(chessPiece);
+        await chessPiece.roque(chessPiece,newPosition);
+    }
+
+
+    @Get("is-check/{gameId}")
+    public async isCheck(@Path() gameId:number): Promise<boolean> {
+        return chessPieceService.isCheck(gameId);
     }
   
 }
