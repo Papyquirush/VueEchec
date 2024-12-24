@@ -10,11 +10,11 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
-import PawnPiece from "../models/pieces/pawnPiece.model";
+import PawnPiece from "../models/pieces/pawnPiece";
 import chessPieceServices from "../services/chessPiece.services";
 import chessPieceModel from "../models/chessPiece.model";
 import {gameService} from "../services/game.services";
-import KingPiece from "../models/pieces/kingPiece.model";
+import KingPiece from "../models/pieces/kingPiece";
 
 
 
