@@ -20,7 +20,6 @@ import KingPiece from "../models/pieces/kingPiece.model";
 
 
 @Route("chessPieces")
-@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
@@ -46,11 +45,7 @@ export class ChessPieceController extends Controller {
       return chessPieceService.createChessPiece(pieceType, color, position, gameId);
     }
 
-    @Delete("/{game}/{position}")
-    public async deleteChessPiece(@Path() position: string,@Path() game: number): Promise<void> {
-        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position);
-        await chessPieceServices.deleteChessPiece(chessPiece.id);
-    }
+
 
 
     @Post("/move/{game}/{oldPosition}/{newPosition}")
