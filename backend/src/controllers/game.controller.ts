@@ -4,7 +4,6 @@ import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
 
 @Route("games")
-@Security("jwt")
 export class GameController extends Controller {
 
     @Get("/")
