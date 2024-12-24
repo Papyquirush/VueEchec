@@ -67,6 +67,7 @@ class PawnPiece extends ChessPiece {
     public async promotePiece(pieceType: string): Promise<void> {
         if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if(pieceType == 'king' || pieceType == 'pawn') {throw new Error("Le pion ne peut pas être promu en roi ou en pion");}
+        if(!(await this.getSlotsAvailable()).includes('promote')) {throw new Error("Le pion ne peut pas être promu");}
         const [currentXLetter, currentY] = this.position.split('');
         const newX = this.letterToIndex(currentXLetter)+1;
 
