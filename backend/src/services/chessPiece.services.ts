@@ -2,16 +2,17 @@ import {chessPieceDto} from "../dto/chessPiece.dto";
 import {notFound} from "../error/NotFoundError";
 import ChessPiece from "../models/chessPiece.model";
 import {ChessPieceMapper} from "../mapper/chessPiece.mapper";
-import PawnPiece from "../models/pieces/pawnPiece.model";
-import KingPiece from "../models/pieces/kingPiece.model";
-import QueenPiece from "../models/pieces/queenPiece.model";
-import BishopPiece from "../models/pieces/bishopPiece.model";
-import KnightPiece from "../models/pieces/knightPiece.model";
-import RookPiece from "../models/pieces/rookPiece.model";
+import PawnPiece from "../models/pieces/pawnPiece";
+import KingPiece from "../models/pieces/kingPiece";
+import QueenPiece from "../models/pieces/queenPiece";
+import BishopPiece from "../models/pieces/bishopPiece";
+import KnightPiece from "../models/pieces/knightPiece";
+import RookPiece from "../models/pieces/rookPiece";
 import Gamestate from "../models/object/gamestate";
 import {gameService} from "./game.services";
 import { GameDTO } from "../dto/game.dto";
 import { all } from "axios";
+import {CONSTRAINT} from "sqlite3";
 
 const pieceTypeMap: { [key: string]: typeof ChessPiece } = {
     'pawn': PawnPiece,
@@ -37,17 +38,9 @@ export class ChessPieceService {
     }
 
 
-    public async getChessPiece(id: number): Promise<ChessPiece> {
-        let chessPiece = await ChessPiece.findByPk(id);
-        if (chessPiece) {
-            return this.convertToSpecificPiece(chessPiece);
-        } else {
-            notFound("ChessPiece");
-        }
-    }
 
     public async getChessPiecesByGameAndPosition(gameId: number,position : string): Promise<chessPieceDto> {
-        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId, is_captured: false } });
         if (chessPiece) {
             return ChessPieceMapper.toOutputDto(this.convertToSpecificPiece(chessPiece));
         } else {
@@ -59,6 +52,13 @@ export class ChessPieceService {
         const oldPosition = piece.position;
         let slots = await piece.getSlotsAvailable();
         if (slots.includes(position)) {
+            if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
+                console.log("capture");
+                let chessPiece = await this.getChessPieceByPosition(position, piece.game_id);
+                await this.deleteChessPiece(chessPiece.id);
+            }
+
+
             piece.position = position;
             piece.has_moved = true;
             await gameService.nextTurn(piece.game_id, oldPosition, position);
@@ -67,7 +67,7 @@ export class ChessPieceService {
     }
 
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
-        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId, is_captured: false}});
         if (chessPiece) {
             return this.convertToSpecificPiece(chessPiece);
         } else {
@@ -116,12 +116,16 @@ export class ChessPieceService {
     public async deleteChessPiece(id: number): Promise<void> {
         let chessPiece = await ChessPiece.findByPk(id);
         if (chessPiece) {
+            chessPiece.is_captured = true;
+            await chessPiece.save();
             await gameService.deleteChessPiece(chessPiece.game_id,chessPiece.position);
-            await chessPiece.destroy();
         } else {
             notFound("ChessPiece");
         }
     }
+
+
+
 
     private convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
         let PieceClass = pieceTypeMap[chessPiece.piece_type.toLowerCase()] || ChessPiece;
@@ -129,7 +133,7 @@ export class ChessPieceService {
     }
 
     public async getSlotsAvailable(position: string, gameId: number): Promise<string[]> {
-        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId } });
+        let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId, is_captured : false } });
         if (chessPiece) {
             let specificChessPiece = this.convertToSpecificPiece(chessPiece);
             return await specificChessPiece.getSlotsAvailable();
@@ -139,13 +143,13 @@ export class ChessPieceService {
     }
 
     public async isChessPieceInPosition(position: string,gameId : number): Promise<boolean> {
-        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId}});
+        let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId, is_captured: false}});
         return chessPiece !== null;
     }
 
     public async isTwoPiecesInSameColor(position1: string, position2: string, gameId: number): Promise<boolean> {
-        let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId}});
-        let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId}});
+        let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId,is_captured : false}});
+        let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId,is_captured : false}});
         if (firstChessPiece && secondChessPiece) {
             return firstChessPiece.color === secondChessPiece.color;
         } else {

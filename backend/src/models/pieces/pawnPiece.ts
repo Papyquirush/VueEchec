@@ -23,8 +23,15 @@ class PawnPiece extends ChessPiece {
     public async getSlotsAvailable(): Promise<string[]> {
         let slotsAvailable: string[] = [];
         if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+
+        if(this.color == 'white' && parseInt(this.position[1]) == 8) {
+            return ['promote'];
+        }
+        if(this.color == 'black' && parseInt(this.position[1]) == 1) {
+            return ['promote'];
+        }
         //vérification d'une pièce devant le pion
-        if((this.position[2]!=='8'&& this.color=='white')||(this.position[2]!=='1'&& this.color=='black')){
+        if((this.position[1]!=='8'&& this.color=='white')||(this.position[1]!=='1'&& this.color=='black')){
             let chessPieceInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${parseInt(this.position[1]) + 1}`, this.game_id) : await chessPieceServices.isChessPieceInPosition(`${this.position[0]}${parseInt(this.position[1]) - 1}`, this.game_id);
             if(!chessPieceInfront) {
                 slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 1}` : `${this.position[0]}${parseInt(this.position[1]) - 1}`);
@@ -60,6 +67,7 @@ class PawnPiece extends ChessPiece {
     public async promotePiece(pieceType: string): Promise<void> {
         if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if(pieceType == 'king' || pieceType == 'pawn') {throw new Error("Le pion ne peut pas être promu en roi ou en pion");}
+        if(!(await this.getSlotsAvailable()).includes('promote')) {throw new Error("Le pion ne peut pas être promu");}
         const [currentXLetter, currentY] = this.position.split('');
         const newX = this.letterToIndex(currentXLetter)+1;
 
