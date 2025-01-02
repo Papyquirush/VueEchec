@@ -149,7 +149,6 @@ const models: TsoaRoute.Models = {
     "AuthenticationInputDTO": {
         "dataType": "refObject",
         "properties": {
-            "grant_type": {"dataType":"string","required":true},
             "username": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
         },

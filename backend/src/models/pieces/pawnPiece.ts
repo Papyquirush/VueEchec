@@ -54,6 +54,23 @@ class PawnPiece extends ChessPiece {
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
         }
 
+        let lastMove = await moveServices.getLastMove(this.game_id);
+        if(!lastMove) {return slotsAvailable;}
+        let lastMovePiece = await chessPieceServices.getChessPieceByPosition(lastMove.to_position, this.game_id);
+
+        //passant
+        if (lastMove && lastMovePiece.piece_type === 'pawn' && Math.abs(parseInt(lastMove.to_position[1]) - parseInt(lastMove.from_position[1])) === 2) {
+            let enPassantRow = this.color === 'white' ? '5' : '4';
+            if (this.position[1] === enPassantRow) {
+                let enPassantLeft = `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${this.color === 'white' ? '6' : '3'}`;
+                let enPassantRight = `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${this.color === 'white' ? '6' : '3'}`;
+                if (lastMove.to_position === enPassantLeft || lastMove.to_position === enPassantRight) {
+                    slotsAvailable.push(lastMove.to_position);
+                }
+            }
+        }
+
+
         return slotsAvailable;
     }
 
