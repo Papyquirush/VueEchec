@@ -1,5 +1,5 @@
 export interface AuthenticationInputDTO {
-    grant_type: string;
+    grant_type: 'password';
     username: string;
     password: string;
 }

@@ -59,6 +59,7 @@ class KingPiece extends chessPieceModel {
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                 if(!await chessPieceServices.isChessPieceInPosition('b1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d1', this.game_id)){
                                     slotsAvailable.push('c1');
+                                    slotsAvailable.push('roque');
                                 }
                             }
                         }
@@ -68,6 +69,7 @@ class KingPiece extends chessPieceModel {
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                 if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
                                     slotsAvailable.push('g1');
+                                    slotsAvailable.push('roque');
                                 }
                             }
                         }
@@ -77,13 +79,12 @@ class KingPiece extends chessPieceModel {
                 if(await chessPieceServices.isChessPieceInPosition('e8', this.game_id)){
                     let kingPiece = await chessPieceServices.getChessPieceByPosition('e8', this.game_id);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
-                        console.log("1");
-                        console.log(this.position);
                                 if(await chessPieceServices.isChessPieceInPosition('a8', this.game_id)){
                                     let rookPiece = await chessPieceServices.getChessPieceByPosition('a8', this.game_id);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                         if(!await chessPieceServices.isChessPieceInPosition('b8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d8', this.game_id)){
                                             slotsAvailable.push('c8');
+                                            slotsAvailable.push('roque');
                                         }
                                     }
                                 }
@@ -92,6 +93,7 @@ class KingPiece extends chessPieceModel {
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                         if(!await chessPieceServices.isChessPieceInPosition('f8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g8', this.game_id)){
                                             slotsAvailable.push('g8');
+                                            slotsAvailable.push('roque');
                                         }
                                     }
 
@@ -113,7 +115,7 @@ class KingPiece extends chessPieceModel {
         if(!await chessPieceServices.isTurn(piece.game_id, piece.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         const oldPosition = piece.position;
         let slots = await piece.getSlotsAvailable();
-
+        if(slots.includes("roque")){
         if(piece.color == 'white') {
             if (position == 'c1') {
                 if (slots.includes(position)) {
@@ -151,7 +153,7 @@ class KingPiece extends chessPieceModel {
                     await chessPieceServices.updateChessPiece(rookPiece.id, rookPiece.piece_type, rookPiece.color, rookPiece.position, rookPiece.game_id, rookPiece.has_moved);
                     await chessPieceServices.updateChessPiece(piece.id, piece.piece_type, piece.color, piece.position, piece.game_id, piece.has_moved);
                 }
-            }else if(position == 'g8') {
+            } else if (position == 'g8') {
                 if (slots.includes(position)) {
                     piece.position = position;
                     piece.has_moved = true;
@@ -163,6 +165,7 @@ class KingPiece extends chessPieceModel {
                     await chessPieceServices.updateChessPiece(piece.id, piece.piece_type, piece.color, piece.position, piece.game_id, piece.has_moved);
                 }
             }
+        }
         }
 
 
