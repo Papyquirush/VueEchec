@@ -12,7 +12,6 @@ import {
 import MoveService  from "../services/move.services";
 
 @Route("moves")
-@Security("jwt")
 export class MoveController extends Controller {
 
     @Get("/")
