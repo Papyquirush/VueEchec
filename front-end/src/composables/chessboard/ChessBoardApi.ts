@@ -12,8 +12,17 @@ export const ChessBoardApi = {
   },
 
   async getGameState(gameId: number) {
-    const response = await axiosInstance.get(API_BASE_URL+API_GAME_URL+`${gameId}`);
-    return response.data; 
+    try {
+      console.log("gameId gst : ",gameId);
+      
+      const response = await axiosInstance.get(`${API_BASE_URL}${API_GAME_URL}${gameId}`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 500) {
+        throw new Error('Game not found');
+      }
+      throw error;
+    }
   },
 
   async getAvailableSlots(gameId: number, position: string) {

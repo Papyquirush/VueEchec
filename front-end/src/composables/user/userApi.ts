@@ -6,11 +6,11 @@ export function useUserApi() {
   return {
     async authenticate(user: User): Promise<string> {
       const res = await axiosInstance.post(`${API_BASE_AUTH}`, {
-        grant_type: 'password',
         username: user.username,
         password: user.password,
       });
       console.log(res.data.token);
+      localStorage.setItem('authToken', res.data.token);
       return res.data.token;
     },
     async register(user: User): Promise<void> {

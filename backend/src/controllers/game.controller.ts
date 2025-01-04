@@ -3,7 +3,9 @@ import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
 
+
 @Route("games")
+@Security("jwt")
 export class GameController extends Controller {
 
     @Get("/")

@@ -25,18 +25,30 @@ export const ChessBoardService = {
 
 
   async loadBoard(gameId: number) {
-    const { gameState } = await ChessBoardApi.getGameState(gameId);
+    try {
+      console.log("gameId lb : ",gameId);
+      
+      const { gameState } = await ChessBoardApi.getGameState(gameId);
 
-    const board = Array(8)
-      .fill(null)
-      .map(() => Array(8).fill(null));
+      if (!gameState) {
+        throw new Error('Invalid game state received from server');
+      }
 
-    for (const [position, piece] of Object.entries(gameState)) {
-      const { row, col } = mapPositionToIndex(position);
-      board[row][col] = piece;
+      const board = Array(8)
+        .fill(null)
+        .map(() => Array(8).fill(null));
+
+      for (const [position, piece] of Object.entries(gameState)) {
+        const { row, col } = mapPositionToIndex(position);
+        board[row][col] = piece;
+      }
+
+      return { gameId, board };
+      
+    } catch (error) {
+      console.error('Error loading board:', error);
+      throw error;
     }
-
-    return board;
   },
 
   async fetchAndHighlightAvailableSlots(gameId: number, position: string) {

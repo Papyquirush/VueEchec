@@ -150,28 +150,39 @@ const clearSelection = () => {
   availableMoves.value = [];
 };
 
-const syncWithServer = async () => {
-  try {
-    const serverBoard = await ChessBoardService.loadBoard(currGame.value.gameId);
-    localBoard.value = JSON.parse(JSON.stringify(serverBoard));
-  } catch (error) {
-    console.error("Erreur de synchronisation avec le serveur:", error);
+
+
+const loadGame = async () => {
+  const savedGameId = localStorage.getItem('currentGameId');
+  
+  if (savedGameId) {
+    gameId.value = savedGameId;
   }
+  
+  const loadedGame = await ChessBoardService.loadBoard(Number(gameId.value));
+  currGame.value = { gameId: loadedGame.gameId };
+  localBoard.value = loadedGame.board;
+
+  localStorage.setItem('currentGameId', currGame.value.gameId);
+};
+
+const syncWithServer = async () => {
+  const loadedGame = await ChessBoardService.loadBoard(currGame.value.gameId);
+  localBoard.value = loadedGame.board;
 };
 
 watch(isInit, async (value) => {
   if (value) {
-    currGame.value = await ChessBoardService.initializeBoard(1, 3);
-    await syncWithServer();
-    gameId.value = currGame.value.gameId;
-  }
+    const newGame = await ChessBoardService.initializeBoard(1, 3);
+    currGame.value = { gameId: newGame.gameId };
+    localBoard.value = newGame.board;
+    gameId.value = newGame.gameId.toString();
+    localStorage.setItem('currentGameId', gameId.value);
+}
 });
 
 onMounted(async () => {
-  if (gameId.value) {
-    currGame.value = await ChessBoardService.loadBoard(Number(gameId.value));
-    await syncWithServer();
-  }
+  await loadGame();
 });
 </script>
 

@@ -43,16 +43,16 @@ const router = useRouter()
 const { userConnecte } = useUserConnecteService()
 
 const handleLogout = (event: Event) => {
-event.preventDefault()
-userConnecte.value = { username: '', password: '' }
-router.push('/login')
+  event.preventDefault()
+  userConnecte.value = { username: '', password: '' }
+  router.push('/login')
 }
 
 const navigation = [
-{ name: 'Vue Échecs', href: '/', current: true },
-{ name: 'Jouer', href: '/about', current: false },
-{ name: 'Statistiques', href: '#', current: false },
-{ name: 'Mes parties', href: '#', current: false },
+  { name: 'Vue Échecs', href: '/', current: true },
+  { name: 'Jouer', href: '/play', current: false },
+  { name: 'Statistiques', href: '#', current: false },
+  { name: 'Mes parties', href: '#', current: false },
 ]
 
 const filteredNavigation = computed(() => {

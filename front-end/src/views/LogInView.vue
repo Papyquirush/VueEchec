@@ -1,4 +1,5 @@
 <template>
+  <div class="bg-blue-950"><HeaderVue/></div>
     <div class="login-container">
       <h2>Connexion</h2>
       <form @submit.prevent="handleLogin" class="login-form">
@@ -36,6 +37,7 @@
   </template>
   
   <script setup lang="ts">
+  import HeaderVue from '@/components/HeaderVue.vue'
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserService } from '@/composables/user/userService';
@@ -63,8 +65,9 @@
       
       const authenticatedUser = await userService.authenticate(user);
       userConnecte.value = authenticatedUser;
+      console.log(userConnecte.value);
       
-      router.push('/about');
+      router.push('/play');
     } catch (e) {
       error.value = 'Identifiants invalides';
     }

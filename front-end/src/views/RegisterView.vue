@@ -1,4 +1,5 @@
 <template>
+  <div class="bg-blue-950"><HeaderVue/></div>
     <div class="register-container">
       <h2>Inscription</h2>
       <form @submit.prevent="handleRegister" class="register-form">
@@ -8,16 +9,6 @@
             id="username"
             v-model="form.username"
             type="text"
-            required
-          />
-        </div>
-  
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input 
-            id="email"
-            v-model="form.email"
-            type="email"
             required
           />
         </div>
@@ -36,7 +27,7 @@
           {{ error }}
         </div>
   
-        <button type="submit">S'inscrire</button>
+        <button type="submit" class="bg-blue-950 hover:bg-blue-700">S'inscrire</button>
         
         <div class="login-link">
           <router-link to="/login">Déjà un compte ? Se connecter</router-link>
@@ -46,6 +37,7 @@
   </template>
   
   <script setup lang="ts">
+  import HeaderVue from '@/components/HeaderVue.vue'
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserApi } from '@/composables/user/userApi';
@@ -55,12 +47,11 @@
   
   const form = ref({
     username: '',
-    email: '',
     password: ''
   });
   
   const error = ref('');
-  
+   
   const handleRegister = async () => {
     try {
       error.value = '';
@@ -98,15 +89,10 @@
   
   button {
     padding: 10px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
   }
   
   .login-link {
