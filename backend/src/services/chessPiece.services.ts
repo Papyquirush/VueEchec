@@ -53,6 +53,10 @@ export class ChessPieceService {
             if (piece instanceof KingPiece && slots.includes("roque") && ( piece.color=="white" && (position === "g1" || position === "c1") || (piece.color=="black" && (position === "g8" || position === "c8"))) ) {
                 {
                     await piece.roque(piece, position);
+                    piece.position = position;
+                    piece.has_moved = true;
+                    await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
+                    return;
                 }
             }
             if(piece instanceof PawnPiece && slots.includes("passant")){
