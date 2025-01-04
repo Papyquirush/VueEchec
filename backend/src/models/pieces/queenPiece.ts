@@ -17,15 +17,13 @@ class QueenPiece extends chessPieceModel {
     public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
-        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if(!toCheck &&!await chessPieceServices.isTurnWithDTO(game, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
 
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
-                console.log(piece.pieceType, this.piece_type, piece.color == this.color);
                 if (piece.pieceType == this.piece_type && piece.color == this.color && piece.position == this.position) {
                     slotsAvailable = slotsAvailable.concat(slots);
-                    console.log(slotsAvailable);
                 }
             }            
             return slotsAvailable;
@@ -116,7 +114,7 @@ class QueenPiece extends chessPieceModel {
                 break;
             }
         }
-        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+        if(await chessPieceServices.isTurn(this.game_id, this.color) && !toCheck){
                     return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable;
