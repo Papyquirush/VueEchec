@@ -49,4 +49,13 @@ export class UserController extends Controller {
       const { username, password } = requestBody;
       return userService.updateUser(id, username, password);
     }
+
+    @Get("/winrate/{id}")
+    public async getWinrate(@Path() id: number): Promise<number> {
+      return userService.getWinrate(id);
+    }
+
+
+
+
   }

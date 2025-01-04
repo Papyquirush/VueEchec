@@ -44,6 +44,14 @@ export class GameController extends Controller {
     }
 
 
+
+
+    @Get("/pieceCaptured/{gameId}")
+    public async getPieceCaptured(@Path() gameId:number): Promise<{ [key: string]: number }>
+    {
+        return gameService.getRemainingPiecesCount(gameId);
+    }
+
     @Get("/public/games")
     public async getPublicGames(): Promise<GameDTO[]> {
         return gameService.getPublicGames();

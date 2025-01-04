@@ -1,6 +1,8 @@
+import { Op } from "sequelize";
 import { UserOutputDTO } from "../dto/user.dto";
 import { notFound } from "../error/NotFoundError";
 import { UserMapper } from "../mapper/user.mapper";
+import Game from "../models/game.model";
 import { User } from "../models/user.model";
 
 export class UserService {
@@ -62,6 +64,27 @@ export class UserService {
     } else {
       notFound("User");
     }
+  }
+
+  public async getWinrate(userId: number): Promise<number> {
+    const games = await Game.findAll({
+      where: {
+        [Op.or]: [
+          { player_white_id: userId },
+          { player_black_id: userId }
+        ],
+        is_finished: true
+      }
+    });
+
+    const totalGames = games.length;
+    const wonGames = games.filter(game => game.winner_id === userId).length;
+
+    if (totalGames === 0) {
+      return 0;
+    }
+
+    return (wonGames / totalGames) * 100;
   }
 }
 

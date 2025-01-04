@@ -2,6 +2,7 @@ import ChessPiece from '../chessPiece.model';
 import chessPieceServices from "../../services/chessPiece.services";
 import moveServices from "../../services/move.services";
 import {gameService} from "../../services/game.services";
+import Game from "../game.model";
 import { GameDTO } from '../../dto/game.dto';
 
 
@@ -144,7 +145,11 @@ class PawnPiece extends ChessPiece {
         }
 
         await gameService.nextTurnAfterPromote(this.game_id, this.position,pieceType);
-        console.log(`PawnPiece is promoted to ${pieceType}`);
+
+        let game = await Game.findByPk(this.game_id);
+        if(game) {
+            await moveServices.createMove(game.id, game.turn_count, game.turn_count % 2 ? game.player_white_id : game.player_black_id,this.id, "promote", pieceType,0);
+        }
     }
 
 
