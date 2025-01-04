@@ -77,7 +77,7 @@ export class ChessPieceService {
             await gameService.nextTurn(piece.game_id, oldPosition, position);
             await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
             }
-        }
+    }
 
 
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {

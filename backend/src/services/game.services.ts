@@ -73,9 +73,15 @@ export class GameService {
             await gameState.updateGameState(oldPosition, position);
 
             if (gameState.pieces[position].color === 'white') {
-                await moveServices.createMove(game.id, game.turn_count, game.player_white_id, game.id, oldPosition, position, 0);
+                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                if(chessPiece) {
+                    await moveServices.createMove(game.id, game.turn_count, game.player_white_id, chessPiece.id, oldPosition, position, 0);
+                }
             } else {
-                await moveServices.createMove(game.id, game.turn_count, game.player_black_id, game.id, oldPosition, position, 0);
+                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                if(chessPiece) {
+                    await moveServices.createMove(game.id, game.turn_count, game.player_black_id, chessPiece.id, oldPosition, position, 0);
+                }
             }
 
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
