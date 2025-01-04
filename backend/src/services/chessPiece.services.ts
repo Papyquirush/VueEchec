@@ -56,12 +56,10 @@ export class ChessPieceService {
                 }
             }
             if(piece instanceof PawnPiece && slots.includes("passant")){
-                console.log("passant");
                 await piece.passant(position);
             }
 
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
-                console.log("capture");
                 let chessPiece = await this.getChessPieceByPosition(position, piece.game_id);
                 await this.deleteChessPiece(chessPiece.id);
             }
@@ -207,7 +205,7 @@ export class ChessPieceService {
             //game.gameState[newPiecePosition[0]] = oldPiece;
             game.gameState[newPiecePosition[1]] = piece;
             game.gameState[newPiecePosition[0]] = {};
-            console.log(game.gameState);
+
         }
         for(let piece of opponentPieces){
             let specificPiece = this.convertToSpecificPiece(piece);
@@ -220,7 +218,7 @@ export class ChessPieceService {
     }
 
     public async slotsAvailableForOutOfCheck(gameId: number): Promise<Map<chessPieceDto,string[]>> {
-        console.log("slotsAvailableForOutOfCheck");
+
         let posibilities = new Map<chessPieceDto,string[]>();
         let game = await gameService.getGameById(gameId);
         let fictiveGameMap = await gameService.createFictiveGameByOtherGame(game.id);
@@ -257,7 +255,7 @@ export class ChessPieceService {
                 }
             }
             else{
-                console.log("notCheck");
+
                 return notFound('notCheck');
             }
         }
@@ -268,7 +266,6 @@ export class ChessPieceService {
         let kingPosition = await this.getKingPosition(game,game.turnCount % 2 === 0 ? "white" : "black");
         let opponentPieces = game.turnCount % 2 === 0 ? await ChessPiece.findAll({where: {color: "black", game_id: game.id}})
                                     : await ChessPiece.findAll({where: {color: "white", game_id: game.id}});
-        console.log(kingPosition,slotsAvailable);
         let excludedSlots = [];
         for(let slot of slotsAvailable){
             let oldPiece = game.gameState[slot];

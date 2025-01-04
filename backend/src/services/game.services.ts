@@ -194,6 +194,35 @@ export class GameService {
     }
 
 
+    public async getPublicGames(): Promise<GameDTO[]> {
+
+        let gameList = Game.findAll({
+            where: {
+                is_public: true
+            }
+        });
+
+        return GameMapper.toDTOList(await gameList);
+
+    }
+
+    public async getPrivateGames(userId: number): Promise<GameDTO[]> {
+        let gameList = Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ],
+                is_public: false
+            }
+        });
+
+        return GameMapper.toDTOList(await gameList);
+    }
+
+
+
+
 }
 
 export const gameService = new GameService();
