@@ -164,8 +164,34 @@ export class GameService {
         }
     }
 
+    public async getWinningPercentages(gameId: number): Promise<{ white: number, black: number }> {
+        const game = await this.getGameById(gameId);
+        const pieces: ChessPiece[] = [];
 
+        for (let position in game.gameState) {
+            const piece = new ChessPiece();
+            piece.position = position;
+            piece.color = game.gameState[position].color;
+            piece.piece_type = game.gameState[position].type;
+            pieces.push(piece);
+        }
 
+        return this.calculateWinningPercentage(pieces);
+    }
+
+    public async calculateWinningPercentage(pieces: ChessPiece[]): Promise<{ white: number, black: number }> {
+        const totalPieces = pieces.length;
+        const whitePieces = pieces.filter(piece => piece.color === 'white').length;
+        const blackPieces = pieces.filter(piece => piece.color === 'black').length;
+
+        const whitePercentage = (whitePieces / totalPieces) * 100;
+        const blackPercentage = (blackPieces / totalPieces) * 100;
+
+        return {
+            white: whitePercentage,
+            black: blackPercentage
+        };
+    }
 
 
 }
