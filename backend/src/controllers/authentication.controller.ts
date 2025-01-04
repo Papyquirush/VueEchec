@@ -10,8 +10,13 @@ export class AuthenticationController extends Controller {
     ) {
         const {  username, password } = body;
 
-        const token = await authService.authenticate(username, password);
+        const temp = await authService.authenticate(username, password);
 
-        return { token };
+        const token = temp.token;
+
+        const userId = temp.userId;
+
+
+        return { token, userId };
     }
 }

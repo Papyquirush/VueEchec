@@ -3,7 +3,9 @@ import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
 
+
 @Route("games")
+@Security("jwt")
 export class GameController extends Controller {
 
     @Get("/")
@@ -50,6 +52,16 @@ export class GameController extends Controller {
         return gameService.getRemainingPiecesCount(gameId);
     }
 
+    @Get("/public/games")
+    public async getPublicGames(): Promise<GameDTO[]> {
+        return gameService.getPublicGames();
+    }
+
+    @Get("/private/{userId}")
+    public async getPrivateGames(@Path() userId:number): Promise<GameDTO[]>
+    {
+        return gameService.getPrivateGames(userId);
+    }
 
 
 }

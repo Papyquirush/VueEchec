@@ -2,6 +2,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 import Game from "./game.model";
 import chessPieceServices from "../services/chessPiece.services";
+import { GameDTO } from '../dto/game.dto';
 
 
 interface ChessPieceAttributes {
@@ -44,7 +45,7 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
 
     public isPieceAlly(positionX: number, positionY: number): boolean {return true; }
 
-    public getSlotsAvailable(): Promise<string[]> { return Promise.resolve(["oui"]); }
+    public getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> { return Promise.resolve(["oui"]); }
 
 }
 

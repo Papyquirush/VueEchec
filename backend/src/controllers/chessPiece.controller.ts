@@ -20,6 +20,7 @@ import KingPiece from "../models/pieces/kingPiece";
 
 
 @Route("chessPieces")
+@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
