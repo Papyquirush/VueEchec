@@ -1,51 +1,45 @@
 <template>
-    <div class="register-container">
-      <h2>Inscription</h2>
-      <form @submit.prevent="handleRegister" class="register-form">
-        <div class="form-group">
-          <label for="username">Nom d'utilisateur</label>
-          <input 
-            id="username"
-            v-model="form.username"
-            type="text"
-            required
-          />
-        </div>
-  
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input 
-            id="email"
-            v-model="form.email"
-            type="email"
-            required
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input 
-            id="password"
-            v-model="form.password"
-            type="password"
-            required
-          />
-        </div>
-  
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
-  
-        <button type="submit">S'inscrire</button>
-        
-        <div class="login-link">
-          <router-link to="/login">Déjà un compte ? Se connecter</router-link>
-        </div>
-      </form>
-    </div>
-  </template>
+  <div class="bg-blue-950"><HeaderVue /></div>
+  <div class="text-white h-screen flex flex-col gap-5 items-center justify-center">
+    <h2 class="font-bold text-xl py-50">Inscription</h2>
+    <form @submit.prevent="handleRegister" class="flex flex-col mx-[30%] p-20 gap-10 bg-blue-950 rounded-xl">
+      <div class="flex flex-col">
+        <label for="username" class="font-bold">Nom d'utilisateur</label>
+        <input 
+          id="username"
+          v-model="form.username"
+          type="text"
+          required
+          class="p-2 rounded-lg bg-white text-black"
+        />
+      </div>
+      
+      <div class="flex flex-col">
+        <label for="password" class="font-bold">Mot de passe</label>
+        <input 
+          id="password"
+          v-model="form.password"
+          type="password"
+          required
+          class="p-2 rounded-lg bg-white text-black"
+        />
+      </div>
+
+      <div v-if="error" class="text-red-500 text-sm">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="p-2 border border-white hover:bg-black rounded-lg">S'inscrire</button>
+      
+      <div class="text-center mt-4">
+        <router-link to="/login" class="text-blue-300 hover:underline">Déjà un compte ? Se connecter</router-link>
+      </div>
+    </form>
+  </div>
+</template>
   
   <script setup lang="ts">
+  import HeaderVue from '@/components/HeaderVue.vue'
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserApi } from '@/composables/user/userApi';
@@ -55,12 +49,11 @@
   
   const form = ref({
     username: '',
-    email: '',
     password: ''
   });
   
   const error = ref('');
-  
+   
   const handleRegister = async () => {
     try {
       error.value = '';
@@ -98,15 +91,10 @@
   
   button {
     padding: 10px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
   }
   
   .login-link {

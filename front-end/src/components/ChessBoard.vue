@@ -1,7 +1,7 @@
 <template>
-  <BoutonInit v-model:isInit="isInit"/>
-  <BoutonRotate v-model="isRotated"/>
-  <h1 class="text-3xl text-white">Partie numéro : {{ gameId }}</h1>
+  <BoutonInit v-model:isInit="isInit" class="m-10"/>
+  <!-- <BoutonRotate v-model="isRotated"/> -->
+  <h1 class="text-3xl text-white text-center underline">Partie numéro : {{ gameId }}</h1>
   <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
     <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
       <div v-for="(cell, colIndex) in row"
@@ -121,12 +121,15 @@ const selectPiece = async (row: number, col: number) => {
 const movePiece = async (from: string, to: string) => {
   const fromIndices = positionToIndex(from);
   const toIndices = positionToIndex(to);
-  
+
   try {
     isUpdating = true;
     
-    const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
+    await ChessBoardService.movePiece(currGame.value.gameId, from, to);
+
     
+
+    const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
     const newBoard = localBoard.value.map(row => [...row]);
     newBoard[fromIndices.row][fromIndices.col] = null;
     newBoard[toIndices.row][toIndices.col] = movingPiece;
@@ -134,9 +137,9 @@ const movePiece = async (from: string, to: string) => {
     
     lastMove.value = { from: fromIndices, to: toIndices };
     clearSelection();
-    
-    await ChessBoardService.movePiece(currGame.value.gameId, from, to);
-    
+    //isRotated.value = !isRotated.value;
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
     await syncWithServer();
@@ -150,28 +153,39 @@ const clearSelection = () => {
   availableMoves.value = [];
 };
 
-const syncWithServer = async () => {
-  try {
-    const serverBoard = await ChessBoardService.loadBoard(currGame.value.gameId);
-    localBoard.value = JSON.parse(JSON.stringify(serverBoard));
-  } catch (error) {
-    console.error("Erreur de synchronisation avec le serveur:", error);
+
+
+const loadGame = async () => {
+  const savedGameId = localStorage.getItem('currentGameId');
+  
+  if (savedGameId) {
+    gameId.value = savedGameId;
   }
+  
+  const loadedGame = await ChessBoardService.loadBoard(Number(gameId.value));
+  currGame.value = { gameId: loadedGame.gameId };
+  localBoard.value = loadedGame.board;
+
+  localStorage.setItem('currentGameId', currGame.value.gameId);
+};
+
+const syncWithServer = async () => {
+  const loadedGame = await ChessBoardService.loadBoard(currGame.value.gameId);
+  localBoard.value = loadedGame.board;
 };
 
 watch(isInit, async (value) => {
   if (value) {
-    currGame.value = await ChessBoardService.initializeBoard(1, 3);
-    await syncWithServer();
-    gameId.value = currGame.value.gameId;
-  }
+    const newGame = await ChessBoardService.initializeBoard(1, 3);
+    currGame.value = { gameId: newGame.gameId };
+    localBoard.value = newGame.board;
+    gameId.value = newGame.gameId.toString();
+    localStorage.setItem('currentGameId', gameId.value);
+}
 });
 
 onMounted(async () => {
-  if (gameId.value) {
-    currGame.value = await ChessBoardService.loadBoard(Number(gameId.value));
-    await syncWithServer();
-  }
+  await loadGame();
 });
 </script>
 
