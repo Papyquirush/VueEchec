@@ -41,7 +41,15 @@ export class GameController extends Controller {
         return gameService.getWinningPercentages(gameId);
     }
 
-    
+
+
+
+    @Get("/pieceCaptured/{gameId}")
+    public async getPieceCaptured(@Path() gameId:number): Promise<{ [key: string]: number }>
+    {
+        return gameService.getRemainingPiecesCount(gameId);
+    }
+
 
 
 }

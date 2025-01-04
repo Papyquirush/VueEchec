@@ -193,6 +193,35 @@ export class GameService {
     }
 
 
+    public async getRemainingPiecesCount(gameId: number): Promise<{ [key: string]: number }> {
+        const maxPiecesCount: { [key: string]: number } = {
+            whitePawn: 8,
+            whiteRook: 2,
+            whiteKnight: 2,
+            whiteBishop: 2,
+            whiteQueen: 1,
+            blackPawn: 8,
+            blackRook: 2,
+            blackKnight: 2,
+            blackBishop: 2,
+            blackQueen: 1,
+        };
+
+        const game = await this.getGameById(gameId);
+
+        for (let position in game.gameState) {
+            const piece = game.gameState[position];
+            const key = `${piece.color}${piece.pieceType.charAt(0).toUpperCase() + piece.pieceType.slice(1)}`;
+            if (maxPiecesCount[key] !== undefined) {
+                maxPiecesCount[key]--;
+            }
+        }
+
+        return maxPiecesCount;
+    }
+
+
+
 }
 
 export const gameService = new GameService();
