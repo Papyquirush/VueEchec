@@ -283,6 +283,14 @@ export class ChessPieceService {
                         fictiveGame.gameState[slot]=oldPositionValue;
                     }
                 }
+                if(posibilities.size === 0){
+                    const winnerId = game.turnCount % 2 === 0 ? game.playerBlackId : game.playerWhiteId;
+                    if (winnerId !== null) {
+                        gameService.finishGame(game.id, winnerId);
+                    } else {
+                        throw new Error("Winner ID is null");
+                    }
+                }
             }
             else{
 

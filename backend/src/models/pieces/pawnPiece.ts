@@ -50,8 +50,9 @@ class PawnPiece extends ChessPiece {
         }
         //vérification si le pion n'a pas bougé si il y a une pièce deux cases devant
         if(!this.has_moved){
+            let chessPieceInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 1}`, game);
             let chessPieceTwoInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 2}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 2}`, game);
-            if(!chessPieceTwoInfront) {
+            if(!chessPieceTwoInfront && !chessPieceInfront) {
                     slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 2}` : `${this.position[0]}${parseInt(this.position[1]) - 2}`);
             }
         }

@@ -220,6 +220,16 @@ export class GameService {
         return GameMapper.toDTOList(await gameList);
     }
 
+    public async finishGame(gameId: number, winnerId: number): Promise<GameDTO> {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count);
+            return await this.getGameById(gameId);
+        } else {
+            notFound("Game");
+        }
+    }
+
 
 
 
