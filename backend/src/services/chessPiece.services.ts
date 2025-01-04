@@ -50,7 +50,7 @@ export class ChessPieceService {
 
     public async moveTo(piece : ChessPiece ,position: string): Promise<void> {
         const oldPosition = piece.position;
-        let slots = await piece.getSlotsAvailable();
+        let slots = await piece.getSlotsAvailable(false);
         if (slots.includes(position)) {
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
                 console.log("capture");
@@ -136,7 +136,7 @@ export class ChessPieceService {
         let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: gameId, is_captured : false } });
         if (chessPiece) {
             let specificChessPiece = this.convertToSpecificPiece(chessPiece);
-            return await specificChessPiece.getSlotsAvailable();
+            return await specificChessPiece.getSlotsAvailable(false);
         } else {
             notFound("ChessPiece");
         }
@@ -147,12 +147,28 @@ export class ChessPieceService {
         return chessPiece !== null;
     }
 
+    public async isChessPieceInPositionWithDTO(position: string,game : GameDTO): Promise<boolean> {
+        if(game.gameState[position] && game.gameState[position].color){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public async isTwoPiecesInSameColor(position1: string, position2: string, gameId: number): Promise<boolean> {
         let firstChessPiece = await ChessPiece.findOne({where: {position: position1, game_id: gameId,is_captured : false}});
         let secondChessPiece = await ChessPiece.findOne({where: {position: position2, game_id: gameId,is_captured : false}});
         if (firstChessPiece && secondChessPiece) {
             return firstChessPiece.color === secondChessPiece.color;
         } else {
+            return false;
+        }
+    }
+
+    public async isTwoPiecesInSameColorWithDTO(position1: string, position2: string, game: GameDTO): Promise<boolean> {
+        if(game.gameState[position1] && game.gameState[position2]){
+            return game.gameState[position1].color === game.gameState[position2].color;
+        }else{
             return false;
         }
     }
@@ -173,13 +189,26 @@ export class ChessPieceService {
         }
         return false;
     }
-
-    public async isCheckPosition(game:GameDTO,kingPosition:string):Promise<boolean>{
+    public async getKingPosition(game:GameDTO, color: string): Promise<string> {
+        for(let position in game.gameState){
+            if(game.gameState[position].color === color && game.gameState[position].pieceType === "king"){
+                return position;
+            }
+        }
+        return "";
+    }
+    public async isCheckPosition(game:GameDTO,kingPosition:string,newPiecePosition:string[]=[]):Promise<boolean>{
         let opponentPieces = game.turnCount % 2 === 0 ? await ChessPiece.findAll({where: {color: "black", game_id: game.id}})
                                     : await ChessPiece.findAll({where: {color: "white", game_id: game.id}});
+        if(newPiecePosition.length > 0){
+            let piece = game.gameState[newPiecePosition[0]];
+            let currentPieceInThisPosition = game.gameState[newPiecePosition[1]];
+            //game.gameState[newPiecePosition[0]] = oldPiece;
+            game.gameState[newPiecePosition[1]] = piece;
+        }
         for(let piece of opponentPieces){
             let specificPiece = this.convertToSpecificPiece(piece);
-            let slots = await specificPiece.getSlotsAvailable();
+            let slots = await specificPiece.getSlotsAvailable(true,game);
             if(slots.includes(kingPosition)){
                 return true;
             }
@@ -188,36 +217,48 @@ export class ChessPieceService {
     }
 
     public async slotsAvailableForOutOfCheck(gameId: number): Promise<Map<chessPieceDto,string[]>> {
+        console.log("slotsAvailableForOutOfCheck");
         let posibilities = new Map<chessPieceDto,string[]>();
         let game = await gameService.getGameById(gameId);
         let fictiveGameMap = await gameService.createFictiveGameByOtherGame(game.id);
         let fictiveGame = fictiveGameMap.keys().next().value;
         let fictiveChessPieces = fictiveGameMap.values().next().value;
         let isWhiteTurn = game.turnCount % 2 === 0;
-        let kingPiece = isWhiteTurn ? fictiveChessPieces?.find(piece => piece.piece_type === "king" && piece.color === "white") : undefined;
+        let kingPiece = isWhiteTurn ? fictiveChessPieces?.find(piece => piece.piece_type === "king" && piece.color === "white") : fictiveChessPieces?.find(piece => piece.piece_type === "king" && piece.color === "black");
+        console.log(kingPiece, fictiveGame, fictiveChessPieces);
         if (kingPiece && fictiveGame && fictiveChessPieces) {
             if(await this.isCheckPosition(fictiveGame, kingPiece.position)){
                 let allPieces = isWhiteTurn ? fictiveChessPieces.filter(piece => piece.color === "white") : fictiveChessPieces.filter(piece => piece.color === "black");
                 for(let piece of allPieces){
                     let specificPiece = this.convertToSpecificPiece(piece);
-                    let slots = await specificPiece.getSlotsAvailable();
+                    let slots = await specificPiece.getSlotsAvailable(true);
                     for (let slot of slots){
                         let oldPosition = specificPiece.position;
+                        fictiveGame.gameState[slot]={color:specificPiece.color,pieceType:specificPiece.piece_type};
+                        fictiveGame.gameState[oldPosition]={};
                         specificPiece.position = slot;
                         let isCheck = specificPiece.piece_type === "king" ? await this.isCheckPosition(fictiveGame, specificPiece.position): await this.isCheckPosition(fictiveGame, kingPiece.position);
                         if(!isCheck){
+                            console.log("nouvelle possibilité",specificPiece.piece_type)
                             let pieceDto = ChessPieceMapper.toOutputDto(piece);
+                            pieceDto.position = oldPosition;
                             let slotsAvailable = posibilities.get(pieceDto) || [];
                             slotsAvailable.push(slot);
                             posibilities.set(pieceDto, slotsAvailable);
+
                         }
                         specificPiece.position = oldPosition;
+                        fictiveGame.gameState[oldPosition]={color:specificPiece.color,pieceType:specificPiece.piece_type};
+                        fictiveGame.gameState[slot]={};
                     }
                 }
             }
-            else{return notFound('notCheck');}
+            else{
+                console.log("notCheck");
+                return notFound('notCheck');
+            }
         }
-        
+        console.log(posibilities);
         return posibilities;
     }
 

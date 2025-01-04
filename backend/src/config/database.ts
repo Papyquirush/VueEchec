@@ -5,6 +5,7 @@ const sequelize = new Sequelize({
   define: {
     timestamps: false,
   },
+  logging: false,
   storage: "./library.sqlite", // Chemin vers la base SQLite
 });
 
