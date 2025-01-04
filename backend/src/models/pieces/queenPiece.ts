@@ -17,6 +17,8 @@ class QueenPiece extends chessPieceModel {
     public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
+        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
@@ -28,7 +30,6 @@ class QueenPiece extends chessPieceModel {
             }            
             return slotsAvailable;
         }       
-        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         //Déplacement du fou
         //haut gauche
         for(let i = parseInt(this.position[1]) + 1, j = this.position[0].charCodeAt(0) - 1; i <= 8 && j >= 97; i++, j--){
@@ -114,6 +115,9 @@ class QueenPiece extends chessPieceModel {
             if(await chessPieceServices.isChessPieceInPositionWithDTO(`${String.fromCharCode(i)}${parseInt(this.position[1])}`, game)){
                 break;
             }
+        }
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+                    return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable;
     }

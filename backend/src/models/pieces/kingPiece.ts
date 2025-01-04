@@ -90,8 +90,6 @@ class KingPiece extends chessPieceModel {
                 if(await chessPieceServices.isChessPieceInPosition('e8', this.game_id)){
                     let kingPiece = await chessPieceServices.getChessPieceByPosition('e8', this.game_id);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
-                        console.log("1");
-                        console.log(this.position);
                                 if(await chessPieceServices.isChessPieceInPosition('a8', this.game_id)){
                                     let rookPiece = await chessPieceServices.getChessPieceByPosition('a8', this.game_id);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
@@ -112,6 +110,9 @@ class KingPiece extends chessPieceModel {
                     }
                 }
             }
+        }
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+                    return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable; 
     }

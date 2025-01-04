@@ -21,7 +21,7 @@ class PawnPiece extends ChessPiece {
         return letter.charCodeAt(0) - 'a'.charCodeAt(0);
     }
 
-    public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
+    public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null,removeSlot : boolean =true): Promise<string[]> {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
         let kingPosition = await chessPieceServices.getKingPosition(game, this.color);
@@ -29,10 +29,8 @@ class PawnPiece extends ChessPiece {
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
-                console.log(piece.pieceType, this.piece_type, piece.color == this.color);
                 if (piece.pieceType == this.piece_type && piece.color == this.color && piece.position == this.position) {
                     slotsAvailable = slotsAvailable.concat(slots);
-                    console.log(slotsAvailable);
                 }
             }            
             return slotsAvailable;
@@ -47,34 +45,28 @@ class PawnPiece extends ChessPiece {
         if((this.position[1]!=='8'&& this.color=='white')||(this.position[1]!=='1'&& this.color=='black')){
             let chessPieceInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 1}`, game);
             if(!chessPieceInfront) {
-                if(!await chessPieceServices.isCheckPosition(game,kingPosition,[this.position,this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 1}` : `${this.position[0]}${parseInt(this.position[1]) - 1}`])){
                 slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 1}` : `${this.position[0]}${parseInt(this.position[1]) - 1}`);
-                }
             }
         }
         //vérification si le pion n'a pas bougé si il y a une pièce deux cases devant
         if(!this.has_moved){
             let chessPieceTwoInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 2}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 2}`, game);
             if(!chessPieceTwoInfront) {
-                if(!await chessPieceServices.isCheckPosition(game,kingPosition,[this.position,this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 2}` : `${this.position[0]}${parseInt(this.position[1]) - 2}`])){
                     slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 2}` : `${this.position[0]}${parseInt(this.position[1]) - 2}`);
-                }
             }
         }
         //vérification des pièces à prendre
         let chessPieceLeft : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, game);
         if(chessPieceLeft && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, game)) {
-            if(!await chessPieceServices.isCheckPosition(game,kingPosition,[this.position,this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`])){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`);
-            }
         }
         let chessPieceRight : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, game);
         if(chessPieceRight && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, game)){
-            if(!await chessPieceServices.isCheckPosition(game,kingPosition,[this.position,this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`])){
             slotsAvailable.push(this.color == 'white' ? `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}` : `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
-            }
         }
-
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+            return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
+        }
         return slotsAvailable;
     }
 

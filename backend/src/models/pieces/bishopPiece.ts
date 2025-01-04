@@ -67,6 +67,9 @@ class BishopPiece extends ChessPiece {
                 break;
             }
         }
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+                    return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
+        }
         return slotsAvailable;
     }
 

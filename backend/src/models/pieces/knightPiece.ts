@@ -64,6 +64,9 @@ class KnightPiece extends ChessPiece {
             && parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) + 2 <= 104){
                 slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 2)}${parseInt(this.position[1]) - 1}`);
         }
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+                    return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
+        }
         return slotsAvailable;
     }
 
