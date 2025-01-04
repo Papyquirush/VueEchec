@@ -40,6 +40,7 @@ import BoutonRotate from "./BoutonRotate.vue";
 import BoardLabels from './BoardLabels.vue';
 import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
 import { COLUMNS, ROWS, type Cell } from '@/constants';
+import { useUserConnecteService } from '@/composables/user/userConnecteService';
 
 
 const gameId = ref<string>("1");
@@ -127,7 +128,6 @@ const movePiece = async (from: string, to: string) => {
     
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
-    
 
     const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
     const newBoard = localBoard.value.map(row => [...row]);
@@ -138,7 +138,7 @@ const movePiece = async (from: string, to: string) => {
     lastMove.value = { from: fromIndices, to: toIndices };
     clearSelection();
     //isRotated.value = !isRotated.value;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 500));
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
@@ -176,11 +176,16 @@ const syncWithServer = async () => {
 
 watch(isInit, async (value) => {
   if (value) {
-    const newGame = await ChessBoardService.initializeBoard(1, 3);
+    try {
+    const idUser = useUserConnecteService().userConnecte.value.id;
+    const newGame = await ChessBoardService.initializeBoard(idUser, 3);
     currGame.value = { gameId: newGame.gameId };
     localBoard.value = newGame.board;
     gameId.value = newGame.gameId.toString();
     localStorage.setItem('currentGameId', gameId.value);
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation de la partie: Vous êtes connectez ? ", error);
+  }
 }
 });
 
