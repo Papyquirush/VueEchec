@@ -29,7 +29,7 @@
           {{ error }}
         </div>
   
-        <button type="submit" class="p-2 border hover:bg-black rounded-lg">Se connecter</button>
+        <button type="submit" class="p-2 border hover:bg-black rounded-lg ">Se connecter</button>
         
         <div class="register-link">
           <router-link to="/register">Pas encore de compte ? S'inscrire</router-link>

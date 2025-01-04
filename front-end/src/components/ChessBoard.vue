@@ -121,12 +121,15 @@ const selectPiece = async (row: number, col: number) => {
 const movePiece = async (from: string, to: string) => {
   const fromIndices = positionToIndex(from);
   const toIndices = positionToIndex(to);
-  
+
   try {
     isUpdating = true;
     
-    const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
+    await ChessBoardService.movePiece(currGame.value.gameId, from, to);
+
     
+
+    const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
     const newBoard = localBoard.value.map(row => [...row]);
     newBoard[fromIndices.row][fromIndices.col] = null;
     newBoard[toIndices.row][toIndices.col] = movingPiece;
@@ -134,10 +137,9 @@ const movePiece = async (from: string, to: string) => {
     
     lastMove.value = { from: fromIndices, to: toIndices };
     clearSelection();
-    
-    await ChessBoardService.movePiece(currGame.value.gameId, from, to);
     //isRotated.value = !isRotated.value;
-    
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
     await syncWithServer();
