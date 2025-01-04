@@ -309,8 +309,11 @@ export class ChessPieceService {
         }
         let excludedSlots = [];
         for(let slot of slotsAvailable){
+            if(game.gameState[piecePosition].pieceType === "king"){
+                kingPosition = slot;
+            }
             let oldPiece = game.gameState[slot];
-            game.gameState[slot] = {color:game.gameState[kingPosition].color,pieceType:game.gameState[kingPosition].pieceType};
+            game.gameState[slot] = {color:game.gameState[piecePosition].color,pieceType:game.gameState[piecePosition].pieceType};
             game.gameState[piecePosition] = {};
             for(let piece of opponentPieces){
                 let specificPiece = this.convertToSpecificPiece(piece);
