@@ -9,11 +9,22 @@ export function expressAuthentication(
     scopes?: string[]
 ): Promise<any> {
     if (securityName === "jwt") {
-        const token = request.body.token || request.query.token || request.headers['authorization']?.split(' ')[1];
+        const authHeader = request.headers["authorization"];
+
+        if (!authHeader) {
+            return Promise.reject(new Error("Authentication required - No token provided"));
+        }
+
+        if (!authHeader.startsWith("Bearer ")) {
+            return Promise.reject(new Error("Invalid token format - Must be Bearer token"));
+        }
+
+        const token = authHeader.split(" ")[1];
+
+        if (!token) {
+            return Promise.reject(new Error("No token provided after Bearer"));
+        }
         return new Promise((resolve, reject) => {
-            if (!token) {
-                reject("No token provided");
-            }
             jwt.verify(
                 token,
                 "your_jwt_secret_key",
