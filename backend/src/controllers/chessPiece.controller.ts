@@ -10,17 +10,16 @@ import {
   } from "../dto/chessPiece.dto";
 
 import chessPieceService, {ChessPieceService} from "../services/chessPiece.services";
-import PawnPiece from "../models/pieces/pawnPiece.model";
+import PawnPiece from "../models/pieces/pawnPiece";
 import chessPieceServices from "../services/chessPiece.services";
 import chessPieceModel from "../models/chessPiece.model";
 import {gameService} from "../services/game.services";
-import KingPiece from "../models/pieces/kingPiece.model";
+import KingPiece from "../models/pieces/kingPiece";
 
 
 
 
 @Route("chessPieces")
-@Security("jwt")
 export class ChessPieceController extends Controller {
 
     @Get("/")
@@ -46,11 +45,7 @@ export class ChessPieceController extends Controller {
       return chessPieceService.createChessPiece(pieceType, color, position, gameId);
     }
 
-    @Delete("/{game}/{position}")
-    public async deleteChessPiece(@Path() position: string,@Path() game: number): Promise<void> {
-        let chessPiece = await chessPieceService.getChessPiecesByGameAndPosition(game,position);
-        await chessPieceServices.deleteChessPiece(chessPiece.id);
-    }
+
 
 
     @Post("/move/{game}/{oldPosition}/{newPosition}")
