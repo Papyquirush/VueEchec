@@ -1,12 +1,20 @@
 import axiosInstance from '@/config/AxiosConfig';
-import { API_BASE_CONNECTION } from '@/constants';
+import { API_BASE_AUTH, API_BASE_USERS } from '@/constants';
 import type { User } from '@/models/User.model';
 
 export function useUserApi() {
   return {
     async authenticate(user: User): Promise<string> {
-      const res = await axiosInstance.post<{ token: string }>(`${API_BASE_CONNECTION}`, {
+      const res = await axiosInstance.post(`${API_BASE_AUTH}`, {
         grant_type: 'password',
+        username: user.username,
+        password: user.password,
+      });
+      console.log(res.data.token);
+      return res.data.token;
+    },
+    async register(user: User): Promise<void> {
+      const res = await axiosInstance.post(`${API_BASE_USERS}`, {
         username: user.username,
         password: user.password,
       });

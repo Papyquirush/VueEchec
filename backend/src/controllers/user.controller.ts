@@ -12,7 +12,6 @@ import { userService } from "../services/user.services";
 
 
 @Route("users")
-@Security("jwt")
 export class UserController extends Controller {
     // Récupère tous les utilisateurs
     @Get("/")
