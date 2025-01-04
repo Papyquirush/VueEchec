@@ -1,25 +1,27 @@
 <template>
   <div class="bg-blue-950"><HeaderVue/></div>
-    <div class="login-container">
-      <h2>Connexion</h2>
-      <form @submit.prevent="handleLogin" class="login-form">
-        <div class="form-group">
-          <label for="username">Nom d'utilisateur</label>
+    <div class="text-white h-screen flex gap-5 flex-col items-center justify-center">
+      <h2 class="font-bold text-xl py-50">Connexion</h2>
+      <form @submit.prevent="handleLogin" class="flex flex-col mx-[30%] p-20 gap-10 bg-blue-950 rounded-xl">
+        <div class="flex flex-col">
+          <label for="username" class="font-bold">Nom d'utilisateur</label> 
           <input 
             id="username"
             v-model="form.username"
             type="text"
             required
+            class="p-2 rounded-lg bg-white text-black"
           />
         </div>
         
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
+        <div class="flex flex-col">
+          <label for="password" class="font-bold">Mot de passe</label>
           <input 
             id="password"
             v-model="form.password"
             type="password"
             required
+            class="p-2 rounded-lg bg-white text-black"
           />
         </div>
   
@@ -27,7 +29,7 @@
           {{ error }}
         </div>
   
-        <button type="submit">Se connecter</button>
+        <button type="submit" class="p-2 border hover:bg-black rounded-lg">Se connecter</button>
         
         <div class="register-link">
           <router-link to="/register">Pas encore de compte ? S'inscrire</router-link>
@@ -74,45 +76,4 @@
   };
   </script>
   
-  <style scoped>
-  .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-  }
   
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 0.9em;
-  }
-  
-  button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  .register-link {
-    text-align: center;
-    margin-top: 10px;
-  }
-  </style>

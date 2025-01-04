@@ -1,7 +1,7 @@
 <template>
-  <BoutonInit v-model:isInit="isInit"/>
-  <BoutonRotate v-model="isRotated"/>
-  <h1 class="text-3xl text-white">Partie numéro : {{ gameId }}</h1>
+  <BoutonInit v-model:isInit="isInit" class="m-10"/>
+  <!-- <BoutonRotate v-model="isRotated"/> -->
+  <h1 class="text-3xl text-white text-center underline">Partie numéro : {{ gameId }}</h1>
   <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
     <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
       <div v-for="(cell, colIndex) in row"
@@ -136,6 +136,7 @@ const movePiece = async (from: string, to: string) => {
     clearSelection();
     
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
+    //isRotated.value = !isRotated.value;
     
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);

@@ -1,5 +1,5 @@
 <template>
-  <button @click="verif()" class="border rounded-lg bg-white text-black">Init</button>
+  <button @click="verif()" class="border rounded-lg bg-white text-black">Nouvelle partie</button>
 </template>
 
 <script setup lang="ts">
