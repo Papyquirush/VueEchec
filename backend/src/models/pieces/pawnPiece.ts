@@ -60,12 +60,40 @@ class PawnPiece extends ChessPiece {
 
         //passant
         if (lastMove && lastMovePiece.piece_type === 'pawn' && Math.abs(parseInt(lastMove.to_position[1]) - parseInt(lastMove.from_position[1])) === 2) {
-            let enPassantRow = this.color === 'white' ? '5' : '4';
-            if (this.position[1] === enPassantRow) {
-                let enPassantLeft = `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${this.color === 'white' ? '6' : '3'}`;
-                let enPassantRight = `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${this.color === 'white' ? '6' : '3'}`;
-                if (lastMove.to_position === enPassantLeft || lastMove.to_position === enPassantRight) {
-                    slotsAvailable.push(lastMove.to_position);
+            slotsAvailable.push('passant');
+            let passantColumn = lastMove.to_position[0];
+            if (this.color === 'white') {
+                let enPassantRow = '5';
+                if (this.position[1] === enPassantRow) {
+                    let enPassantLeft = `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}6`;
+                    let enPassantRight = `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}6`;
+
+
+
+                    let passantRow = parseInt(lastMove.to_position[1])+1;
+                    let passantCoordinate = `${passantColumn}${passantRow}`;
+
+                    if (passantCoordinate === enPassantLeft ) {
+                        slotsAvailable.push(enPassantLeft);
+                    }else if (passantCoordinate === enPassantRight) {
+                        slotsAvailable.push(enPassantRight);
+                    }
+                }
+            } else if (this.color === 'black') {
+                let enPassantRow = '4';
+                if (this.position[1] === enPassantRow) {
+                    let enPassantLeft = `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}3`;
+                    let enPassantRight = `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}3`;
+
+
+                    let passantRow = parseInt(lastMove.to_position[1]) - 1;
+                    let passantCoordinate = `${passantColumn}${passantRow}`;
+
+                    if (passantCoordinate === enPassantLeft) {
+                        slotsAvailable.push(enPassantLeft);
+                    } else if (passantCoordinate === enPassantRight) {
+                        slotsAvailable.push(enPassantRight);
+                    }
                 }
             }
         }
@@ -104,6 +132,16 @@ class PawnPiece extends ChessPiece {
     }
 
 
+   public async passant(position: string): Promise<void> {
+        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if(!(await this.getSlotsAvailable()).includes('passant')) {throw new Error("Le pion ne peut pas faire de passant");}
+        let chessPieceToTake = await chessPieceServices.getChessPieceByPosition(`${position[0]}${parseInt(position[1]) + (this.color == 'white' ? -1 : 1)}`, this.game_id);
+
+        if(chessPieceToTake) {
+            console.log(`PawnPiece is taking`);
+            await chessPieceServices.deleteChessPiece(chessPieceToTake.id);
+        }
+    }
 
 
 

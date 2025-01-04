@@ -57,6 +57,10 @@ export class ChessPieceService {
                     await piece.roque(piece, position);
                 }
             }
+            if(piece instanceof PawnPiece && slots.includes("passant")){
+                console.log("passant");
+                await piece.passant(position);
+            }
 
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
                 console.log("capture");
