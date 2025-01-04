@@ -101,9 +101,10 @@ export class GameService {
         let fictiveChessPieces: ChessPiece[] = [];
         for (let position in game.gameState) {
             let chessPiece = new ChessPiece();
+            chessPiece.game_id = game.id;
             chessPiece.position = position;
             chessPiece.color = game.gameState[position].color;
-            chessPiece.piece_type = game.gameState[position].type;
+            chessPiece.piece_type = game.gameState[position].pieceType;
             fictiveChessPieces.push(chessPiece);
         }
         let map = new Map<GameDTO, ChessPiece[]>();

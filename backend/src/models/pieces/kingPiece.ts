@@ -4,6 +4,7 @@ import ChessPiece from "../chessPiece.model";
 
 import chessPieceServices from "../../services/chessPiece.services";
 import {gameService} from "../../services/game.services";
+import { GameDTO } from "../../dto/game.dto";
 
 class KingPiece extends chessPieceModel {
     public static createInstance(piece_type: string, color: string, position: string, gameId: number): KingPiece {
@@ -11,63 +12,75 @@ class KingPiece extends chessPieceModel {
     }
 
     
-    public async getSlotsAvailable(): Promise<string[]> {
+    public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
         let slotsAvailable: string[] = [];
-        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
+        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
+            let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
+            for (let [piece, slots] of possibilities) {
+                console.log(piece.pieceType, this.piece_type, piece.color == this.color);
+                if (piece.pieceType == this.piece_type && piece.color == this.color) {
+                    slotsAvailable = slotsAvailable.concat(slots);
+                    console.log(slotsAvailable);
+                }
+            }            
+            return slotsAvailable;
+        }
         // Implémentation spécifique pour le roi
         //haut
-        if(parseInt(this.position[1]) + 1 <= 8){
+        if(parseInt(this.position[1]) + 1 <= 8 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${this.position[0]}${parseInt(this.position[1]) + 1}`, game)){
             slotsAvailable.push(`${this.position[0]}${parseInt(this.position[1]) + 1}`);
         }
         //bas
-        if(parseInt(this.position[1]) - 1 >= 1){
+        if(parseInt(this.position[1]) - 1 >= 1 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${this.position[0]}${parseInt(this.position[1]) - 1}`, game)){
             slotsAvailable.push(`${this.position[0]}${parseInt(this.position[1]) - 1}`);
         }
         //gauche
-        if(this.position[0].charCodeAt(0) - 1 >= 97){
+        if(this.position[0].charCodeAt(0) - 1 >= 97 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1])}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1])}`);
         }
         //droite
-        if(this.position[0].charCodeAt(0) + 1 <= 104){
+        if(this.position[0].charCodeAt(0) + 1 <= 104 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1])}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1])}`);
         }
         //haut gauche
-        if(parseInt(this.position[1]) + 1 <= 8 && this.position[0].charCodeAt(0) - 1 >= 97){
+        if(parseInt(this.position[1]) + 1 <= 8 && this.position[0].charCodeAt(0) - 1 >= 97 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) + 1}`);
         }
         //haut droite
-        if(parseInt(this.position[1]) + 1 <= 8 && this.position[0].charCodeAt(0) + 1 <= 104){
+        if(parseInt(this.position[1]) + 1 <= 8 && this.position[0].charCodeAt(0) + 1 <= 104  && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) + 1}`);
         }
         //bas gauche
-        if(parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) - 1 >= 97){
+        if(parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) - 1 >= 97 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}${parseInt(this.position[1]) - 1}`);
         }
         //bas droite
-        if(parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) + 1 <= 104){
+        if(parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) + 1 <= 104 && !await chessPieceServices.isTwoPiecesInSameColorWithDTO(this.position, `${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`, game)){
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
         }
         //roque
         if(!this.has_moved){
             if(this.color == 'white'){
-                if(await chessPieceServices.isChessPieceInPosition('e1', this.game_id)){
+                if(await chessPieceServices.isChessPieceInPositionWithDTO('e1', game)){
                     let kingPiece = await chessPieceServices.getChessPieceByPosition('e1', this.game_id);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
                         //grand roque
-                        if(await chessPieceServices.isChessPieceInPosition('a1', this.game_id)){
+                        if(await chessPieceServices.isChessPieceInPositionWithDTO('a1', game)){
                             let rookPiece = await chessPieceServices.getChessPieceByPosition('a1', this.game_id);
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                if(!await chessPieceServices.isChessPieceInPosition('b1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d1', this.game_id)){
+                                if(!await chessPieceServices.isChessPieceInPositionWithDTO('b1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('c1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('d1', game)){
                                     slotsAvailable.push('c1');
                                     slotsAvailable.push('roque');
                                 }
                             }
                         }
                         //petit roque
-                        if(await chessPieceServices.isChessPieceInPosition('h1', this.game_id)){
+                        if(await chessPieceServices.isChessPieceInPositionWithDTO('h1', game)){
                             let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', this.game_id);
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                if(!await chessPieceServices.isChessPieceInPosition('f1', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g1', this.game_id)){
+                                if(!await chessPieceServices.isChessPieceInPositionWithDTO('f1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('g1', game)){
                                     slotsAvailable.push('g1');
                                     slotsAvailable.push('roque');
                                 }
@@ -102,6 +115,9 @@ class KingPiece extends chessPieceModel {
                 }
             }
         }
+        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+                    return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
+        }
         return slotsAvailable; 
     }
 
@@ -114,7 +130,9 @@ class KingPiece extends chessPieceModel {
     public async roque(piece : ChessPiece ,position: string): Promise<void> {
         if(!await chessPieceServices.isTurn(piece.game_id, piece.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         const oldPosition = piece.position;
-        let slots = await piece.getSlotsAvailable();
+
+        let slots = await piece.getSlotsAvailable(false);
+
         if(slots.includes("roque")){
         if(piece.color == 'white') {
             if (position == 'c1') {
