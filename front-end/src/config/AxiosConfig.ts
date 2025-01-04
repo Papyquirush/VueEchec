@@ -1,11 +1,16 @@
 import { useUserConnecteService } from '@/composables/user/userConnecteService';
 import axios, { type InternalAxiosRequestConfig } from 'axios';
+import { API_BASE_URL } from '@/constants';
 
 const { userConnecte } = useUserConnecteService();
-const axiosInstance = axios.create({});
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+});
 
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  config.headers['Authorization'] = `Bearer ${userConnecte.value.token}`;
+  if (userConnecte.value.token) {
+    config.headers['Authorization'] = `Bearer ${userConnecte.value.token}`;
+  }
   return config;
 });
 

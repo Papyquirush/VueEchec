@@ -1,6 +1,7 @@
 export const API_BASE_URL = 'http://localhost:8000';
 export const API_GAME_URL = '/games/';
-export const API_BASE_CONNECTION = '';
+export const API_BASE_AUTH = '/auth';
+export const API_BASE_USERS = '/users';
 export const API_SLOTS_AVAILABLE = '/chessPieces/slots-available/';
 export const API_MOVE_PIECE = '/chessPieces/move/';
 
