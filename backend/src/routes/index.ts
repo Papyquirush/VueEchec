@@ -149,7 +149,6 @@ const models: TsoaRoute.Models = {
     "AuthenticationInputDTO": {
         "dataType": "refObject",
         "properties": {
-            "grant_type": {"dataType":"string","required":true},
             "username": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
         },
@@ -581,6 +580,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getLastGame',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getWinningPercentage: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.get('/games/winningPercentage/:gameId',
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getWinningPercentage)),
+
+            async function GameController_getWinningPercentage(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getWinningPercentage, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getWinningPercentage',
                 controller,
                 response,
                 next,

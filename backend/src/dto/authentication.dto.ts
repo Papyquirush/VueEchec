@@ -3,6 +3,9 @@ export interface AuthenticationInputDTO {
     password: string;
 }
 
+
+
+
 export interface AuthenticationOutputDTO {
     message : string;
     token? : string;

@@ -67,6 +67,16 @@ export class MoveService {
         }
     }
 
+
+    public async getLastMove(gameId: number): Promise<MoveDto|null> {
+        const move = await Move.findOne({ where: { game_id: gameId }, order: [['move_number', 'DESC']] });
+        if (!move) {
+            return null;
+        }
+        return MoveMapper.toOutputDto(move);
+    }
+
+
 }
 
 export default new MoveService();
