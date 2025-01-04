@@ -307,8 +307,7 @@ export class ChessPieceService {
                 opponentPieces.push(piece);
             }
         }
-        let opponentPieces = game.turnCount % 2 === 0 ? await ChessPiece.findAll({where: {color: "black", game_id: game.id}})
-                                    : await ChessPiece.findAll({where: {color: "white", game_id: game.id}});
+
         let excludedSlots = [];
         for(let slot of slotsAvailable){
             if(game.gameState[piecePosition].pieceType === "king"){
@@ -326,7 +325,6 @@ export class ChessPieceService {
                         excludedSlots.push(slot);
                     }
                 }
-                continue;
             }
             game.gameState[piecePosition] = {color:game.gameState[slot].color,pieceType:game.gameState[slot].pieceType};
             game.gameState[slot] = oldPiece;
