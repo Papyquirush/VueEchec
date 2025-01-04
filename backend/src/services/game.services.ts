@@ -101,9 +101,10 @@ export class GameService {
         let fictiveChessPieces: ChessPiece[] = [];
         for (let position in game.gameState) {
             let chessPiece = new ChessPiece();
+            chessPiece.game_id = game.id;
             chessPiece.position = position;
             chessPiece.color = game.gameState[position].color;
-            chessPiece.piece_type = game.gameState[position].type;
+            chessPiece.piece_type = game.gameState[position].pieceType;
             fictiveChessPieces.push(chessPiece);
         }
         let map = new Map<GameDTO, ChessPiece[]>();
@@ -191,6 +192,35 @@ export class GameService {
             black: blackPercentage
         };
     }
+
+
+    public async getPublicGames(): Promise<GameDTO[]> {
+
+        let gameList = Game.findAll({
+            where: {
+                is_public: true
+            }
+        });
+
+        return GameMapper.toDTOList(await gameList);
+
+    }
+
+    public async getPrivateGames(userId: number): Promise<GameDTO[]> {
+        let gameList = Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ],
+                is_public: false
+            }
+        });
+
+        return GameMapper.toDTOList(await gameList);
+    }
+
+
 
 
 }
