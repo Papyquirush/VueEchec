@@ -52,19 +52,29 @@ export class ChessPieceService {
         const oldPosition = piece.position;
         let slots = await piece.getSlotsAvailable();
         if (slots.includes(position)) {
+            if (piece instanceof KingPiece && slots.includes("roque") && ( piece.color=="white" && (position === "g1" || position === "c1") || (piece.color=="black" && (position === "g8" || position === "c8"))) ) {
+                {
+                    await piece.roque(piece, position);
+                }
+            }
+            if(piece instanceof PawnPiece && slots.includes("passant")){
+                console.log("passant");
+                await piece.passant(position);
+            }
+
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
                 console.log("capture");
                 let chessPiece = await this.getChessPieceByPosition(position, piece.game_id);
                 await this.deleteChessPiece(chessPiece.id);
             }
 
-
             piece.position = position;
             piece.has_moved = true;
             await gameService.nextTurn(piece.game_id, oldPosition, position);
             await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
+            }
         }
-    }
+
 
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
         let chessPiece = await ChessPiece.findOne({where: {position: position, game_id: gameId, is_captured: false}});

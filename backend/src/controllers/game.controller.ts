@@ -35,6 +35,12 @@ export class GameController extends Controller {
     }
 
 
+    @Get("/winningPercentage/{gameId}")
+    public async getWinningPercentage(@Path() gameId:number): Promise<{ white: number; black: number }>
+    {
+        return gameService.getWinningPercentages(gameId);
+    }
+
     
 
 
