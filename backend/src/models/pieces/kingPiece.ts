@@ -15,14 +15,12 @@ class KingPiece extends chessPieceModel {
     public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
-        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if(!toCheck &&!await chessPieceServices.isTurnWithDTO(game, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
-                console.log(piece.pieceType, this.piece_type, piece.color == this.color);
                 if (piece.pieceType == this.piece_type && piece.color == this.color) {
                     slotsAvailable = slotsAvailable.concat(slots);
-                    console.log(slotsAvailable);
                 }
             }            
             return slotsAvailable;
@@ -64,11 +62,11 @@ class KingPiece extends chessPieceModel {
         if(!this.has_moved){
             if(this.color == 'white'){
                 if(await chessPieceServices.isChessPieceInPositionWithDTO('e1', game)){
-                    let kingPiece = await chessPieceServices.getChessPieceByPosition('e1', this.game_id);
+                    let kingPiece = await chessPieceServices.getChessPieceByPositionWithDTO('e1', game);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
                         //grand roque
                         if(await chessPieceServices.isChessPieceInPositionWithDTO('a1', game)){
-                            let rookPiece = await chessPieceServices.getChessPieceByPosition('a1', this.game_id);
+                            let rookPiece = await chessPieceServices.getChessPieceByPositionWithDTO('a1', game);
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                 if(!await chessPieceServices.isChessPieceInPositionWithDTO('b1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('c1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('d1', game)){
                                     slotsAvailable.push('c1');
@@ -78,7 +76,7 @@ class KingPiece extends chessPieceModel {
                         }
                         //petit roque
                         if(await chessPieceServices.isChessPieceInPositionWithDTO('h1', game)){
-                            let rookPiece = await chessPieceServices.getChessPieceByPosition('h1', this.game_id);
+                            let rookPiece = await chessPieceServices.getChessPieceByPositionWithDTO('h1', game);
                             if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
                                 if(!await chessPieceServices.isChessPieceInPositionWithDTO('f1', game) && !await chessPieceServices.isChessPieceInPositionWithDTO('g1', game)){
                                     slotsAvailable.push('g1');
@@ -90,21 +88,21 @@ class KingPiece extends chessPieceModel {
                 }
             }else{
                 if(await chessPieceServices.isChessPieceInPosition('e8', this.game_id)){
-                    let kingPiece = await chessPieceServices.getChessPieceByPosition('e8', this.game_id);
+                    let kingPiece = await chessPieceServices.getChessPieceByPositionWithDTO('e8', game);
                     if(kingPiece.piece_type == 'king' && !this.has_moved){
-                                if(await chessPieceServices.isChessPieceInPosition('a8', this.game_id)){
-                                    let rookPiece = await chessPieceServices.getChessPieceByPosition('a8', this.game_id);
+                                if(await chessPieceServices.getChessPieceByPositionWithDTO('a8', game)){
+                                    let rookPiece = await chessPieceServices.getChessPieceByPositionWithDTO('a8', game);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                        if(!await chessPieceServices.isChessPieceInPosition('b8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('c8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('d8', this.game_id)){
+                                        if(!await chessPieceServices.getChessPieceByPositionWithDTO('b8', game) && !await chessPieceServices.getChessPieceByPositionWithDTO('c8', game) && !await chessPieceServices.getChessPieceByPositionWithDTO('d8',game)){
                                             slotsAvailable.push('c8');
                                             slotsAvailable.push('roque');
                                         }
                                     }
                                 }
-                                if(await chessPieceServices.isChessPieceInPosition('h8', this.game_id)){
-                                    let rookPiece = await chessPieceServices.getChessPieceByPosition('h8', this.game_id);
+                                if(await chessPieceServices.getChessPieceByPositionWithDTO('h8', game)){
+                                    let rookPiece = await chessPieceServices.getChessPieceByPositionWithDTO('h8', game);
                                     if(rookPiece.piece_type == 'rook' && !rookPiece.has_moved){
-                                        if(!await chessPieceServices.isChessPieceInPosition('f8', this.game_id) && !await chessPieceServices.isChessPieceInPosition('g8', this.game_id)){
+                                        if(!await chessPieceServices.getChessPieceByPositionWithDTO('f8', game) && !await chessPieceServices.getChessPieceByPositionWithDTO('g8', game)){
                                             slotsAvailable.push('g8');
                                             slotsAvailable.push('roque');
                                         }
@@ -115,7 +113,7 @@ class KingPiece extends chessPieceModel {
                 }
             }
         }
-        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+        if(await chessPieceServices.isTurnWithDTO(game, this.color) && !toCheck){
                     return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable; 

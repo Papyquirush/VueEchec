@@ -11,7 +11,7 @@ class KnightPiece extends ChessPiece {
     public async getSlotsAvailable(toCheck : boolean, gameDto:GameDTO |null =null): Promise<string[]> {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
-        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if(!toCheck &&!await chessPieceServices.isTurnWithDTO(game, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
@@ -64,7 +64,7 @@ class KnightPiece extends ChessPiece {
             && parseInt(this.position[1]) - 1 >= 1 && this.position[0].charCodeAt(0) + 2 <= 104){
                 slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 2)}${parseInt(this.position[1]) - 1}`);
         }
-        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+        if(await chessPieceServices.isTurnWithDTO(game, this.color)&& !toCheck ){
                     return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable;

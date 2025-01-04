@@ -25,7 +25,7 @@ class PawnPiece extends ChessPiece {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
         let kingPosition = await chessPieceServices.getKingPosition(game, this.color);
-        if(!toCheck &&!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
+        if(!toCheck &&!await chessPieceServices.isTurnWithDTO(game, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
@@ -68,7 +68,7 @@ class PawnPiece extends ChessPiece {
 
         let lastMove = await moveServices.getLastMove(this.game_id);
         if(!lastMove) {return slotsAvailable;}
-        let lastMovePiece = await chessPieceServices.getChessPieceByPosition(lastMove.to_position, this.game_id);
+        let lastMovePiece = await chessPieceServices.getChessPieceByPositionWithDTO(lastMove.to_position, game);
 
         //passant
         if (lastMove && lastMovePiece.piece_type === 'pawn' && Math.abs(parseInt(lastMove.to_position[1]) - parseInt(lastMove.from_position[1])) === 2) {
@@ -93,7 +93,6 @@ class PawnPiece extends ChessPiece {
                 }
             } else if (this.color === 'black' && this.position[1] === '4') {
                 slotsAvailable.push("passant");
-                console.log('black');
                 let enPassantRow = '4';
                 if (this.position[1] === enPassantRow) {
                     let enPassantLeft = `${String.fromCharCode(this.position[0].charCodeAt(0) - 1)}3`;
@@ -112,7 +111,7 @@ class PawnPiece extends ChessPiece {
             }
         }
 
-        if(await chessPieceServices.isTurn(this.game_id, this.color) ){
+        if(await chessPieceServices.isTurnWithDTO(game, this.color)&& !toCheck){
             return await chessPieceServices.removeSlotAvailablesForInCheck(game,slotsAvailable,this.position);
         }
         return slotsAvailable;
