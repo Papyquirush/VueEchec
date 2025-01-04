@@ -10,6 +10,7 @@ export function useUserApi() {
         password: user.password,
       });
       console.log(res.data.token);
+      localStorage.setItem('authToken', res.data.token);
       return res.data.token;
     },
     async register(user: User): Promise<void> {
