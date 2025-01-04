@@ -225,6 +225,8 @@ export class GameService {
         }
 
         return maxPiecesCount;
+    }
+
     public async getPublicGames(): Promise<GameDTO[]> {
 
         let gameList = Game.findAll({

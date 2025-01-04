@@ -665,10 +665,33 @@ export function RegisterRoutes(app: Router) {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };
         app.get('/games/pieceCaptured/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getPieceCaptured)),
 
             async function GameController_getPieceCaptured(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getPieceCaptured, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getPieceCaptured',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsGameController_getPublicGames: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/games/public/games',
