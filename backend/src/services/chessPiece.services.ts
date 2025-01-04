@@ -96,6 +96,7 @@ export class ChessPieceService {
             piece.game_id = game.id;
             return this.convertToSpecificPiece(piece);
         }else{
+            
             notFound("ChessPiece");
         }
     }

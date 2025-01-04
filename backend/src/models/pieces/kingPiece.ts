@@ -59,7 +59,7 @@ class KingPiece extends chessPieceModel {
             slotsAvailable.push(`${String.fromCharCode(this.position[0].charCodeAt(0) + 1)}${parseInt(this.position[1]) - 1}`);
         }
         //roque
-        if(!this.has_moved){
+        if(!this.has_moved && !toCheck){
             if(this.color == 'white'){
                 if(await chessPieceServices.isChessPieceInPositionWithDTO('e1', game)){
                     let kingPiece = await chessPieceServices.getChessPieceByPositionWithDTO('e1', game);

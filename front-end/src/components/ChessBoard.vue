@@ -138,7 +138,7 @@ const movePiece = async (from: string, to: string) => {
     lastMove.value = { from: fromIndices, to: toIndices };
     clearSelection();
     //isRotated.value = !isRotated.value;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
