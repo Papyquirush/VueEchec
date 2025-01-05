@@ -37,22 +37,17 @@ import { computed } from 'vue'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useUserConnecteService } from '@/composables/user/userConnecteService'
+
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { userConnecte } = useUserConnecteService()
 
-const handleLogout = (event: Event) => {
-  event.preventDefault()
-  userConnecte.value = { username: '', password: '' }
-  router.push('/login')
-}
-
 const navigation = [
   { name: 'Vue Échecs', href: '/', current: true },
   { name: 'Jouer', href: '/play', current: false },
-  { name: 'Statistiques', href: '#', current: false },
   { name: 'Mes parties', href: '#', current: false },
+  { name: 'Profil', href: '/profile', current: false },
 ]
 
 const filteredNavigation = computed(() => {

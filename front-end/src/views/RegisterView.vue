@@ -43,10 +43,11 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserApi } from '@/composables/user/userApi';
+  import { useUserService } from '@/composables/user/userService';
   
   const router = useRouter();
   const userApi = useUserApi();
-  
+  const userService = useUserService();
   const form = ref({
     username: '',
     password: '',
@@ -58,7 +59,7 @@
   const handleRegister = async () => {
     try {
       error.value = '';
-      await userApi.register(form.value);
+      await userService.register(form.value);
       router.push('/login');
     } catch (e) {
       error.value = 'Erreur lors de l\'inscription';

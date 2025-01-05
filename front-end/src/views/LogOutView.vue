@@ -12,7 +12,7 @@
 
     onMounted(() => {
         localStorage.removeItem('authToken');
-        userConnecte.value = { username: '', password: '', token: '' };
+        userConnecte.value = { username: '', password: '', token: '', id: 0 };
         router.push('/login');
     });
   
