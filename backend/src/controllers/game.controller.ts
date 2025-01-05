@@ -57,6 +57,12 @@ export class GameController extends Controller {
         return gameService.getPublicGames();
     }
 
+    @Get("/user/{userId}")
+    public async getUserGames(@Path() userId:number): Promise<GameDTO[]>
+    {
+        return gameService.getUserGames(userId);
+    }
+
     @Get("/private/{userId}")
     public async getPrivateGames(@Path() userId:number): Promise<GameDTO[]>
     {

@@ -301,6 +301,17 @@ export class GameService {
     }
 
 
+    public async getUserGames(userId: number) {
+        let gameList = Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ]
+            }
+        })
+        return GameMapper.toDTOList(await gameList);
+    }
 }
 
 export const gameService = new GameService();
