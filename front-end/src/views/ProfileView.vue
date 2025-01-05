@@ -84,13 +84,13 @@ onMounted(async () => {
     }
 
     try {
-       // nbGames.value = await userService.getNbGames(userConnecte.value.id)
+       nbGames.value = await userService.getNbGames(userConnecte.value.id)
     } catch (error) {
         console.error("Erreur lors de la récupération du nombre de parties, Vous êtes connectés ?", error)
     }
 
     try {
-        //nbCaptures.value = await userService.getPiecesCaptured(userConnecte.value.id)
+        nbCaptures.value = await userService.getPiecesCaptured(userConnecte.value.id)
     } catch (error) {
         console.error("Erreur lors de la récupération du nombre de pièces capturées, Vous êtes connectés ?", error)
     }

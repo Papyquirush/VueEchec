@@ -21,9 +21,9 @@ export function useUserService() {
     async getPiecesCaptured(idUser: number): Promise<number> {
       return userApi.getPiecesCaptured(idUser);
     },
-    // async getNbGames(idUser: number): Promise<number> {
-    //   return userApi.getNbGames(idUser);
-    // }
+    async getNbGames(idUser: number): Promise<number> {
+      return userApi.getNbGames(idUser);
+    },
     async getLeaderboard() {
       return userApi.getLeaderboard();
     }
