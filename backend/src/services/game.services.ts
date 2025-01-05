@@ -95,9 +95,7 @@ export class GameService {
                 await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,game.count_rule_fifty_moves);
             }
             console.log(id)
-            if(await this.isPat(id)){
-                await this.finishGame(id,undefined);
-            }
+
         }
     }
 
@@ -145,9 +143,7 @@ export class GameService {
 
 
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,1);
-            if(await this.isPat(id)){
-                await this.finishGame(id,undefined);
-            }
+
         }
         
     }
@@ -170,9 +166,7 @@ export class GameService {
             }else{
                 await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,game.count_rule_fifty_moves);
             }
-            if(await this.isPat(id)){
-                await this.finishGame(id,undefined);
-            }
+
         }
        
     }
