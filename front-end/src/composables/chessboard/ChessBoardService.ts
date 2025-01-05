@@ -3,10 +3,12 @@ import type{ Cell } from '@/constants';
 
 export const ChessBoardService = {
   async initializeBoard(playerWhiteId: number, playerBlackId: number) {
+    console.log('initializeBoard', playerWhiteId, playerBlackId);
     const currGame = await ChessBoardApi.initializeGame(playerWhiteId, playerBlackId);
+    console.log('currGame', currGame);
     const gameId = currGame.id;
-    const gameState = await ChessBoardApi.getGameState(gameId);
-
+    const gameState = currGame.gameState;
+    console.log('gameState', gameState);
 
 
     const board:Cell[][] = Array(8)
@@ -21,6 +23,7 @@ export const ChessBoardService = {
   },
 
   async loadBoard(gameId: number) {
+    console.log('loadBoard', gameId);
     try {
 
       const { gameState } = await ChessBoardApi.getGameState(gameId);
