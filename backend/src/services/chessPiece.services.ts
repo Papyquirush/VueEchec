@@ -152,7 +152,7 @@ export class ChessPieceService {
         }
     }
 
-    private convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
+    public convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
         let PieceClass = pieceTypeMap[chessPiece.piece_type.toLowerCase()] || ChessPiece;
         return Object.assign(new PieceClass(), chessPiece);
     }
@@ -208,6 +208,7 @@ export class ChessPieceService {
     }
 
     public async isCheck(gameId: number): Promise<boolean> {
+        console.log("coucou",gameId);
         let game = await gameService.getGameById(gameId);
         if(game){
             let kingPiece = game.turnCount % 2 === 0 ? await ChessPiece.findOne({where: {piece_type: "king", color: "white", game_id: gameId}})

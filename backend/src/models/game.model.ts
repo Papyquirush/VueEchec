@@ -81,12 +81,11 @@ Game.init(
         count_rule_fifty_moves: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 0,
         },
     },
     {
         sequelize,
-        tableName: 'Game',
+        tableName: 'Game',        
     }
 );
 
