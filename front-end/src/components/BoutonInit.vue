@@ -9,8 +9,6 @@ const isInit = defineModel<boolean>('isInit');
 
 function verif () {
   isInit.value = !isInit.value;
-  console.log(useUserConnecteService().userConnecte.value);
-  
 } 
 </script> 
 

@@ -304,7 +304,8 @@ onMounted(async () => {
   grid-template-rows: repeat(8, 5vw);
   justify-content: center;
   align-items: center;
-  padding-top: 5%;
+  padding-top: 2%;
+  padding-bottom: 2%;
   transition: transform 0.5s ease; 
 }
 
