@@ -11,11 +11,34 @@ export const ChessBoardApi = {
     return response.data;
   },
 
+
+  async initializeGameReview(playerWhiteId: number, playerBlackId: number, isPublic: boolean = false,isReview: boolean = true) {
+    const response = await axiosInstance.post(API_BASE_URL+API_GAME_URL, {
+      playerWhiteId,
+      playerBlackId,
+      isPublic,
+      isReview
+    });
+    return response.data;
+  },
+
   async getGameState(gameId: number) {
     try {
-      
       const response = await axiosInstance.get(`${API_BASE_URL}${API_GAME_URL}${gameId}`);
       return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 500) {
+        throw new Error('Partie non trouvée');
+      }
+      throw error;
+    }
+  },
+
+
+  async getGameStateReview(gameId: number,move : number) {
+    try {
+      const response = await axiosInstance.get(`${API_BASE_URL}${API_GAME_URL}gameStates/${gameId}}`);
+      return response.data[move-1];
     } catch (error: any) {
       if (error.response?.status === 500) {
         throw new Error('Partie non trouvée');
@@ -57,6 +80,7 @@ export const ChessBoardApi = {
   async patchGameToPublic(gameId: number) {
     const response = await axiosInstance.patch(`${API_BASE_URL}${API_GAME_URL}${API_MAKE_PUBLIC}${gameId}`);
     return response.data;
-  }
-  
+  },
+
+
 };

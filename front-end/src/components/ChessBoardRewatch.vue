@@ -199,8 +199,8 @@ const loadGame = async () => {
     gameId.value = savedGameId;
   }
 
-  const loadedGame = await ChessBoardService.loadBoard(Number(gameId.value));
-  currGame.value = { gameId: loadedGame.gameId };
+  const loadedGame = await ChessBoardService.loadBoardReview(390,1);
+  currGame.value = { gameId: /*loadedGame.gameId*/ 390};
   localBoard.value = loadedGame.board;
 
   localStorage.setItem('currentGameId', currGame.value.gameId);
