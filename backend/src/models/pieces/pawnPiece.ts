@@ -70,7 +70,7 @@ class PawnPiece extends ChessPiece {
 
         if(!toCheck){
             let lastMove = await moveServices.getLastMove(this.game_id);
-            if(!lastMove) {return slotsAvailable;}
+            if(!lastMove || lastMove.to_position.length != 2) {return slotsAvailable;}
             let lastMovePiece = await chessPieceServices.getChessPieceByPosition(lastMove.to_position, game.id);
             //passant
             if (lastMove && lastMovePiece.piece_type === 'pawn' && Math.abs(parseInt(lastMove.to_position[1]) - parseInt(lastMove.from_position[1])) === 2) {

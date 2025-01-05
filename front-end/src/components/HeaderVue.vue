@@ -55,6 +55,7 @@ const filteredNavigation = computed(() => {
 const nav = [...navigation]
 if (!userConnecte.value.token) {
   nav.push({ name: 'Connexion', href: '/login', current: false })
+  nav[1].href = '/login'
 } else {
   nav.push({ name: 'Déconnexion', href: '/logout', current: false })
 }

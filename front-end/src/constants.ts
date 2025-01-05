@@ -13,6 +13,7 @@ export const API_LEADERBOARD = '/classement/winrate';
 export const API_PUBLIC_GAMES = 'public/games';
 export const API_GAMES_OF_USERS = 'user/';
 export const API_MAKE_PUBLIC = 'makePublic/';
+export const API_TOTAL = 'total/';
 
 export const COLUMNS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 export const ROWS = ['8', '7', '6', '5', '4', '3', '2', '1'];
