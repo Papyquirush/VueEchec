@@ -7,6 +7,8 @@ import  GameState  from "../models/object/gamestate";
 import moveServices from "./move.services";
 import gamestate from "../models/object/gamestate";
 import ChessPiece from "../models/chessPiece.model";
+import e from "express";
+import chessPieceServices from "./chessPiece.services";
 
 export class GameService {
     public async getGames(): Promise<GameDTO[]> {
@@ -39,12 +41,12 @@ export class GameService {
         }));
         let gameState = new GameState(game.id);
         await gameState.initStartGame(game.id);
-        return await this.updateGame(game.id, playerWhiteId, playerBlackId, isPublic, gameState.pieces, false, undefined, 0,undefined);
+        return await this.updateGame(game.id, playerWhiteId, playerBlackId, isPublic, gameState.pieces, false, undefined, 0,undefined,0);
     }
 
     public async updateGame(id: number, playerWhiteId: number | undefined, playerBlackId: number | undefined, isPublic: boolean, gameState: {
         [key: string]: { [key: string]: string }
-    }, isFinished: boolean, winnerId: number | undefined, turnCount: number,finished_at:Date |undefined): Promise<GameDTO> {
+    }, isFinished: boolean, winnerId: number | undefined, turnCount: number,finished_at:Date |undefined,count_rule_fifty_moves:number|undefined): Promise<GameDTO> {
         let game = await Game.findByPk(id);
         if (game) {
             if (playerWhiteId) game.player_white_id = playerWhiteId;
@@ -54,6 +56,7 @@ export class GameService {
             if (isFinished) game.is_finished = isFinished;
             if (winnerId) game.winner_id = winnerId;
             if (finished_at) game.finished_at = finished_at;
+            if (count_rule_fifty_moves) game.count_rule_fifty_moves = count_rule_fifty_moves;
             game.turn_count = turnCount;
             await game.save();
             const gameDTO = GameMapper.toDTO(game);
@@ -64,7 +67,7 @@ export class GameService {
         }
     }
 
-    public async nextTurn(id: number, oldPosition: string, position: string) {
+    public async nextTurn(id: number, oldPosition: string, position: string,resetRuleFiftyMoves:boolean): Promise<void> {
         let game = await Game.findByPk(id);
         if (game) {
             let gameState = new GameState(game.id);
@@ -85,8 +88,12 @@ export class GameService {
                     await moveServices.createMove(game.id, game.turn_count, game.player_black_id, chessPiece.id, oldPosition, position, 0);
                 }
             }
-
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
+            resetRuleFiftyMoves ? game.count_rule_fifty_moves = 1 : game.count_rule_fifty_moves++;
+            if(game.count_rule_fifty_moves>=50){
+                await this.finishGame(id,undefined);
+            }else{
+                await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,game.count_rule_fifty_moves);
+            }
         }
     }
 
@@ -99,7 +106,7 @@ export class GameService {
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
             await gameState.updateGameStateAfterDelete(position);
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count,undefined);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count,undefined,game.count_rule_fifty_moves);
 
         }
     }
@@ -132,7 +139,8 @@ export class GameService {
 
             await gameState.updateGameStateAfterPromote(position, pieceType);
 
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
+
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,1);
         }
     }
 
@@ -148,8 +156,12 @@ export class GameService {
                 : JSON.parse(JSON.stringify(game.game_state));
 
             await gameState.updateGameStateAfterRoque(oldPosition, position, oldRookPosition, rookPosition);
-
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
+            game.count_rule_fifty_moves++;
+            if(game.count_rule_fifty_moves>=50){
+                await this.finishGame(id,undefined);
+            }else{
+                await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined,game.count_rule_fifty_moves);
+            }
         }
 
     }
@@ -259,7 +271,7 @@ export class GameService {
         let game = await Game.findByPk(gameId);
         let finished_at= new Date();
         if (game) {
-            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count,finished_at);
+            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count,finished_at,game.count_rule_fifty_moves);
             return await this.getGameById(gameId);
         } else {
             notFound("Game");
@@ -314,6 +326,27 @@ export class GameService {
             }
         })
         return GameMapper.toDTOList(await gameList);
+    }
+
+    public async isPat(gameId: number) {
+        let game = await this.getGameById(gameId);
+        let turnWhite = game.turnCount % 2 === 0;
+        let pieces = [];
+        for (let position in game.gameState) {
+            if(game.gameState[position].color === (turnWhite ? 'white' : 'black')) {
+                let piece = new ChessPiece();
+                piece.position = position;
+                piece.color = game.gameState[position].color;
+                piece.piece_type = game.gameState[position].type;
+                pieces.push(piece);
+            }
+        }
+        for (let piece of pieces) {
+            let slots = await chessPieceServices.getSlotsAvailable(piece.position, gameId);
+            if(slots.length > 0) {
+                return false;
+            }
+        }
     }
 }
 

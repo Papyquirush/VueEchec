@@ -15,6 +15,7 @@ export interface GameDTO {
     turnCount: number;         // Nombre de tours
     createdAt: Date;           // Date de création de la partie
     finishedAt: Date;           // Dernière mise à jour de la partie
+    countRuleFiftyMoves: number; // Nombre de coups sans prise de pièce
 }
 
 export interface UpdateGameDTO {
@@ -23,4 +24,5 @@ export interface UpdateGameDTO {
     winnerId?: number | null;           // ID du gagnant si la partie est terminée
     finishedAt?: Date;                   // Date de la fin de la partie
     turnCount?: number;        // Nombre de tours
+    countRuleFiftyMoves?: number; // Nombre de coups sans prise de pièce
 }
