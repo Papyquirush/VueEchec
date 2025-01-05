@@ -10,14 +10,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import HeaderVue from '@/components/HeaderVue.vue'
-import {Tab} from "@headlessui/vue";
-export default defineComponent({
-  components: {
-    Tab,
-    HeaderVue
-  }
-})
 </script>

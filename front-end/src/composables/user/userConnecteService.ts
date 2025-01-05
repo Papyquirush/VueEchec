@@ -5,6 +5,11 @@ const userConnecte = ref<User>({ username: '', password: '' , token: '' , id: 0}
 
 export function useUserConnecteService() {
 
+  const username = localStorage.getItem('username');
+  if (username) {
+    userConnecte.value.username = username;
+  }
+
   const token = localStorage.getItem('authToken');
   if (token) {
     userConnecte.value.token = token;
