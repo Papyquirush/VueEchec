@@ -11,6 +11,7 @@ export function useUserApi() {
       });
       console.log(res.data.token);
       localStorage.setItem('authToken', res.data.token);
+      localStorage.setItem('idUser', res.data.userId);
       return res.data.token;
     },
     async register(user: User): Promise<void> {
