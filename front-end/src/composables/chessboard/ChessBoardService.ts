@@ -16,7 +16,6 @@ export const ChessBoardService = {
       const { row, col } = mapPositionToIndex(position);
       board[row][col] = piece as Cell;
     }
-    console.log("board : ",board);
     return { gameId, board };
   },
 
@@ -26,12 +25,11 @@ export const ChessBoardService = {
 
   async loadBoard(gameId: number) {
     try {
-      console.log("gameId lb : ",gameId);
       
       const { gameState } = await ChessBoardApi.getGameState(gameId);
 
       if (!gameState) {
-        throw new Error('Invalid game state received from server');
+        throw new Error('Le gamestate n\'est pas valide ; Porblème de serveur ?');
       }
 
       const board = Array(8)
@@ -46,7 +44,7 @@ export const ChessBoardService = {
       return { gameId, board };
 
     } catch (error) {
-      console.error('Error loading board:', error);
+      console.error('Erreur de chargement:', error);
       throw error;
     }
   },

@@ -46,21 +46,16 @@
     white: 50,
     black: 50
   });
-  
   const fetchWinningPercentages = async () => {
-    console.log('Fetching winning percentages...');
-    console.log('Game ID:', gameId.value);
     
     
     if (!gameId.value) return;
-    
     try {
       const data = await ChessBoardService.getWinningGauge(Number(gameId.value));
       winningPercentages.value = data;
-      console.log('Winning percentages:', data);
       
     } catch (error) {
-      console.error('Error fetching winning percentages:', error);
+      console.error('Erreur lors de l\'affichage des poucentages:', error);
     }
   };
   

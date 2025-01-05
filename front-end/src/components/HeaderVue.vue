@@ -48,6 +48,7 @@ const navigation = [
   { name: 'Jouer', href: '/play', current: false },
   { name: 'Mes parties', href: '#', current: false },
   { name: 'Profil', href: '/profile', current: false },
+  { name: 'Classement', href: '/leaderboard', current: false },
 ]
 
 const filteredNavigation = computed(() => {
