@@ -73,9 +73,15 @@ export class GameService {
             await gameState.updateGameState(oldPosition, position);
 
             if (gameState.pieces[position].color === 'white') {
-                await moveServices.createMove(game.id, game.turn_count, game.player_white_id, game.id, oldPosition, position, 0);
+                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                if(chessPiece) {
+                    await moveServices.createMove(game.id, game.turn_count, game.player_white_id, chessPiece.id, oldPosition, position, 0);
+                }
             } else {
-                await moveServices.createMove(game.id, game.turn_count, game.player_black_id, game.id, oldPosition, position, 0);
+                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                if(chessPiece) {
+                    await moveServices.createMove(game.id, game.turn_count, game.player_black_id, chessPiece.id, oldPosition, position, 0);
+                }
             }
 
             await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
@@ -194,6 +200,33 @@ export class GameService {
     }
 
 
+    public async getCapturedPiecesCount(gameId: number): Promise<{ [key: string]: number }> {
+        const maxPiecesCount: { [key: string]: number } = {
+            whitePawn: 8,
+            whiteRook: 2,
+            whiteKnight: 2,
+            whiteBishop: 2,
+            whiteQueen: 1,
+            blackPawn: 8,
+            blackRook: 2,
+            blackKnight: 2,
+            blackBishop: 2,
+            blackQueen: 1,
+        };
+
+        const game = await this.getGameById(gameId);
+
+        for (let position in game.gameState) {
+            const piece = game.gameState[position];
+            const key = `${piece.color}${piece.pieceType.charAt(0).toUpperCase() + piece.pieceType.slice(1)}`;
+            if (maxPiecesCount[key] !== undefined) {
+                maxPiecesCount[key]--;
+            }
+        }
+
+        return maxPiecesCount;
+    }
+
     public async getPublicGames(): Promise<GameDTO[]> {
 
         let gameList = Game.findAll({
@@ -220,9 +253,65 @@ export class GameService {
         return GameMapper.toDTOList(await gameList);
     }
 
+    public async finishGame(gameId: number, winnerId: number): Promise<GameDTO> {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count);
+            return await this.getGameById(gameId);
+        } else {
+            notFound("Game");
+        }
+    }
+
+
+    public async makePublic(gameId: number) : Promise<void> {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            game.is_public = !game.is_public;
+            await game.save();
+        }
+
+    }
 
 
 
+    public async getNbMoves(gameId: number) {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            return game.turn_count;
+        } else {
+            return 0;
+        }
+    }
+
+    public async getNbPiecesCaptured(gameId: number) {
+        return await this.getNbPiecesCapturedByColor(gameId, 'white') + await this.getNbPiecesCapturedByColor(gameId, 'black');
+
+    }
+
+    public async getNbPiecesCapturedByColor(gameId: number, color: string) {
+        let temp = await this.getCapturedPiecesCount(gameId);
+        let nbPiecesCaptured = 0;
+        for (let key in temp) {
+            if (key.includes(color)) {
+                nbPiecesCaptured += temp[key];
+            }
+        }
+        return nbPiecesCaptured;
+    }
+
+
+    public async getUserGames(userId: number) {
+        let gameList = Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ]
+            }
+        })
+        return GameMapper.toDTOList(await gameList);
+    }
 }
 
 export const gameService = new GameService();

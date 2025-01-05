@@ -75,7 +75,7 @@ export class ChessPieceService {
             await gameService.nextTurn(piece.game_id, oldPosition, position);
             await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
             }
-        }
+    }
 
 
     public async getChessPieceByPosition(position: string, gameId: number): Promise<ChessPiece> {
@@ -96,6 +96,7 @@ export class ChessPieceService {
             piece.game_id = game.id;
             return this.convertToSpecificPiece(piece);
         }else{
+            
             notFound("ChessPiece");
         }
     }
@@ -285,6 +286,14 @@ export class ChessPieceService {
                         specificPiece.position = oldPosition;
                         fictiveGame.gameState[oldPosition]={color:specificPiece.color,pieceType:specificPiece.piece_type};
                         fictiveGame.gameState[slot]=oldPositionValue;
+                    }
+                }
+                if(posibilities.size === 0){
+                    const winnerId = game.turnCount % 2 === 0 ? game.playerBlackId : game.playerWhiteId;
+                    if (winnerId !== null) {
+                        gameService.finishGame(game.id, winnerId);
+                    } else {
+                        throw new Error("Winner ID is null");
                     }
                 }
             }

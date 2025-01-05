@@ -322,9 +322,69 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_getWinrate: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
+        };
+        app.get('/users/winrate/:id',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getWinrate)),
+
+            async function UserController_getWinrate(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_getWinrate, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'getWinrate',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_getClassement: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/users/classement/winrate',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getClassement)),
+
+            async function UserController_getClassement(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_getClassement, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'getClassement',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsMoveController_getAllMoves: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/moves',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MoveController)),
             ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.getAllMoves)),
 
@@ -355,6 +415,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/moves/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MoveController)),
             ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.getMoveById)),
 
@@ -385,6 +446,7 @@ export function RegisterRoutes(app: Router) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateMoveDto"},
         };
         app.post('/moves',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MoveController)),
             ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.createMove)),
 
@@ -415,6 +477,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.delete('/moves/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MoveController)),
             ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.deleteMove)),
 
@@ -446,6 +509,7 @@ export function RegisterRoutes(app: Router) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UpdateMoveDto"},
         };
         app.patch('/moves/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(MoveController)),
             ...(fetchMiddlewares<RequestHandler>(MoveController.prototype.updateMove)),
 
@@ -475,6 +539,7 @@ export function RegisterRoutes(app: Router) {
         const argsGameController_getGames: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/games',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getGames)),
 
@@ -505,6 +570,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/games/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getGameById)),
 
@@ -535,6 +601,7 @@ export function RegisterRoutes(app: Router) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateGameDTO"},
         };
         app.post('/games',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.createGame)),
 
@@ -565,6 +632,7 @@ export function RegisterRoutes(app: Router) {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
         };
         app.get('/games/last/:userId',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getLastGame)),
 
@@ -595,6 +663,7 @@ export function RegisterRoutes(app: Router) {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };
         app.get('/games/winningPercentage/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getWinningPercentage)),
 
@@ -621,9 +690,41 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getPieceCaptured: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.get('/games/pieceCaptured/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getPieceCaptured)),
+
+            async function GameController_getPieceCaptured(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getPieceCaptured, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getPieceCaptured',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsGameController_getPublicGames: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/games/public/games',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getPublicGames)),
 
@@ -650,10 +751,42 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getUserGames: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
+        };
+        app.get('/games/user/:userId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getUserGames)),
+
+            async function GameController_getUserGames(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getUserGames, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserGames',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsGameController_getPrivateGames: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"double"},
         };
         app.get('/games/private/:userId',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(GameController)),
             ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getPrivateGames)),
 
@@ -680,9 +813,135 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_makePublic: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.patch('/games/makePublic/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.makePublic)),
+
+            async function GameController_makePublic(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_makePublic, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'makePublic',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getNbMoves: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.get('/games/nbMoves/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getNbMoves)),
+
+            async function GameController_getNbMoves(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getNbMoves, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getNbMoves',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getNbPiecesCaptured: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+        };
+        app.get('/games/nbCapturedPieces/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getNbPiecesCaptured)),
+
+            async function GameController_getNbPiecesCaptured(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getNbPiecesCaptured, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getNbPiecesCaptured',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGameController_getNbPiecesCapturedByColor: Record<string, TsoaRoute.ParameterSchema> = {
+                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+                color: {"in":"path","name":"color","required":true,"dataType":"string"},
+        };
+        app.get('/games/nbCapturedPieces/:gameId/:color',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.getNbPiecesCapturedByColor)),
+
+            async function GameController_getNbPiecesCapturedByColor(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_getNbPiecesCapturedByColor, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'getNbPiecesCapturedByColor',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsChessPieceController_getAllChessPieces: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/chessPieces',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getAllChessPieces)),
 
@@ -713,6 +972,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/chessPieces/:id',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getChessPieceById)),
 
@@ -744,6 +1004,7 @@ export function RegisterRoutes(app: Router) {
                 game: {"in":"path","name":"game","required":true,"dataType":"double"},
         };
         app.get('/chessPieces/:game/:position',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getChessPieceByPosition)),
 
@@ -774,6 +1035,7 @@ export function RegisterRoutes(app: Router) {
                 requestBody: {"in":"body","name":"requestBody","required":true,"ref":"CreateChessPieceDTO"},
         };
         app.post('/chessPieces',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.createChessPiece)),
 
@@ -806,6 +1068,7 @@ export function RegisterRoutes(app: Router) {
                 game: {"in":"path","name":"game","required":true,"dataType":"double"},
         };
         app.post('/chessPieces/move/:game/:oldPosition/:newPosition',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.move)),
 
@@ -838,6 +1101,7 @@ export function RegisterRoutes(app: Router) {
                 game: {"in":"path","name":"game","required":true,"dataType":"double"},
         };
         app.post('/chessPieces/promote/:game/:position/:pieceType',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.promote)),
 
@@ -869,6 +1133,7 @@ export function RegisterRoutes(app: Router) {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };
         app.get('/chessPieces/slots-available/:gameId/:position',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.getSlotsAvailable)),
 
@@ -901,6 +1166,7 @@ export function RegisterRoutes(app: Router) {
                 game: {"in":"path","name":"game","required":true,"dataType":"double"},
         };
         app.post('/chessPieces/roque/:game/:position/:newPosition',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.roque)),
 
@@ -931,6 +1197,7 @@ export function RegisterRoutes(app: Router) {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };
         app.get('/chessPieces/is-check/:gameId',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController)),
             ...(fetchMiddlewares<RequestHandler>(ChessPieceController.prototype.isCheck)),
 
@@ -990,6 +1257,76 @@ export function RegisterRoutes(app: Router) {
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+    function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
+        return async function runAuthenticationMiddleware(request: any, response: any, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            // keep track of failed auth attempts so we can hand back the most
+            // recent one.  This behavior was previously existing so preserving it
+            // here
+            const failedAttempts: any[] = [];
+            const pushAndRethrow = (error: any) => {
+                failedAttempts.push(error);
+                throw error;
+            };
+
+            const secMethodOrPromises: Promise<any>[] = [];
+            for (const secMethod of security) {
+                if (Object.keys(secMethod).length > 1) {
+                    const secMethodAndPromises: Promise<any>[] = [];
+
+                    for (const name in secMethod) {
+                        secMethodAndPromises.push(
+                            expressAuthenticationRecasted(request, name, secMethod[name], response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+
+                    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+                    secMethodOrPromises.push(Promise.all(secMethodAndPromises)
+                        .then(users => { return users[0]; }));
+                } else {
+                    for (const name in secMethod) {
+                        secMethodOrPromises.push(
+                            expressAuthenticationRecasted(request, name, secMethod[name], response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+                }
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            try {
+                request['user'] = await Promise.any(secMethodOrPromises);
+
+                // Response was sent in middleware, abort
+                if (response.writableEnded) {
+                    return;
+                }
+
+                next();
+            }
+            catch(err) {
+                // Show most recent error as response
+                const error = failedAttempts.pop();
+                error.status = error.status || 401;
+
+                // Response was sent in middleware, abort
+                if (response.writableEnded) {
+                    return;
+                }
+                next(error);
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        }
+    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 }

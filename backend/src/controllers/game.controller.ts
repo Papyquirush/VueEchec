@@ -1,4 +1,4 @@
-import {Controller, Get, Route, Post, Body, Security,Path } from "tsoa";
+import {Controller, Get, Route, Post, Body, Security, Path, Patch} from "tsoa";
 import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
@@ -44,9 +44,23 @@ export class GameController extends Controller {
     }
 
 
+
+
+    @Get("/pieceCaptured/{gameId}")
+    public async getPieceCaptured(@Path() gameId:number): Promise<{ [key: string]: number }>
+    {
+        return gameService.getCapturedPiecesCount(gameId);
+    }
+
     @Get("/public/games")
     public async getPublicGames(): Promise<GameDTO[]> {
         return gameService.getPublicGames();
+    }
+
+    @Get("/user/{userId}")
+    public async getUserGames(@Path() userId:number): Promise<GameDTO[]>
+    {
+        return gameService.getUserGames(userId);
     }
 
     @Get("/private/{userId}")
@@ -54,6 +68,33 @@ export class GameController extends Controller {
     {
         return gameService.getPrivateGames(userId);
     }
+
+
+    @Patch("/makePublic/{gameId}")
+    public async makePublic(@Path() gameId:number): Promise<void>
+    {
+        return gameService.makePublic(gameId);
+    }
+
+    @Get("/nbMoves/{gameId}")
+    public async getNbMoves(@Path() gameId:number): Promise<number>
+    {
+        return gameService.getNbMoves(gameId);
+    }
+
+    @Get("/nbCapturedPieces/{gameId}")
+    public async getNbPiecesCaptured(@Path() gameId:number): Promise<number>
+    {
+        return gameService.getNbPiecesCaptured(gameId);
+    }
+
+    @Get("/nbCapturedPieces/{gameId}/{color}")
+    public async getNbPiecesCapturedByColor(@Path() gameId:number, @Path() color:string): Promise<number>
+    {
+        return gameService.getNbPiecesCapturedByColor(gameId, color);
+    }
+
+
 
 
 }
