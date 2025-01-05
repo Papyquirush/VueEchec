@@ -51,7 +51,7 @@ export const ChessBoardService = {
     try {
 
       const gameState = await ChessBoardApi.getGameStateReview(gameId, move);
-      console.log(gameState);
+
       if (!gameState) {
         throw new Error('Le gamestate n\'est pas valide ; Porblème de serveur ?');
       }

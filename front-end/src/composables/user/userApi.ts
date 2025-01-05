@@ -9,7 +9,7 @@ export function useUserApi() {
         username: user.username,
         password: user.password,
       });
-      console.log(res.data.token);
+
       localStorage.setItem('username', user.username);
       localStorage.setItem('authToken', res.data.token);
       localStorage.setItem('idUser', res.data.userId);

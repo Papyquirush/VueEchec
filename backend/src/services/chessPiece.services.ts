@@ -64,13 +64,11 @@ export class ChessPieceService {
                 resetRuleFiftyMoves = true;
             }
             if(piece instanceof PawnPiece && slots.includes("passant")){
-                console.log("passant");
                 await piece.passant(position);
             }
 
 
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
-                console.log("capture");
                 let chessPiece = await this.getChessPieceByPosition(position, piece.game_id);
                 resetRuleFiftyMoves = true;
                 await this.deleteChessPiece(chessPiece.id);
@@ -208,7 +206,6 @@ export class ChessPieceService {
     }
 
     public async isCheck(gameId: number): Promise<boolean> {
-        console.log("coucou",gameId);
         let game = await gameService.getGameById(gameId);
         if(game){
             let kingPiece = game.turnCount % 2 === 0 ? await ChessPiece.findOne({where: {piece_type: "king", color: "white", game_id: gameId}})
