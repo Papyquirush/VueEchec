@@ -39,7 +39,7 @@ class ChessPiece extends Model<ChessPieceAttributes, ChessPieceCreationAttribute
     }
 
 
-    public moveTo(position: string): void{
+    public async moveTo(position: string): Promise<void>{
 
     }
 
