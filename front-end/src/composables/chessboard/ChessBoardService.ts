@@ -71,6 +71,14 @@ export const ChessBoardService = {
   async getPublicGames() {
     return await ChessBoardApi.getPublicGames();
   },
+  
+  async getGamesOfUser(userId: number) {
+    return await ChessBoardApi.getGamesOfUser(userId);
+  },
+
+  async patchGameToPublic(gameId: number) {
+    return await ChessBoardApi.patchGameToPublic(gameId);
+  }
 
 };
   
