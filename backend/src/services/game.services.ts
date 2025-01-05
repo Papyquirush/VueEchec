@@ -14,7 +14,7 @@ import {chessPieceDto} from "../dto/chessPiece.dto";
 import chessPieceServices from "./chessPiece.services";
 import PawnPiece from "../models/pieces/pawnPiece";
 import e from "express";
-import chessPieceServices from "./chessPiece.services";
+
 
 
 export class GameService {
@@ -24,6 +24,7 @@ export class GameService {
     }
 
     public async getGameById(id: number): Promise<GameDTO> {
+        console.log(id)
         let game = await Game.findByPk(id);
         if (game) {
             const gameDTO = GameMapper.toDTO(game);
