@@ -62,7 +62,8 @@
       error.value = '';
       const user: User = {
         username: form.value.username,
-        password: form.value.password
+        password: form.value.password,
+        id: 0
       };
       
       const authenticatedUser = await userService.authenticate(user);
