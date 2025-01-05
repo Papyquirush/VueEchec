@@ -1,6 +1,15 @@
 <template>
   <BoutonInit v-model:isInit="isInit" class="m-10"/>
   <!-- <BoutonRotate v-model="isRotated"/> -->
+  <PromotionDialog
+    v-if="showPromotion"
+    v-model="showPromotion"
+    :color="getPawnColor()"
+    @promote="handlePromotion"
+  />
+  <div v-if="showPromotion" class="fixed top-0 left-0 bg-red-500 text-white p-2">
+    Debug: Promotion Dialog Should Show
+  </div>
   <h1 class="text-3xl text-white text-center underline">Partie numéro : {{ gameId }}</h1>
   <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
     <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
@@ -30,6 +39,11 @@
       </div>
     </div>
   </div>
+  <WinningGauge 
+    :gameId="gameId"
+    :moveCount="moveCount"
+   />
+  
 </template>
 
 <script setup lang="ts">
@@ -40,6 +54,10 @@ import BoutonRotate from "./BoutonRotate.vue";
 import BoardLabels from './BoardLabels.vue';
 import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
 import { COLUMNS, ROWS, type Cell } from '@/constants';
+import { useUserConnecteService } from '@/composables/user/userConnecteService';
+import WinningGauge from './WinningGauge.vue';
+import PromotionDialog from './PromotionDialog.vue';
+import type { EnumDeclaration } from 'typescript';
 
 
 const gameId = ref<string>("1");
@@ -47,7 +65,10 @@ const localBoard = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(nul
 const isRotated = ref(false);
 const isInit = ref(false);
 const currGame = ref();
+const moveCount = ref(0);
 let isUpdating = false;
+const showPromotion = ref(false);
+const promotionPosition = ref("");
 
 const selectedCell = ref<{row: number, col: number} | null>(null);
 const availableMoves = ref<string[]>([]);
@@ -113,7 +134,7 @@ const selectPiece = async (row: number, col: number) => {
     );
     selectedCell.value = { row, col };
   } catch (error) {
-    console.error("Erreur lors de la récupération des mouvements:", error);
+    console.error("Erreur lors de la récupération des mouvements: Ce n'est pas à ce joueur de jouer !", error);
     clearSelection();
   }
 };
@@ -124,10 +145,13 @@ const movePiece = async (from: string, to: string) => {
 
   try {
     isUpdating = true;
-    
+    moveCount.value++;
+
+    const needsPromotion = isPawnPromotion(from, to);
+    console.log("Needs promotion:", needsPromotion);
+
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
-    
 
     const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
     const newBoard = localBoard.value.map(row => [...row]);
@@ -135,10 +159,23 @@ const movePiece = async (from: string, to: string) => {
     newBoard[toIndices.row][toIndices.col] = movingPiece;
     localBoard.value = newBoard;
     
-    lastMove.value = { from: fromIndices, to: toIndices };
-    clearSelection();
+    
+    if (needsPromotion) {
+      console.log("Tentative d'affichage de la promotion");
+      showPromotion.value = true;
+      promotionPosition.value = to;
+      console.log("État après promotion:", {
+        showPromotion: showPromotion.value,
+        promotionPosition: promotionPosition.value
+      });
+    } else {
+      lastMove.value = { from: fromIndices, to: toIndices };
+      clearSelection();
+    }
+    //variable pour actualiser la barre de % de victoire
+    
     //isRotated.value = !isRotated.value;
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 700));
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
@@ -176,13 +213,77 @@ const syncWithServer = async () => {
 
 watch(isInit, async (value) => {
   if (value) {
-    const newGame = await ChessBoardService.initializeBoard(1, 3);
+    try {
+    const idUser = useUserConnecteService().userConnecte.value.id;
+    const newGame = await ChessBoardService.initializeBoard(idUser, 3);
     currGame.value = { gameId: newGame.gameId };
     localBoard.value = newGame.board;
     gameId.value = newGame.gameId.toString();
     localStorage.setItem('currentGameId', gameId.value);
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation de la partie: Vous êtes connectez ? ", error);
+  }
 }
 });
+
+const isPawnPromotion = (from: string, to: string): boolean => {
+  const fromIndices = positionToIndex(from);
+  const piece = localBoard.value[fromIndices.row][fromIndices.col];
+  console.log("Vérification promotion:", {
+    from,
+    to,
+    piece,
+    toRow: positionToIndex(to).row
+  });
+  
+  if (!piece || piece.pieceType !== 'pawn') return false;
+  
+  const toRow = positionToIndex(to).row;
+  const isPromotion = (piece.color === 'white' && toRow === 0) || 
+                     (piece.color === 'black' && toRow === 7);
+                     
+  console.log("Résultat promotion:", isPromotion);
+  return isPromotion;
+};
+
+const getPawnColor = (): 'white' | 'black' => {
+  if (!promotionPosition.value) return 'white';
+  const { row, col } = positionToIndex(promotionPosition.value);
+  return localBoard.value[row][col]?.color || 'white';
+};
+
+const handlePromotion = async (pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {
+  try {
+    if (!currGame.value?.gameId || !promotionPosition.value) return;
+    
+    await ChessBoardService.promotePiece(
+      currGame.value.gameId, 
+      { value: promotionPosition.value }, 
+      pieceType
+    );
+    
+    const { row, col } = positionToIndex(promotionPosition.value);
+    const newBoard = localBoard.value.map(r => [...r]);
+    newBoard[row][col] = {
+      pieceType,
+      color: getPawnColor()
+    };
+    localBoard.value = newBoard;
+    
+    showPromotion.value = false;
+    promotionPosition.value = '';
+    lastMove.value = { 
+      from: selectedCell.value || { row: 0, col: 0 }, 
+      to: { row, col } 
+    };
+    clearSelection();
+    
+    await syncWithServer();
+  } catch (error) {
+    console.error("Erreur lors de la promotion:", error);
+    await syncWithServer();
+  }
+};
 
 onMounted(async () => {
   await loadGame();
@@ -196,7 +297,7 @@ onMounted(async () => {
   grid-template-rows: repeat(8, 5vw);
   justify-content: center;
   align-items: center;
-  padding: 5% 0;
+  padding-top: 5%;
 }
 
 .row {

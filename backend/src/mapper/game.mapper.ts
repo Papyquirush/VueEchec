@@ -14,6 +14,7 @@ export class GameMapper{
             createdAt: game.created_at,
             finishedAt: game.finished_at,
             turnCount: game.turn_count,
+            countRuleFiftyMoves: game.count_rule_fifty_moves
         }
     }
 

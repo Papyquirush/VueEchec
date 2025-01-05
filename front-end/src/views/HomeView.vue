@@ -7,17 +7,10 @@
 
   <div>
     <h1 class="text-4xl text-white text-center">Le site d'échecs numéro 4 au monde !</h1>
+    <p class="text-2xl text-white text-center">Appuyer sur jouer après vous être connectez pour commencer une partie !</p>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import HeaderVue from '@/components/HeaderVue.vue'
-import {Tab} from "@headlessui/vue";
-export default defineComponent({
-  components: {
-    Tab,
-    HeaderVue
-  }
-})
 </script>

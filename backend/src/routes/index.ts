@@ -107,6 +107,7 @@ const models: TsoaRoute.Models = {
             "turnCount": {"dataType":"double","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "finishedAt": {"dataType":"datetime","required":true},
+            "countRuleFiftyMoves": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
