@@ -1,3 +1,4 @@
+
 import { GameDTO, CreateGameDTO } from "../dto/game.dto";
 import { Op } from "sequelize";
 import Game from "../models/game.model";
@@ -7,6 +8,10 @@ import  GameState  from "../models/object/gamestate";
 import moveServices from "./move.services";
 import gamestate from "../models/object/gamestate";
 import ChessPiece from "../models/chessPiece.model";
+import chessPieceService from "./chessPiece.services";
+import {chessPieceDto} from "../dto/chessPiece.dto";
+import chessPieceServices from "./chessPiece.services";
+import PawnPiece from "../models/pieces/pawnPiece";
 
 export class GameService {
     public async getGames(): Promise<GameDTO[]> {
@@ -25,7 +30,7 @@ export class GameService {
         }
     }
 
-    public async createGame(playerWhiteId: number | undefined, playerBlackId: number | undefined, isPublic: boolean): Promise<GameDTO> {
+    public async createGame(playerWhiteId: number | undefined, playerBlackId: number | undefined, isPublic: boolean,isReview = false): Promise<GameDTO> {
         let game = GameMapper.toDTO(await Game.create({
             player_white_id: playerWhiteId,
             player_black_id: playerBlackId,
@@ -35,7 +40,8 @@ export class GameService {
             winner_id: null,
             created_at: new Date(),
             turn_count: 0,
-            count_rule_fifty_moves:0
+            count_rule_fifty_moves:0,
+            is_review: isReview
         }));
         let gameState = new GameState(game.id);
         await gameState.initStartGame(game.id);
@@ -71,16 +77,14 @@ export class GameService {
             gameState.pieces = typeof game.game_state === 'string'
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
-
             await gameState.updateGameState(oldPosition, position);
-
             if (gameState.pieces[position].color === 'white') {
-                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                let chessPiece = await ChessPiece.findOne({ where: { position: oldPosition, game_id: game.id } });
                 if(chessPiece) {
                     await moveServices.createMove(game.id, game.turn_count, game.player_white_id, chessPiece.id, oldPosition, position, 0);
                 }
             } else {
-                let chessPiece = await ChessPiece.findOne({ where: { position: position, game_id: game.id } });
+                let chessPiece = await ChessPiece.findOne({ where: { position: oldPosition, game_id: game.id } });
                 if(chessPiece) {
                     await moveServices.createMove(game.id, game.turn_count, game.player_black_id, chessPiece.id, oldPosition, position, 0);
                 }
@@ -132,7 +136,7 @@ export class GameService {
 
             await gameState.updateGameStateAfterPromote(position, pieceType);
 
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count ,undefined);
         }
     }
 
@@ -276,19 +280,40 @@ export class GameService {
 
     }
 
-
-
-    public async getNbMoves(gameId: number) {
-        let game = await Game.findByPk(gameId);
-        if (game) {
-            return game.turn_count;
-        } else {
-            return 0;
+    public async getNbMoves(userId: number) {
+        let games = await Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ]
+            }
+        });
+        let cpt =0;
+        for (let game of games) {
+            cpt += game.turn_count;
         }
+        return cpt;
     }
 
-    public async getNbPiecesCaptured(gameId: number) {
-        return await this.getNbPiecesCapturedByColor(gameId, 'white') + await this.getNbPiecesCapturedByColor(gameId, 'black');
+    public async getNbPiecesCaptured(userId: number) {
+
+        let games = await Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ]
+            }
+        });
+
+        let cpt= 0;
+
+        for (let game of games) {
+            cpt += await this.getNbPiecesCapturedByColor(game.id, "white") + await this.getNbPiecesCapturedByColor(game.id, "black");
+        }
+
+        return cpt;
 
     }
 
@@ -303,6 +328,19 @@ export class GameService {
         return nbPiecesCaptured;
     }
 
+    public async getTotalGames(userId: number) {
+
+        let games = await Game.findAll({
+            where: {
+                [Op.or]: [
+                    { player_white_id: userId },
+                    { player_black_id: userId }
+                ]
+            }
+        });
+
+        return games.length;
+    }
 
     public async getUserGames(userId: number) {
         let gameList = Game.findAll({
@@ -315,6 +353,67 @@ export class GameService {
         })
         return GameMapper.toDTOList(await gameList);
     }
+
+    public async deleteGame(id: number) {
+        let game = await Game.findByPk(id);
+        if (game) {
+            await game.destroy();
+        } else {
+            notFound("Game");
+
+        }
+    }
+
+    public async getGameStates(gameId: number): Promise<{ [key: string]: { [key: string]: any } }[]> {
+        let game = await Game.findByPk(gameId);
+        if (!game) {
+            throw new Error("Game not found");
+        }
+
+        let moves = await moveServices.getMovesByGameId(gameId);
+        if (!moves) {
+            throw new Error("Moves not found");
+        }
+
+        let gameStates: { [key: string]: { [key: string]: any } }[] = [];
+
+        let ReviewedGame = await this.createGame(game.player_white_id, game.player_black_id, game.is_public,true);
+
+        let tempState = new GameState(ReviewedGame.id);
+
+        await tempState.initStartGame(ReviewedGame.id);
+        gameStates.push(tempState.pieces);
+
+        for(let move of moves) {
+            if(move.from_position != "promote") {
+                let chessPiece = await chessPieceServices.getChessPieceByPosition(move.from_position, ReviewedGame.id);
+                if (chessPiece) {
+                    await chessPiece.moveTo(move.to_position)
+
+                    let tempGame = await this.getGameById(chessPiece.game_id);
+                    let gameState = new GameState(tempGame.id);
+                    gameState.pieces = typeof tempGame.gameState === 'string'
+                        ? JSON.parse(tempGame.gameState)
+                        : JSON.parse(JSON.stringify(tempGame.gameState));
+                    gameStates.push(gameState.pieces);
+                }
+            }else {
+                let chessPiece = await chessPieceServices.getChessPieceByPosition(move.from_position, ReviewedGame.id) as PawnPiece;
+                if (chessPiece) {
+                    await chessPiece.promotePiece(move.to_position);
+                    let tempGame = await this.getGameById(ReviewedGame.id);
+                    let gameState = new GameState(tempGame.id);
+                    gameState.pieces = typeof tempGame.gameState === 'string'
+                        ? JSON.parse(tempGame.gameState)
+                        : JSON.parse(JSON.stringify(tempGame.gameState));
+                    gameStates.push(gameState.pieces);
+                }
+            }
+        }
+        return gameStates;
+    }
+
+
 }
 
 export const gameService = new GameService();

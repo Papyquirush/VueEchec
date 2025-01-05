@@ -1,7 +1,9 @@
-import {Controller, Get, Route, Post, Body, Security, Path, Patch} from "tsoa";
+
+import {Controller, Get, Route, Post, Body, Security, Path, Patch, Delete} from "tsoa";
 import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
+import Gamestate from "../models/object/gamestate";
 
 
 @Route("games")
@@ -21,7 +23,7 @@ export class GameController extends Controller {
     @Post("/")
     public async createGame(@Body() requestBody: CreateGameDTO): Promise<GameDTO> {
         const { playerWhiteId, playerBlackId, isPublic } = requestBody;
-        
+
         return gameService.createGame(playerWhiteId, playerBlackId, isPublic);
     }
 
@@ -32,7 +34,7 @@ export class GameController extends Controller {
         if (game) {
             return game;
         } else {
-            notFound('game'); 
+            notFound('game');
         }
     }
 
@@ -42,9 +44,6 @@ export class GameController extends Controller {
     {
         return gameService.getWinningPercentages(gameId);
     }
-
-
-
 
     @Get("/pieceCaptured/{gameId}")
     public async getPieceCaptured(@Path() gameId:number): Promise<{ [key: string]: number }>
@@ -69,33 +68,43 @@ export class GameController extends Controller {
         return gameService.getPrivateGames(userId);
     }
 
-
     @Patch("/makePublic/{gameId}")
     public async makePublic(@Path() gameId:number): Promise<void>
     {
         return gameService.makePublic(gameId);
     }
 
-    @Get("/nbMoves/{gameId}")
-    public async getNbMoves(@Path() gameId:number): Promise<number>
+    @Get("/nbMoves/{userId}")
+    public async getNbMoves(@Path() userId:number): Promise<number>
     {
-        return gameService.getNbMoves(gameId);
+        return gameService.getNbMoves(userId);
     }
 
-    @Get("/nbCapturedPieces/{gameId}")
-    public async getNbPiecesCaptured(@Path() gameId:number): Promise<number>
+    @Get("/nbCapturedPieces/{userId}")
+    public async getNbPiecesCaptured(@Path() userId:number): Promise<number>
     {
-        return gameService.getNbPiecesCaptured(gameId);
-    }
 
-    @Get("/nbCapturedPieces/{gameId}/{color}")
-    public async getNbPiecesCapturedByColor(@Path() gameId:number, @Path() color:string): Promise<number>
-    {
-        return gameService.getNbPiecesCapturedByColor(gameId, color);
+        return gameService.getNbPiecesCaptured(userId);
     }
 
 
+    @Get("/gameStates/{gameId}")
+    public async getGameStates(@Path() gameId:number): Promise<{ [key: string]: { [key: string]: any } }[]>
+    {
+        return gameService.getGameStates(gameId);
+    }
 
+    @Delete("{id}")
+    public async deleteGame(@Path() id: number): Promise<void> {
+        return gameService.deleteGame(id);
+    }
+
+
+    @Get("total/{userId}")
+    public async getTotalGames(@Path() userId:number): Promise<number>
+    {
+        return gameService.getTotalGames(userId);
+    }
 
 }
 

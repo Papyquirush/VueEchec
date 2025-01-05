@@ -14,6 +14,7 @@ interface GameAttributes {
     finished_at?: Date;
     turn_count: number;
     count_rule_fifty_moves: number;
+    is_review : boolean;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
@@ -30,6 +31,8 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public readonly created_at!: Date;
     public turn_count!: number;
     public count_rule_fifty_moves!: number;
+    public is_review! : boolean;
+
 }
 
 Game.init(
@@ -83,6 +86,11 @@ Game.init(
             allowNull: false,
             defaultValue: 0,
         },
+        is_review: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            defaultValue: false,
+        }
     },
     {
         sequelize,

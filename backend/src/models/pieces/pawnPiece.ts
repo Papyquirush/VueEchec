@@ -1,3 +1,4 @@
+
 import ChessPiece from '../chessPiece.model';
 import chessPieceServices from "../../services/chessPiece.services";
 import moveServices from "../../services/move.services";
@@ -26,6 +27,12 @@ class PawnPiece extends ChessPiece {
         let slotsAvailable: string[] = [];
         let game = gameDto ? gameDto : await gameService.getGameById(this.game_id);
         let kingPosition = await chessPieceServices.getKingPosition(game, this.color);
+        if(this.color == 'white' && parseInt(this.position[1]) == 8) {
+            return ['promote'];
+        }
+        if(this.color == 'black' && parseInt(this.position[1]) == 1) {
+            return ['promote'];
+        }
         if(!toCheck &&!await chessPieceServices.isTurnWithDTO(game, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
@@ -33,15 +40,10 @@ class PawnPiece extends ChessPiece {
                 if (piece.pieceType == this.piece_type && piece.color == this.color && piece.position == this.position) {
                     slotsAvailable = slotsAvailable.concat(slots);
                 }
-            }            
+            }
             return slotsAvailable;
         }
-        if(this.color == 'white' && parseInt(this.position[1]) == 8) {
-            return ['promote'];
-        }
-        if(this.color == 'black' && parseInt(this.position[1]) == 1) {
-            return ['promote'];
-        }
+
         //vérification d'une pièce devant le pion
         if((this.position[1]!=='8'&& this.color=='white')||(this.position[1]!=='1'&& this.color=='black')){
             let chessPieceInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 1}`, game);
@@ -54,7 +56,7 @@ class PawnPiece extends ChessPiece {
             let chessPieceInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 1}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 1}`, game);
             let chessPieceTwoInfront : boolean = this.color == 'white' ? await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) + 2}`, game) : await chessPieceServices.isChessPieceInPositionWithDTO(`${this.position[0]}${parseInt(this.position[1]) - 2}`, game);
             if(!chessPieceTwoInfront && !chessPieceInfront) {
-                    slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 2}` : `${this.position[0]}${parseInt(this.position[1]) - 2}`);
+                slotsAvailable.push(this.color == 'white' ? `${this.position[0]}${parseInt(this.position[1]) + 2}` : `${this.position[0]}${parseInt(this.position[1]) - 2}`);
             }
         }
         //vérification des pièces à prendre
@@ -126,7 +128,6 @@ class PawnPiece extends ChessPiece {
 
 
     public async promotePiece(pieceType: string): Promise<void> {
-        if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if(pieceType == 'king' || pieceType == 'pawn') {throw new Error("Le pion ne peut pas être promu en roi ou en pion");}
         if(!(await this.getSlotsAvailable(false)).includes('promote')) {throw new Error("Le pion ne peut pas être promu");}
         const [currentXLetter, currentY] = this.position.split('');
@@ -152,7 +153,7 @@ class PawnPiece extends ChessPiece {
     }
 
 
-   public async passant(position: string): Promise<void> {
+    public async passant(position: string): Promise<void> {
         if(!await chessPieceServices.isTurn(this.game_id, this.color)){throw new Error("Ce n'est pas à ce joueur de jouer");}
         if(!(await this.getSlotsAvailable(false)).includes('passant')) {throw new Error("Le pion ne peut pas faire de passant");}
         let chessPieceToTake = await chessPieceServices.getChessPieceByPosition(`${position[0]}${parseInt(position[1]) + (this.color == 'white' ? -1 : 1)}`, this.game_id);

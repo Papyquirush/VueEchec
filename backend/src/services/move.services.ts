@@ -77,6 +77,11 @@ export class MoveService {
     }
 
 
+    public async getMovesByGameId(gameId: number) {
+
+        return MoveMapper.toOutputDtoList( await Move.findAll({ where: { game_id: gameId } }));
+
+    }
 }
 
 export default new MoveService();
