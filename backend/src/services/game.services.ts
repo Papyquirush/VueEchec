@@ -9,8 +9,7 @@ import moveServices from "./move.services";
 import gamestate from "../models/object/gamestate";
 import ChessPiece from "../models/chessPiece.model";
 
-import chessPieceService from "./chessPiece.services";
-import {chessPieceDto} from "../dto/chessPiece.dto";
+
 import chessPieceServices from "./chessPiece.services";
 import PawnPiece from "../models/pieces/pawnPiece";
 import e from "express";
