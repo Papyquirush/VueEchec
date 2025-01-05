@@ -88,6 +88,7 @@ export class ChessPieceService {
     }
 
     public async getChessPieceByPositionWithDTO(position: string, game: GameDTO): Promise<ChessPiece> {
+        console.log(game.gameState[position],position,game.gameState);
         if(game.gameState[position]){
             let piece = new ChessPiece();
             piece.color = game.gameState[position].color;
