@@ -1,6 +1,15 @@
 <template>
   <BoutonInit v-model:isInit="isInit" class="m-10"/>
   <!-- <BoutonRotate v-model="isRotated"/> -->
+  <PromotionDialog
+    v-if="showPromotion"
+    v-model="showPromotion"
+    :color="getPawnColor()"
+    @promote="handlePromotion"
+  />
+  <div v-if="showPromotion" class="fixed top-0 left-0 bg-red-500 text-white p-2">
+    Debug: Promotion Dialog Should Show
+  </div>
   <h1 class="text-3xl text-white text-center underline">Partie numéro : {{ gameId }}</h1>
   <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
     <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
@@ -34,11 +43,7 @@
     :gameId="gameId"
     :moveCount="moveCount"
    />
-  <PromotionDialog
-    v-model="showPromotion"
-    :color="getPawnColor()"
-    @promote="handlePromotion"
-  />
+  
 </template>
 
 <script setup lang="ts">
@@ -129,7 +134,7 @@ const selectPiece = async (row: number, col: number) => {
     );
     selectedCell.value = { row, col };
   } catch (error) {
-    console.error("Erreur lors de la récupération des mouvements:", error);
+    console.error("Erreur lors de la récupération des mouvements: Ce n'est pas à ce joueur de jouer !", error);
     clearSelection();
   }
 };
@@ -141,6 +146,10 @@ const movePiece = async (from: string, to: string) => {
   try {
     isUpdating = true;
     moveCount.value++;
+
+    const needsPromotion = isPawnPromotion(from, to);
+    console.log("Needs promotion:", needsPromotion);
+
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
 
@@ -151,14 +160,17 @@ const movePiece = async (from: string, to: string) => {
     localBoard.value = newBoard;
     
     
-    if (isPawnPromotion(from, to)) {
+    if (needsPromotion) {
+      console.log("Tentative d'affichage de la promotion");
       showPromotion.value = true;
       promotionPosition.value = to;
+      console.log("État après promotion:", {
+        showPromotion: showPromotion.value,
+        promotionPosition: promotionPosition.value
+      });
     } else {
       lastMove.value = { from: fromIndices, to: toIndices };
       clearSelection();
-      await new Promise(resolve => setTimeout(resolve, 700));
-      await syncWithServer();
     }
     //variable pour actualiser la barre de % de victoire
     
@@ -215,13 +227,23 @@ watch(isInit, async (value) => {
 });
 
 const isPawnPromotion = (from: string, to: string): boolean => {
-  const piece = localBoard.value[positionToIndex(from).row][positionToIndex(from).col];
-  if (piece?.pieceType !== 'pawn') return false;
+  const fromIndices = positionToIndex(from);
+  const piece = localBoard.value[fromIndices.row][fromIndices.col];
+  console.log("Vérification promotion:", {
+    from,
+    to,
+    piece,
+    toRow: positionToIndex(to).row
+  });
+  
+  if (!piece || piece.pieceType !== 'pawn') return false;
   
   const toRow = positionToIndex(to).row;
-  // Un pion blanc atteint la rangée 8 (index 0) ou un pion noir atteint la rangée 1 (index 7)
-  return (piece.color === 'white' && toRow === 0) || 
-         (piece.color === 'black' && toRow === 7);
+  const isPromotion = (piece.color === 'white' && toRow === 0) || 
+                     (piece.color === 'black' && toRow === 7);
+                     
+  console.log("Résultat promotion:", isPromotion);
+  return isPromotion;
 };
 
 const getPawnColor = (): 'white' | 'black' => {
@@ -232,8 +254,13 @@ const getPawnColor = (): 'white' | 'black' => {
 
 const handlePromotion = async (pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {
   try {
-
-    ChessBoardService.promotePiece(currGame.value.gameId, {value:promotionPosition.value}, pieceType);
+    if (!currGame.value?.gameId || !promotionPosition.value) return;
+    
+    await ChessBoardService.promotePiece(
+      currGame.value.gameId, 
+      { value: promotionPosition.value }, 
+      pieceType
+    );
     
     const { row, col } = positionToIndex(promotionPosition.value);
     const newBoard = localBoard.value.map(r => [...r]);
@@ -243,7 +270,14 @@ const handlePromotion = async (pieceType: 'queen' | 'rook' | 'bishop' | 'knight'
     };
     localBoard.value = newBoard;
     
+    showPromotion.value = false;
     promotionPosition.value = '';
+    lastMove.value = { 
+      from: selectedCell.value || { row: 0, col: 0 }, 
+      to: { row, col } 
+    };
+    clearSelection();
+    
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors de la promotion:", error);

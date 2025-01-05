@@ -7,6 +7,7 @@
 
   <div>
     <h1 class="text-4xl text-white text-center">Le site d'échecs numéro 4 au monde !</h1>
+    <p class="text-2xl text-white text-center">Appuyer sur jouer après vous être connectez pour commencer une partie !</p>
   </div>
 </template>
 
