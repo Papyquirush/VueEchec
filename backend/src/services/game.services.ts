@@ -457,7 +457,7 @@ export class GameService {
         for (let piece of pieces) {
             
             let chessPiece = chessPieceServices.convertToSpecificPiece(piece);
-            let slots = chessPiece.getSlotsAvailable(false,game);
+            let slots = chessPiece.getSlotsAvailable(true,game);
             if((await slots).length>0){
                 return false;
             }
