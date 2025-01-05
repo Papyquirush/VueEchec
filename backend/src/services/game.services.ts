@@ -200,7 +200,7 @@ export class GameService {
     }
 
 
-    public async getRemainingPiecesCount(gameId: number): Promise<{ [key: string]: number }> {
+    public async getCapturedPiecesCount(gameId: number): Promise<{ [key: string]: number }> {
         const maxPiecesCount: { [key: string]: number } = {
             whitePawn: 8,
             whiteRook: 2,
@@ -280,6 +280,33 @@ export class GameService {
             await game.save();
         }
     }
+
+    public async getNbMoves(gameId: number) {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            return game.turn_count;
+        } else {
+            return 0;
+        }
+    }
+
+    public async getNbPiecesCaptured(gameId: number) {
+        return await this.getNbPiecesCapturedByColor(gameId, 'white') + await this.getNbPiecesCapturedByColor(gameId, 'black');
+
+    }
+
+    public async getNbPiecesCapturedByColor(gameId: number, color: string) {
+        let temp = await this.getCapturedPiecesCount(gameId);
+        let nbPiecesCaptured = 0;
+        for (let key in temp) {
+            if (key.includes(color)) {
+                nbPiecesCaptured += temp[key];
+            }
+        }
+        return nbPiecesCaptured;
+    }
+
+
 }
 
 export const gameService = new GameService();

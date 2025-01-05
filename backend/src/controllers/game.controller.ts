@@ -49,7 +49,7 @@ export class GameController extends Controller {
     @Get("/pieceCaptured/{gameId}")
     public async getPieceCaptured(@Path() gameId:number): Promise<{ [key: string]: number }>
     {
-        return gameService.getRemainingPiecesCount(gameId);
+        return gameService.getCapturedPiecesCount(gameId);
     }
 
     @Get("/public/games")
@@ -75,6 +75,26 @@ export class GameController extends Controller {
     {
         return gameService.makePrivate(gameId);
     }
+
+    @Get("/nbMoves/{gameId}")
+    public async getNbMoves(@Path() gameId:number): Promise<number>
+    {
+        return gameService.getNbMoves(gameId);
+    }
+
+    @Get("/nbCapturedPieces/{gameId}")
+    public async getNbPiecesCaptured(@Path() gameId:number): Promise<number>
+    {
+        return gameService.getNbPiecesCaptured(gameId);
+    }
+
+    @Get("/nbCapturedPieces/{gameId}/{color}")
+    public async getNbPiecesCapturedByColor(@Path() gameId:number, @Path() color:string): Promise<number>
+    {
+        return gameService.getNbPiecesCapturedByColor(gameId, color);
+    }
+
+
 
 
 }
