@@ -10,7 +10,7 @@ export class AuthenticationService {
         username: string,
         password: string
     ): Promise<{ token: string; userId: number }> {
-        console.log(username);
+
         const user = await User.findOne({ where: { username } });
 
         if (!user) {
@@ -22,8 +22,6 @@ export class AuthenticationService {
             "utf-8"
         );
 
-        console.log(user.username);
-        console.log(decodedPassword);
         // Vérifie si le mot de passe est correct
         if (password === decodedPassword) {
             // Si l'utilisateur est authentifié, on génère un JWT
