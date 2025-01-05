@@ -30,6 +30,15 @@
       </div>
     </div>
   </div>
+  <WinningGauge 
+    :gameId="gameId"
+    :moveCount="moveCount"
+   />
+  <PromotionDialog
+    v-model="showPromotion"
+    :color="getPawnColor()"
+    @promote="handlePromotion"
+  />
 </template>
 
 <script setup lang="ts">
@@ -40,6 +49,10 @@ import BoutonRotate from "./BoutonRotate.vue";
 import BoardLabels from './BoardLabels.vue';
 import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
 import { COLUMNS, ROWS, type Cell } from '@/constants';
+import { useUserConnecteService } from '@/composables/user/userConnecteService';
+import WinningGauge from './WinningGauge.vue';
+import PromotionDialog from './PromotionDialog.vue';
+import type { EnumDeclaration } from 'typescript';
 
 
 const gameId = ref<string>("1");
@@ -47,7 +60,10 @@ const localBoard = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(nul
 const isRotated = ref(false);
 const isInit = ref(false);
 const currGame = ref();
+const moveCount = ref(0);
 let isUpdating = false;
+const showPromotion = ref(false);
+const promotionPosition = ref("");
 
 const selectedCell = ref<{row: number, col: number} | null>(null);
 const availableMoves = ref<string[]>([]);
@@ -124,10 +140,9 @@ const movePiece = async (from: string, to: string) => {
 
   try {
     isUpdating = true;
-    
+    moveCount.value++;
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
-    
 
     const movingPiece = JSON.parse(JSON.stringify(localBoard.value[fromIndices.row][fromIndices.col]));
     const newBoard = localBoard.value.map(row => [...row]);
@@ -135,10 +150,19 @@ const movePiece = async (from: string, to: string) => {
     newBoard[toIndices.row][toIndices.col] = movingPiece;
     localBoard.value = newBoard;
     
-    lastMove.value = { from: fromIndices, to: toIndices };
-    clearSelection();
+    if (isPawnPromotion(from, to)) {
+      showPromotion.value = true;
+      promotionPosition.value = to;
+    } else {
+      lastMove.value = { from: fromIndices, to: toIndices };
+      clearSelection();
+      await new Promise(resolve => setTimeout(resolve, 700));
+      await syncWithServer();
+    }
+    //variable pour actualiser la barre de % de victoire
+    
     //isRotated.value = !isRotated.value;
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 700));
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
@@ -176,13 +200,55 @@ const syncWithServer = async () => {
 
 watch(isInit, async (value) => {
   if (value) {
-    const newGame = await ChessBoardService.initializeBoard(1, 3);
+    try {
+    const idUser = useUserConnecteService().userConnecte.value.id;
+    const newGame = await ChessBoardService.initializeBoard(idUser, 3);
     currGame.value = { gameId: newGame.gameId };
     localBoard.value = newGame.board;
     gameId.value = newGame.gameId.toString();
     localStorage.setItem('currentGameId', gameId.value);
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation de la partie: Vous êtes connectez ? ", error);
+  }
 }
 });
+
+const isPawnPromotion = (from: string, to: string): boolean => {
+  const piece = localBoard.value[positionToIndex(from).row][positionToIndex(from).col];
+  if (piece?.pieceType !== 'pawn') return false;
+  
+  const toRow = positionToIndex(to).row;
+  // Un pion blanc atteint la rangée 8 (index 0) ou un pion noir atteint la rangée 1 (index 7)
+  return (piece.color === 'white' && toRow === 0) || 
+         (piece.color === 'black' && toRow === 7);
+};
+
+const getPawnColor = (): 'white' | 'black' => {
+  if (!promotionPosition.value) return 'white';
+  const { row, col } = positionToIndex(promotionPosition.value);
+  return localBoard.value[row][col]?.color || 'white';
+};
+
+const handlePromotion = async (pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {
+  try {
+
+    ChessBoardService.promotePiece(currGame.value.gameId, {value:promotionPosition.value}, pieceType);
+    
+    const { row, col } = positionToIndex(promotionPosition.value);
+    const newBoard = localBoard.value.map(r => [...r]);
+    newBoard[row][col] = {
+      pieceType,
+      color: getPawnColor()
+    };
+    localBoard.value = newBoard;
+    
+    promotionPosition.value = '';
+    await syncWithServer();
+  } catch (error) {
+    console.error("Erreur lors de la promotion:", error);
+    await syncWithServer();
+  }
+};
 
 onMounted(async () => {
   await loadGame();
@@ -196,7 +262,7 @@ onMounted(async () => {
   grid-template-rows: repeat(8, 5vw);
   justify-content: center;
   align-items: center;
-  padding: 5% 0;
+  padding-top: 5%;
 }
 
 .row {
