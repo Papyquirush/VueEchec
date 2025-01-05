@@ -1,5 +1,5 @@
 import axiosInstance from '@/config/AxiosConfig';
-import { API_BASE_URL,API_GAME_URL, API_SLOTS_AVAILABLE,API_MOVE_PIECE, API_WINNING, API_PROMOTE , API_PUBLIC_GAMES} from '@/constants';
+import { API_BASE_URL,API_GAME_URL, API_SLOTS_AVAILABLE,API_MOVE_PIECE, API_WINNING, API_PROMOTE , API_PUBLIC_GAMES, API_GAMES_OF_USERS, API_MAKE_PUBLIC} from '@/constants';
 
 export const ChessBoardApi = {
   async initializeGame(playerWhiteId: number, playerBlackId: number, isPublic: boolean = true) {
@@ -46,6 +46,16 @@ export const ChessBoardApi = {
 
   async getPublicGames() {
     const response = await axiosInstance.get(`${API_BASE_URL}${API_GAME_URL}${API_PUBLIC_GAMES}`);
+    return response.data;
+  },
+
+  async getGamesOfUser(userId: number) {
+    const response = await axiosInstance.get(`${API_BASE_URL}${API_GAME_URL}${API_GAMES_OF_USERS}${userId}`);
+    return response.data;
+  },
+
+  async patchGameToPublic(gameId: number) {
+    const response = await axiosInstance.patch(`${API_BASE_URL}${API_GAME_URL}${API_MAKE_PUBLIC}${gameId}`);
     return response.data;
   }
   
