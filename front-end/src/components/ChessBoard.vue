@@ -150,6 +150,7 @@ const movePiece = async (from: string, to: string) => {
     newBoard[toIndices.row][toIndices.col] = movingPiece;
     localBoard.value = newBoard;
     
+    
     if (isPawnPromotion(from, to)) {
       showPromotion.value = true;
       promotionPosition.value = to;
