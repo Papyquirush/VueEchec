@@ -84,7 +84,6 @@ Game.init(
         count_rule_fifty_moves: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 0,
         },
         is_review: {
             type: DataTypes.BOOLEAN,
@@ -94,7 +93,7 @@ Game.init(
     },
     {
         sequelize,
-        tableName: 'Game',
+        tableName: 'Game',        
     }
 );
 

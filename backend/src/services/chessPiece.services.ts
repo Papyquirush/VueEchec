@@ -49,6 +49,7 @@ export class ChessPieceService {
     public async moveTo(piece : ChessPiece ,position: string): Promise<void> {
         const oldPosition = piece.position;
         let slots = await piece.getSlotsAvailable(false);
+        let resetRuleFiftyMoves = false;
         if (slots.includes(position)) {
             if (piece instanceof KingPiece && slots.includes("roque") && ( piece.color=="white" && (position === "g1" || position === "c1") || (piece.color=="black" && (position === "g8" || position === "c8"))) ) {
                 {
@@ -59,20 +60,25 @@ export class ChessPieceService {
                     return;
                 }
             }
+            if(piece instanceof PawnPiece){
+                resetRuleFiftyMoves = true;
+            }
             if(piece instanceof PawnPiece && slots.includes("passant")){
                 console.log("passant");
                 await piece.passant(position);
             }
 
+
             if (await this.isChessPieceInPosition(position, piece.game_id) && !await this.isTwoPiecesInSameColor(piece.position, position, piece.game_id)) {
                 console.log("capture");
                 let chessPiece = await this.getChessPieceByPosition(position, piece.game_id);
+                resetRuleFiftyMoves = true;
                 await this.deleteChessPiece(chessPiece.id);
             }
 
             piece.position = position;
             piece.has_moved = true;
-            await gameService.nextTurn(piece.game_id, oldPosition, position);
+            await gameService.nextTurn(piece.game_id, oldPosition, position,resetRuleFiftyMoves);
             await this.updateChessPiece(piece.id, piece.piece_type, piece.color, position, piece.game_id, piece.has_moved);
             }
     }
@@ -146,7 +152,7 @@ export class ChessPieceService {
         }
     }
 
-    private convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
+    public convertToSpecificPiece(chessPiece: ChessPiece): ChessPiece {
         let PieceClass = pieceTypeMap[chessPiece.piece_type.toLowerCase()] || ChessPiece;
         return Object.assign(new PieceClass(), chessPiece);
     }
@@ -202,6 +208,7 @@ export class ChessPieceService {
     }
 
     public async isCheck(gameId: number): Promise<boolean> {
+        console.log("coucou",gameId);
         let game = await gameService.getGameById(gameId);
         if(game){
             let kingPiece = game.turnCount % 2 === 0 ? await ChessPiece.findOne({where: {piece_type: "king", color: "white", game_id: gameId}})

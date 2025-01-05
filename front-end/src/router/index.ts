@@ -29,6 +29,21 @@ const router = createRouter({
       name: 'register',
       component: () => import('@/views/RegisterView.vue')
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/views/ProfileView.vue')
+    },
+    {
+      path: '/leaderboard',
+      name: 'leaderboard',
+      component: () => import('@/views/LeaderboardView.vue')
+    },
+    {
+      path: '/public-games',
+      name: 'public-games',
+      component: () => import('@/views/PublicGamesView.vue')
+    }
   ],
 })
 
