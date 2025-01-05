@@ -346,7 +346,6 @@ export class ChessPieceService {
             game.gameState[piecePosition] = {color:game.gameState[slot].color,pieceType:game.gameState[slot].pieceType};
             game.gameState[slot] = oldPiece;
         }
-        console.log(slotsAvailable.filter(slot => !excludedSlots.includes(slot)));
         return slotsAvailable.filter(slot => !excludedSlots.includes(slot));       
     }
 }
