@@ -70,12 +70,6 @@ export class GameController extends Controller {
         return gameService.makePublic(gameId);
     }
 
-    @Patch("/makePrivate/{gameId}")
-    public async makePrivate(@Path() gameId:number): Promise<void>
-    {
-        return gameService.makePrivate(gameId);
-    }
-
     @Get("/nbMoves/{gameId}")
     public async getNbMoves(@Path() gameId:number): Promise<number>
     {

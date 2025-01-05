@@ -784,37 +784,6 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsGameController_makePrivate: Record<string, TsoaRoute.ParameterSchema> = {
-                gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
-        };
-        app.patch('/games/makePrivate/:gameId',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(GameController)),
-            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.makePrivate)),
-
-            async function GameController_makePrivate(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsGameController_makePrivate, request, response });
-
-                const controller = new GameController();
-
-              await templateService.apiHandler({
-                methodName: 'makePrivate',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsGameController_getNbMoves: Record<string, TsoaRoute.ParameterSchema> = {
                 gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
         };

@@ -267,19 +267,13 @@ export class GameService {
     public async makePublic(gameId: number) : Promise<void> {
         let game = await Game.findByPk(gameId);
         if (game) {
-            game.is_public = true;
+            game.is_public = !game.is_public;
             await game.save();
         }
 
     }
 
-    public async makePrivate(gameId: number) : Promise<void> {
-        let game = await Game.findByPk(gameId);
-        if (game) {
-            game.is_public = false;
-            await game.save();
-        }
-    }
+
 
     public async getNbMoves(gameId: number) {
         let game = await Game.findByPk(gameId);
