@@ -13,6 +13,7 @@ interface GameAttributes {
     created_at: Date;
     finished_at?: Date;
     turn_count: number;
+    count_rule_fifty_moves: number;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, 'id'> {}
@@ -28,6 +29,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public player_black_id!: number;
     public readonly created_at!: Date;
     public turn_count!: number;
+    public count_rule_fifty_moves!: number;
 }
 
 Game.init(
@@ -72,6 +74,11 @@ Game.init(
             allowNull: true,
         },
         turn_count: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        count_rule_fifty_moves: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,

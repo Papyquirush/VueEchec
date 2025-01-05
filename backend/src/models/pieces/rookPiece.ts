@@ -23,7 +23,6 @@ class RookPiece extends chessPieceModel {
             for (let [piece, slots] of possibilities) {
                 if (piece.pieceType == this.piece_type && piece.color == this.color && piece.position == this.position) {
                     slotsAvailable = slotsAvailable.concat(slots);
-                    console.log(slotsAvailable);
                 }
             }            
             return slotsAvailable;

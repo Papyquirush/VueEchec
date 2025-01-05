@@ -15,10 +15,8 @@ class KnightPiece extends ChessPiece {
         if (!toCheck && await chessPieceServices.isCheck(this.game_id)){
             let possibilities = await (await chessPieceServices.slotsAvailableForOutOfCheck(this.game_id));
             for (let [piece, slots] of possibilities) {
-                console.log(piece.pieceType, this.piece_type, piece.color == this.color);
                 if (piece.pieceType == this.piece_type && piece.color == this.color && piece.position == this.position) {
                     slotsAvailable = slotsAvailable.concat(slots);
-                    console.log(slotsAvailable);
                 }
             }            
             return slotsAvailable;

@@ -34,16 +34,17 @@ export class GameService {
             is_finished: false,
             winner_id: null,
             created_at: new Date(),
-            turn_count: 0
+            turn_count: 0,
+            count_rule_fifty_moves:0
         }));
         let gameState = new GameState(game.id);
         await gameState.initStartGame(game.id);
-        return await this.updateGame(game.id, playerWhiteId, playerBlackId, isPublic, gameState.pieces, false, undefined, 0);
+        return await this.updateGame(game.id, playerWhiteId, playerBlackId, isPublic, gameState.pieces, false, undefined, 0,undefined);
     }
 
     public async updateGame(id: number, playerWhiteId: number | undefined, playerBlackId: number | undefined, isPublic: boolean, gameState: {
         [key: string]: { [key: string]: string }
-    }, isFinished: boolean, winnerId: number | undefined, turnCount: number): Promise<GameDTO> {
+    }, isFinished: boolean, winnerId: number | undefined, turnCount: number,finished_at:Date |undefined): Promise<GameDTO> {
         let game = await Game.findByPk(id);
         if (game) {
             if (playerWhiteId) game.player_white_id = playerWhiteId;
@@ -52,6 +53,7 @@ export class GameService {
             if (gameState) game.game_state = gameState;
             if (isFinished) game.is_finished = isFinished;
             if (winnerId) game.winner_id = winnerId;
+            if (finished_at) game.finished_at = finished_at;
             game.turn_count = turnCount;
             await game.save();
             const gameDTO = GameMapper.toDTO(game);
@@ -84,7 +86,7 @@ export class GameService {
                 }
             }
 
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
         }
     }
 
@@ -97,7 +99,7 @@ export class GameService {
                 ? JSON.parse(game.game_state)
                 : JSON.parse(JSON.stringify(game.game_state));
             await gameState.updateGameStateAfterDelete(position);
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count,undefined);
 
         }
     }
@@ -130,7 +132,7 @@ export class GameService {
 
             await gameState.updateGameStateAfterPromote(position, pieceType);
 
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
         }
     }
 
@@ -147,7 +149,7 @@ export class GameService {
 
             await gameState.updateGameStateAfterRoque(oldPosition, position, oldRookPosition, rookPosition);
 
-            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1);
+            await this.updateGame(id, game.player_white_id, game.player_black_id, game.is_public, gameState.pieces, game.is_finished, undefined, game.turn_count + 1,undefined);
         }
 
     }
@@ -253,10 +255,11 @@ export class GameService {
         return GameMapper.toDTOList(await gameList);
     }
 
-    public async finishGame(gameId: number, winnerId: number): Promise<GameDTO> {
+    public async finishGame(gameId: number, winnerId: number|undefined = undefined): Promise<GameDTO> {
         let game = await Game.findByPk(gameId);
+        let finished_at= new Date();
         if (game) {
-            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count);
+            await this.updateGame(gameId, game.player_white_id, game.player_black_id, game.is_public, game.game_state, true, winnerId, game.turn_count,finished_at);
             return await this.getGameById(gameId);
         } else {
             notFound("Game");
