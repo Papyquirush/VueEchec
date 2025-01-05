@@ -157,18 +157,5 @@ export const ChessBoardApi = {
 
 
 };
-    try {
-      const response = await axiosInstance.patch(`${API_BASE_URL}${API_GAME_URL}${API_MAKE_PUBLIC}${gameId}`);
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        throw new Error('Partie introuvable');
-      } else if (error.response?.status === 403) {
-        throw new Error('Vous n\'avez pas les droits pour rendre cette partie publique');
-      } else {
-        throw new Error('Erreur lors du changement de visibilité de la partie');
-      }
-    }
-  }
-};
+
 
