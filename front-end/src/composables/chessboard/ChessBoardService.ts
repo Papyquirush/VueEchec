@@ -64,11 +64,15 @@ export const ChessBoardService = {
   },
 
   async movePiece(gameId: number, from: string, to: string) {
-      const response = await ChessBoardApi.movePiece(gameId, from, to);
-      return response;
-    },
-  };
+    const response = await ChessBoardApi.movePiece(gameId, from, to);
+    return response;
+  },
+  
+  async getPublicGames() {
+    return await ChessBoardApi.getPublicGames();
+  },
 
+};
   
 
 const mapPositionToIndex = (pos: string) => {

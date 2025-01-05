@@ -46,7 +46,7 @@ const { userConnecte } = useUserConnecteService()
 const navigation = [
   { name: 'Vue Échecs', href: '/', current: true },
   { name: 'Jouer', href: '/play', current: false },
-  { name: 'Mes parties', href: '#', current: false },
+  { name: 'Parties publiques', href: '/public-games', current: false },
   { name: 'Profil', href: '/profile', current: false },
   { name: 'Classement', href: '/leaderboard', current: false },
 ]
