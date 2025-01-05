@@ -49,7 +49,8 @@
   
   const form = ref({
     username: '',
-    password: ''
+    password: '',
+    id: 0
   });
   
   const error = ref('');

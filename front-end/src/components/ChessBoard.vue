@@ -30,6 +30,10 @@
       </div>
     </div>
   </div>
+  <WinningGauge 
+  :gameId="gameId"
+  :moveCount="moveCount"
+   />
 </template>
 
 <script setup lang="ts">
@@ -41,6 +45,7 @@ import BoardLabels from './BoardLabels.vue';
 import { ChessBoardService } from '@/composables/chessboard/ChessBoardService';
 import { COLUMNS, ROWS, type Cell } from '@/constants';
 import { useUserConnecteService } from '@/composables/user/userConnecteService';
+import WinningGauge from './WinningGauge.vue';
 
 
 const gameId = ref<string>("1");
@@ -48,6 +53,7 @@ const localBoard = ref<Cell[][]>(Array(8).fill(null).map(() => Array(8).fill(nul
 const isRotated = ref(false);
 const isInit = ref(false);
 const currGame = ref();
+const moveCount = ref(0);
 let isUpdating = false;
 
 const selectedCell = ref<{row: number, col: number} | null>(null);
@@ -125,7 +131,7 @@ const movePiece = async (from: string, to: string) => {
 
   try {
     isUpdating = true;
-    
+    moveCount.value++;
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
 
@@ -137,8 +143,10 @@ const movePiece = async (from: string, to: string) => {
     
     lastMove.value = { from: fromIndices, to: toIndices };
     clearSelection();
+    //variable pour actualiser la barre de % de victoire
+    
     //isRotated.value = !isRotated.value;
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 700));
     await syncWithServer();
   } catch (error) {
     console.error("Erreur lors du mouvement:", error);
@@ -201,7 +209,7 @@ onMounted(async () => {
   grid-template-rows: repeat(8, 5vw);
   justify-content: center;
   align-items: center;
-  padding: 5% 0;
+  padding-top: 5%;
 }
 
 .row {

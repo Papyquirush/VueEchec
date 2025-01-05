@@ -44,7 +44,7 @@ export const ChessBoardService = {
       }
 
       return { gameId, board };
-      
+
     } catch (error) {
       console.error('Error loading board:', error);
       throw error;
@@ -55,12 +55,18 @@ export const ChessBoardService = {
     return await ChessBoardApi.getAvailableSlots(gameId, position);
   },
 
-async movePiece(gameId: number, from: string, to: string) {
-    const response = await ChessBoardApi.movePiece(gameId, from, to);
+  async getWinningGauge(gameId: number) {
+    const response = await ChessBoardApi.getWinningGauge(gameId);
     return response;
- },
-};
+  },
 
+  async movePiece(gameId: number, from: string, to: string) {
+      const response = await ChessBoardApi.movePiece(gameId, from, to);
+      return response;
+    },
+  };
+
+  
 
 const mapPositionToIndex = (pos: string) => {
   const col = pos.charCodeAt(0) - 97;

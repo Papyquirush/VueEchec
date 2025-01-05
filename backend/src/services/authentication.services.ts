@@ -9,7 +9,7 @@ export class AuthenticationService {
     public async authenticate(
         username: string,
         password: string
-    ): Promise<string> {
+    ): Promise<{ token: string; userId: number }> {
         console.log(username);
         const user = await User.findOne({ where: { username } });
 
@@ -39,8 +39,9 @@ export class AuthenticationService {
 
 
 
+            const userId = user.dataValues.id ? user.dataValues.id : 3;
 
-            return token;
+            return { token , userId };
         } else {
             let error = new Error("Wrong password");
             (error as any).status = 403;
