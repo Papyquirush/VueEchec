@@ -1,34 +1,39 @@
 <template>
   <BoutonInit v-model:isInit="isInit" class="m-10"/>
-  <!-- <BoutonRotate v-model="isRotated"/> -->
+  <button 
+    @click="isRotationAnimated = !isRotationAnimated" 
+    class="border rounded-lg p-2 bg-white text-black"
+  >
+    {{ isRotationAnimated ? 'Désactiver l\'animation EXCEPTIONELLE' : 'Activer l\'animation LEGENDAIRE' }}
+  </button>
   <PromotionDialog
     v-if="showPromotion"
     v-model="showPromotion"
     :color="getPawnColor()"
     @promote="handlePromotion"
   />
-  <div v-if="showPromotion" class="fixed top-0 left-0 bg-red-500 text-white p-2">
-    Debug: Promotion Dialog Should Show
-  </div>
   <h1 class="text-3xl text-white text-center underline">Partie numéro : {{ gameId }}</h1>
-  <div :class="['chessboard', isRotated ? 'rotatitating' : 'unRotatitating']">
+  <div :class="['chessboard', isRotated ? 'rotated' : '', isRotationAnimated ? 'animated' : 'no-animation']">
     <div v-for="(row, rowIndex) in localBoard" :key="rowIndex" class="row">
       <div v-for="(cell, colIndex) in row"
-           :key="colIndex"
-           class="cell"
-           :class="[
-             getCellClasses(rowIndex, colIndex),
-             isRotated ? 'rotatitating' : 'unRotatitating',
-             {'highlighted': isHighlighted(rowIndex, colIndex)},
-             {'selected': isSelectedCell(rowIndex, colIndex)}
-           ]"
-           @click="handleCellClick(rowIndex, colIndex)">
-        <ChessPiece 
-          v-if="cell" 
-          :type="cell.pieceType" 
-          :color="cell.color"
-          :class="{'piece-animation': isMoving(rowIndex, colIndex)}"
-        />
+          :key="colIndex"
+          class="cell"
+          :class="[
+            getCellClasses(rowIndex, colIndex),
+            'cell-container', isRotated ? 'rotated' : '',
+            isRotationAnimated && isRotated ? 'rotatitating' : '',
+            isRotationAnimated && !isRotated ? 'unRotatitating' : '',
+            {'highlighted': isHighlighted(rowIndex, colIndex)},
+            {'selected': isSelectedCell(rowIndex, colIndex)}
+          ]"
+          @click="handleCellClick(rowIndex, colIndex)">
+           <div v-if="cell" class="piece-container">
+              <ChessPiece 
+                :type="cell.pieceType" 
+                :color="cell.color"
+                
+              />
+            </div>
         <BoardLabels 
           :row-index="rowIndex"
           :col-index="colIndex"
@@ -69,6 +74,7 @@ const moveCount = ref(0);
 let isUpdating = false;
 const showPromotion = ref(false);
 const promotionPosition = ref("");
+const isRotationAnimated = ref(true);
 
 const selectedCell = ref<{row: number, col: number} | null>(null);
 const availableMoves = ref<string[]>([]);
@@ -174,7 +180,7 @@ const movePiece = async (from: string, to: string) => {
     }
     //variable pour actualiser la barre de % de victoire
     
-    //isRotated.value = !isRotated.value;
+    isRotated.value = !isRotated.value;
     await new Promise(resolve => setTimeout(resolve, 700));
     await syncWithServer();
   } catch (error) {
@@ -220,6 +226,7 @@ watch(isInit, async (value) => {
     localBoard.value = newGame.board;
     gameId.value = newGame.gameId.toString();
     localStorage.setItem('currentGameId', gameId.value);
+    isRotated.value = false;
   } catch (error) {
     console.error("Erreur lors de l'initialisation de la partie: Vous êtes connectez ? ", error);
   }
@@ -298,6 +305,7 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   padding-top: 5%;
+  transition: transform 0.5s ease; 
 }
 
 .row {
@@ -353,8 +361,9 @@ onMounted(async () => {
   background-color: #ffd700 !important;
 }
 
-.piece-animation {
-  animation: movePiece 0.3s ease-in-out;
+.chessboard.no-animation {
+  animation: none !important;
+  transition: none !important;
 }
 
 .rotatitating {
@@ -363,6 +372,18 @@ onMounted(async () => {
 
 .unRotatitating {
   animation: unRotateBoard 1.5s ease-in-out forwards;
+}
+
+.chessboard.rotated {
+  transform: rotate(180deg);
+}
+
+.chessboard.animated {
+  transition: transform 1.5s ease-in-out;
+}
+
+.cell-container.rotated {
+  transform: rotate(180deg);
 }
 
 @keyframes movePiece {
