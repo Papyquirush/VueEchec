@@ -1,5 +1,5 @@
 import axiosInstance from '@/config/AxiosConfig';
-import { API_BASE_AUTH, API_BASE_USERS, API_WINRATE, API_NBMOVES, API_GAME_URL, API_PIECE_CAPTURED} from '@/constants';
+import { API_BASE_AUTH, API_BASE_USERS, API_WINRATE, API_NBMOVES, API_GAME_URL, API_PIECE_CAPTURED, API_LEADERBOARD} from '@/constants';
 import type { User } from '@/models/User.model';
 
 export function useUserApi() {
@@ -38,5 +38,9 @@ export function useUserApi() {
     //   const res = await axiosInstance.get(`${API_GAME_URL}${API_PIECE_CAPTURED}${idUser}`);
     //   return res.data;
     // },
+    async getLeaderboard() {
+      const response = await axiosInstance.get(`${API_BASE_USERS}${API_LEADERBOARD}`);
+      return response.data;
+    }
   };
 }

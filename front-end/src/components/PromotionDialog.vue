@@ -29,13 +29,14 @@
     modelValue: boolean;
     color: 'white' | 'black';
   }>();
+
+  console.log("PromotionDialog props:", props);
   
   const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
   (e: 'promote', pieceType: 'queen' | 'rook' | 'bishop' | 'knight'): void;
     }>();
 
-    // Et définir le tableau des pièces avec le bon type
     const pieces: ('queen' | 'rook' | 'bishop' | 'knight')[] = ['queen', 'rook', 'bishop', 'knight'];
   
   const selectPiece = (pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {

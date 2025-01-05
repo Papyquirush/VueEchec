@@ -1,8 +1,6 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
 
-
-
 export function expressAuthentication(
     request: express.Request,
     securityName: string,
