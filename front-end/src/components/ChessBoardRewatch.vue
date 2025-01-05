@@ -1,6 +1,5 @@
 <template>
   <BoutonInit v-model:isInit="isInit" class="m-10"/>
-  <!-- <BoutonRotate v-model="isRotated"/> -->
   <PromotionDialog
     v-if="showPromotion"
     v-model="showPromotion"
