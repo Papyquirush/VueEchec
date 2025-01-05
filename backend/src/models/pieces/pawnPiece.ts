@@ -159,7 +159,6 @@ class PawnPiece extends ChessPiece {
         let chessPieceToTake = await chessPieceServices.getChessPieceByPosition(`${position[0]}${parseInt(position[1]) + (this.color == 'white' ? -1 : 1)}`, this.game_id);
 
         if(chessPieceToTake) {
-            console.log(`PawnPiece is taking`);
             await chessPieceServices.deleteChessPiece(chessPieceToTake.id);
         }
     }

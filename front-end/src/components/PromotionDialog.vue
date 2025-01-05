@@ -30,7 +30,7 @@
     color: 'white' | 'black';
   }>();
 
-  console.log("PromotionDialog props:", props);
+
   
   const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;

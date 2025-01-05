@@ -154,7 +154,7 @@ const movePiece = async (from: string, to: string) => {
     moveCount.value++;
 
     const needsPromotion = isPawnPromotion(from, to);
-    console.log("Needs promotion:", needsPromotion);
+  
 
     await ChessBoardService.movePiece(currGame.value.gameId, from, to);
 
@@ -167,13 +167,10 @@ const movePiece = async (from: string, to: string) => {
     
     
     if (needsPromotion) {
-      console.log("Tentative d'affichage de la promotion");
+
       showPromotion.value = true;
       promotionPosition.value = to;
-      console.log("État après promotion:", {
-        showPromotion: showPromotion.value,
-        promotionPosition: promotionPosition.value
-      });
+      
     } else {
       lastMove.value = { from: fromIndices, to: toIndices };
       clearSelection();
@@ -236,12 +233,7 @@ watch(isInit, async (value) => {
 const isPawnPromotion = (from: string, to: string): boolean => {
   const fromIndices = positionToIndex(from);
   const piece = localBoard.value[fromIndices.row][fromIndices.col];
-  console.log("Vérification promotion:", {
-    from,
-    to,
-    piece,
-    toRow: positionToIndex(to).row
-  });
+ 
   
   if (!piece || piece.pieceType !== 'pawn') return false;
   
@@ -249,7 +241,7 @@ const isPawnPromotion = (from: string, to: string): boolean => {
   const isPromotion = (piece.color === 'white' && toRow === 0) || 
                      (piece.color === 'black' && toRow === 7);
                      
-  console.log("Résultat promotion:", isPromotion);
+
   return isPromotion;
 };
 

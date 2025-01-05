@@ -69,7 +69,6 @@
         const authenticatedUser = await userService.authenticate(user);
         userConnecte.value = authenticatedUser;
         userConnecte.value.username = form.value.username;
-        console.log("Je me suis connecté et je suis :",userConnecte.value);
         
         router.push('/play');
       } catch (e) {
