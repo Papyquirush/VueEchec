@@ -264,6 +264,22 @@ export class GameService {
     }
 
 
+    public async makePublic(gameId: number) : Promise<void> {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            game.is_public = true;
+            await game.save();
+        }
+
+    }
+
+    public async makePrivate(gameId: number) : Promise<void> {
+        let game = await Game.findByPk(gameId);
+        if (game) {
+            game.is_public = false;
+            await game.save();
+        }
+    }
 }
 
 export const gameService = new GameService();

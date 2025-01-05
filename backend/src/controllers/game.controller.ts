@@ -1,4 +1,4 @@
-import {Controller, Get, Route, Post, Body, Security,Path } from "tsoa";
+import {Controller, Get, Route, Post, Body, Security, Path, Patch} from "tsoa";
 import { CreateGameDTO, GameDTO } from "../dto/game.dto";
 import { gameService } from "../services/game.services";
 import { notFound } from "../error/NotFoundError";
@@ -61,6 +61,19 @@ export class GameController extends Controller {
     public async getPrivateGames(@Path() userId:number): Promise<GameDTO[]>
     {
         return gameService.getPrivateGames(userId);
+    }
+
+
+    @Patch("/makePublic/{gameId}")
+    public async makePublic(@Path() gameId:number): Promise<void>
+    {
+        return gameService.makePublic(gameId);
+    }
+
+    @Patch("/makePrivate/{gameId}")
+    public async makePrivate(@Path() gameId:number): Promise<void>
+    {
+        return gameService.makePrivate(gameId);
     }
 
 
