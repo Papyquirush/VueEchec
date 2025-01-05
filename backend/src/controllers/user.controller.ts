@@ -56,6 +56,10 @@ export class UserController extends Controller {
     }
 
 
+    @Get("/classement/winrate")
+    public async getClassement(): Promise<{ username: string; winrate: number }[]> {
+      return userService.getClassement();
+    }
 
 
   }

@@ -86,6 +86,20 @@ export class UserService {
 
     return (wonGames / totalGames) * 100;
   }
+
+  public async getClassement(): Promise<{ username: string, winrate: number }[]> {
+    let users = await User.findAll();
+    let winrates = [];
+
+    for (let user of users) {
+      let winrate = await this.getWinrate(user.id);
+      winrates.push({ username: user.username, winrate });
+    }
+
+    winrates.sort((a, b) => b.winrate - a.winrate);
+
+    return winrates;
+  }
 }
 
 export const userService = new UserService();
