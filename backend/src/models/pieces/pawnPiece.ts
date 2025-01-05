@@ -69,7 +69,6 @@ class PawnPiece extends ChessPiece {
 
 
         let lastMove = await moveServices.getLastMove(this.game_id);
-        console.log(lastMove);
         if(!lastMove) {return slotsAvailable;}
         let lastMovePiece = await chessPieceServices.getChessPieceByPosition(lastMove.to_position, game.id);
         //passant
