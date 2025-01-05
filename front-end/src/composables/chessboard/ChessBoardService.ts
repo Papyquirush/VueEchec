@@ -60,6 +60,11 @@ export const ChessBoardService = {
     return response;
   },
 
+  async promotePiece(gameId: number, promotionPosition: { value: string }, pieceType: string) {
+    const response = await ChessBoardApi.promotePiece(gameId, promotionPosition, pieceType);
+    return response;
+  },
+
   async movePiece(gameId: number, from: string, to: string) {
       const response = await ChessBoardApi.movePiece(gameId, from, to);
       return response;
