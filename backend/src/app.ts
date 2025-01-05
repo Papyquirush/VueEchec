@@ -16,7 +16,7 @@ app.use(express.static("public"));
 var cors = require('cors')
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET','PATCH', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
 }));
 
