@@ -43,6 +43,11 @@ const router = createRouter({
       path: '/public-games',
       name: 'public-games',
       component: () => import('@/views/PublicGamesView.vue')
+    },
+    {
+      path: '/rewatch',
+      name: 'rewatch',
+      component: () => import('@/views/RewatchView.vue')
     }
   ],
 })
