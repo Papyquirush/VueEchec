@@ -26,7 +26,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run : npm run eslint
-    - run : npm run typecheck
+        cache-dependency-path: "backend/package-lock.json"
+    - name: Install and build
+      working-directory: ./backend
+      run: 
+        npm ci
+        npm generate
+        npm run build --if-present
+    - name: Checks
+      working-directory: ./backend
+      run:
+          npm init @eslint/config@latest
+          npm run eslint
+          npm install @types/type-check
+          npm run typecheck
