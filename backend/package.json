@@ -9,6 +9,8 @@
     "tsoa:spec": "tsoa spec",
     "generate": "npm run tsoa:routes && npm run tsoa:spec",
     "start": "node build/app.js",
+    "eslint": "eslint ..",
+    "typecheck": "tsc --noEmit",
     "predev": "npm run swagger",
     "prebuild": "npm run swagger",
     "build": "tsc",
