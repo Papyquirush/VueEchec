@@ -36,5 +36,7 @@ jobs:
     - name: Checks
       working-directory: ./backend
       run:
+          npm init @eslint/config@latest
           npm run eslint
+          npm install @types/type-check
           npm run typecheck
