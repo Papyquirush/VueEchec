@@ -34,7 +34,7 @@ jobs:
         npm generate
         npm run build --if-present
     - name: Checks
-    working-directory: ./backend
-    run:
-        npm run eslint
-        npm run typecheck
+      working-directory: ./backend
+      run:
+          npm run eslint
+          npm run typecheck
